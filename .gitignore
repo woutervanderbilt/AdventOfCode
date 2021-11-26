@@ -1,0 +1,9 @@
+AdventOfCode/bin/Debug/net5.0/AdventOfCode.deps.json
+AdventOfCode/bin/
+AdventOfCode/obj/
+Algorithms/bin/
+Algorithms/obj/
+Problems/bin/
+Problems/obj/Debug/netcoreapp3.1/.NETCoreApp,Version=v3.1.AssemblyAttributes.cs
+Problems/obj/
+.vs/
