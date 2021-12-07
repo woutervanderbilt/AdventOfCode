@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Algorithms.Models;
 
 namespace Problems.Advent._2015
 {
@@ -9,6 +10,13 @@ namespace Problems.Advent._2015
     {
         public override Task ExecuteAsync()
         {
+            var b = new ResidueClass(20151125, 33554393);
+            var p = new ResidueClass(252533, 33554393);
+            var completeDiagonals = 2947 + 3029 - 2;
+            Result = (b * p.ToThePower(completeDiagonals * (completeDiagonals + 1) / 2 + 3028)).ToString();
+            return Task.CompletedTask;
+
+
             int r = 1;
             int c = 1;
             foreach (var code in Codes())
