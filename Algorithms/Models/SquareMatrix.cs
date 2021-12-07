@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,6 +47,35 @@ namespace Algorithms.Models
                 }
 
                 currentPower = (SquareMatrix) currentPower.Times(currentPower);
+                e /= 2;
+            }
+
+            return result;
+        }
+
+        public SquareMatrix PowerMod(BigInteger e)
+        {
+            if (e == 0)
+            {
+                return Identity(NumberOfColumns, Modulus);
+            }
+            SquareMatrix result = null;
+            SquareMatrix currentPower = this;
+            while (e > 0)
+            {
+                if (e % 2 == 1)
+                {
+                    if (result == null)
+                    {
+                        result = currentPower;
+                    }
+                    else
+                    {
+                        result = (SquareMatrix)result.Times(currentPower);
+                    }
+                }
+
+                currentPower = (SquareMatrix)currentPower.Times(currentPower);
                 e /= 2;
             }
 
