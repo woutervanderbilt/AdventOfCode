@@ -240,7 +240,6 @@ cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda
         {
             var digits = line.Split(' ');
 
-            long result = 0;
             foreach (var permutation in "abcdefg".Permutations().Select(p => p.ToList()))
             {
                 var dict = new Dictionary<char, char>();
@@ -275,6 +274,7 @@ cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda
 
                 if (correct)
                 {
+                    long result = 0;
                     bool pastPipe = false;
                     long t = 1000;
                     foreach (var digit in digits)
@@ -300,10 +300,11 @@ cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda
                         result += t * DigitMappings.IndexOf(sortedDigit);
                         t /= 10;
                     }
+                    return result;
                 }
             }
 
-            return result;
+            throw new Exception("Geen oplossing :(");
         }
 
         private static readonly IList<string> DigitMappings = new List<string>
