@@ -209,9 +209,7 @@ gcedab facgbd efadg edacg bdafecg fedgb fda af aefc gafcde | dgecfa ebdgac fa bd
 gdba gedfb egfbad fegadc ecgfba dfbec gd cbedfga abefg fdg | fcadge gdbef fegbac agbef
 fbdec fdbceag feacb fbcgd dcbfge dec efgadc dcbafg ed dbge | cabgdf ceafb afgdec de
 cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda";
-
-
-        const string testinput = @"acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf";
+        
         public override Task ExecuteAsync()
         {
             long result = 0;
@@ -229,15 +227,12 @@ cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda
                     }
                     if (pastPipe && (count == 2 || count == 3 || count == 4 || count == 7))
                     {
-                        //Console.WriteLine(digit);
                         result++;
                     }
                 }
             }
 
-
-
-            Result = (result+" "+sum).ToString();
+            Result = (result+" "+sum);
             return Task.CompletedTask;
         }
 
@@ -248,10 +243,6 @@ cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda
             long result = 0;
             foreach (var permutation in "abcdefg".Permutations().Select(p => p.ToList()))
             {
-                if (new string(permutation.ToArray()) == "deafgbc")
-                {
-
-                }
                 var dict = new Dictionary<char, char>();
                 dict[permutation[0]] = 'a';
                 dict[permutation[1]] = 'b';
@@ -293,7 +284,6 @@ cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda
                             pastPipe = true;
                             continue;
                         }
-
                         if (!pastPipe)
                         {
                             continue;
