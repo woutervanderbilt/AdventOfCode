@@ -11,7 +11,7 @@ namespace Algorithms.Models
 
         public GridMember<T> this[int x, int y]
         {
-            get { return grid.TryGetValue((x,y), out var t) ? new GridMember<T>(t, x, y) : new GridMember<T>(); }
+            get { return grid.TryGetValue((x,y), out var t) ? new GridMember<T>(t, x, y) : new GridMember<T>(x, y); }
             set { grid[(x, y)] = value; }
         }
 
@@ -27,6 +27,7 @@ namespace Algorithms.Models
         public int MaxX => grid.Keys.Max(k => k.Item1);
         public int MinY => grid.Keys.Min(k => k.Item2);
         public int MaxY => grid.Keys.Max(k => k.Item2);
+        public int Size => grid.Count;
 
 
         public IEnumerable<(T value, int x, int y)> Neighbours((int, int) location, bool includeDiagonal)
@@ -192,8 +193,11 @@ namespace Algorithms.Models
             Found = true;
         }
 
-        public GridMember()
-        {}
+        public GridMember(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
 
         public T Value { get; }
         public bool Found { get; }
