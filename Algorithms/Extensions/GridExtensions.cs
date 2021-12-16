@@ -40,7 +40,7 @@ namespace Algorithms.Extensions
             }
         }
 
-        public static void Print(this Grid<bool> grid, bool switchXandY = false)
+        public static void Print(this Grid<bool> grid, bool switchXandY = false, char t = '#', char f = '.')
         {
             var minX = grid.MinX;
             var maxX = grid.MaxX;
@@ -54,7 +54,7 @@ namespace Algorithms.Extensions
                     for (int y = maxY; y >= minY; y--)
                     {
                         var value = grid[x, y];
-                        Console.Write(value.Found && value.Value ? "#" : ".");
+                        Console.Write(value.Found && value.Value ? t : f);
                     }
 
                     Console.WriteLine();
@@ -67,7 +67,7 @@ namespace Algorithms.Extensions
                     for (int x = minX; x <= maxX; x++)
                     {
                         var value = grid[x, y];
-                        Console.Write(value.Found && value.Value ? "#" : ".");
+                        Console.Write(value.Found && value.Value ? t : f);
                     }
 
                     Console.WriteLine();

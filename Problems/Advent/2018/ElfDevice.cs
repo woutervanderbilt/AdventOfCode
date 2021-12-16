@@ -22,12 +22,12 @@ namespace Problems.Advent._2018
                 }
             }
 
-            Register = new int[registerSize];
+            Register = new long[registerSize];
         }
 
         private IList<string> program = new List<string>();
 
-        public int[] Register { get; set; }
+        public long[] Register { get; set; }
 
         private int InstructionPointerBinding { get; set; }
 
@@ -44,16 +44,12 @@ namespace Problems.Advent._2018
             }
 
             Register[InstructionPointerBinding] = InstructionPointer;
-            var line = program[Register[InstructionPointerBinding]];
-            if (!new int[] { 3, 4, 5, 6, 8, 9, 10, 11 }.Contains(InstructionPointer))
-            {
-                Console.WriteLine($"{line}      {string.Join(',', Register)}     {InstructionPointer}");
-            }
+            var line = program[(int)Register[InstructionPointerBinding]];
             //Console.WriteLine($"{line}      {string.Join(',',Register)}     {InstructionPointer}");
             var split = line.Split(' ');
             var name = split[0];
             var instructions = split.Skip(1).Select(int.Parse).ToList();
-            int[] result = new int[Register.Length];
+            long[] result = new long[Register.Length];
             for (int i = 0; i < Register.Length; i++)
             {
                 if (instructions[2] != i)
@@ -65,7 +61,7 @@ namespace Problems.Advent._2018
             int a = instructions[0];
             int b = instructions[1];
             int c = instructions[2];
-            int value = 0;
+            long value = 0;
             switch (name)
             {
                 case "addr":
@@ -121,7 +117,7 @@ namespace Problems.Advent._2018
             result[c] = value;
 
             Register = result;
-            InstructionPointer = Register[InstructionPointerBinding] + 1;
+            InstructionPointer = (int)Register[InstructionPointerBinding] + 1;
             return true;
         }
     }

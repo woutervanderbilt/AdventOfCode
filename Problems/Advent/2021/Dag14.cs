@@ -183,7 +183,7 @@ CN -> C";
                 }
             }
 
-            vector = vector.Times(matrix.PowerMod(10000000000000000000));
+            vector = vector.Times(matrix.PowerMod(40));
 
             var counter = new CounterLong<char>(mod);
 
