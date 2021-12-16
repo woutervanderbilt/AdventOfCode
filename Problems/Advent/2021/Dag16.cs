@@ -110,47 +110,18 @@ namespace Problems.Advent._2021
 
             public long Value()
             {
-                if (Type == 0)
+                return Type switch
                 {
-                    return SubPackets.Sum(s => s.Value());
-                }
-
-                if (Type == 1)
-                {
-                    return SubPackets.Aggregate(1l, (a, b) => a * b.Value());
-                }
-
-                if (Type == 2)
-                {
-                    return SubPackets.Select(s => s.Value()).Min();
-                }
-
-                if (Type == 3)
-                {
-                    return SubPackets.Select(s => s.Value()).Max();
-                }
-
-                if (Type == 4)
-                {
-                    return LiteralValue;
-                }
-
-                if (Type == 5)
-                {
-                    return SubPackets[0].Value() > SubPackets[1].Value() ? 1 : 0;
-                }
-
-                if (Type == 6)
-                {
-                    return SubPackets[0].Value() < SubPackets[1].Value() ? 1 : 0;
-                }
-
-                if (Type == 7)
-                {
-                    return SubPackets[0].Value() == SubPackets[1].Value() ? 1 : 0;
-                }
-
-                throw new Exception();
+                    0 => SubPackets.Sum(s => s.Value()),
+                    1 => SubPackets.Aggregate(1l, (a, b) => a * b.Value()),
+                    2 => SubPackets.Select(s => s.Value()).Min(),
+                    3 => SubPackets.Select(s => s.Value()).Max(),
+                    4 => LiteralValue,
+                    5 => SubPackets[0].Value() > SubPackets[1].Value() ? 1 : 0,
+                    6 => SubPackets[0].Value() < SubPackets[1].Value() ? 1 : 0,
+                    7 => SubPackets[0].Value() == SubPackets[1].Value() ? 1 : 0,
+                    _ => throw new Exception()
+                };
             }
         }
 
