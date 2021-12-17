@@ -31,7 +31,7 @@ namespace Problems.Advent._2018
 
         private int InstructionPointerBinding { get; set; }
 
-        private int InstructionPointer { get; set; }
+        public int InstructionPointer { get; private set; }
 
         private Counter<int> LineCounter = new Counter<int>();
 
@@ -114,10 +114,16 @@ namespace Problems.Advent._2018
                     break;
             }
 
-            result[c] = value;
+            if (InstructionPointer == 28)
+            {
+                Console.WriteLine($"{InstructionPointer}  {string.Join(',',Register)}");
+            }
+
+           result[c] = value;
 
             Register = result;
             InstructionPointer = (int)Register[InstructionPointerBinding] + 1;
+  
             return true;
         }
     }

@@ -74,5 +74,38 @@ namespace Algorithms.Extensions
                 }
             }
         }
+
+        public static void Print<T>(this Grid<T> grid, Func<T, char> map, bool switchXandY = false)
+        {
+            var minX = grid.MinX;
+            var maxX = grid.MaxX;
+            var minY = grid.MinY;
+            var maxY = grid.MaxY;
+            if (switchXandY)
+            {
+
+                for (int x = minX; x <= maxX; x++)
+                {
+                    for (int y = maxY; y >= minY; y--)
+                    {
+                        Console.Write(map(grid[x, y]));
+                    }
+
+                    Console.WriteLine();
+                }
+            }
+            else
+            {
+                for (int y = minY; y <= maxY; y++)
+                {
+                    for (int x = minX; x <= maxX; x++)
+                    {
+                        Console.Write(map(grid[x, y]));
+                    }
+
+                    Console.WriteLine();
+                }
+            }
+        }
     }
 }

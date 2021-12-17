@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,22 +42,55 @@ addr 1 4 4
 seti 5 9 4";
         public override Task ExecuteAsync()
         {
-            int r0 = 0;
+            long i1=0, i3=65536, i5 = 733884;
+            HashSet<long> results = new HashSet<long>();
+            HashSet<(long, long)> states = new HashSet<(long, long)>();
             while (true)
             {
-                var device = new ElfDevice(input, 6);
-                device.Register[0] = r0;
-                int count = 0;
-                while (device.ExecuteInstruction())
+                i1 = i3 & 255;
+                i5 += i1;
+                i5 &= 16777215;
+                i5 *= 65899;
+                i5 &= 16777215;
+                if (256 > i3)
                 {
-                    //count++;
-                    //if (count == 100000)
-                    //{
-                    //    break;
-                    //}
+                    if (!states.Add((i3, i5)))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        results.Add(i5);
+                        i3 = i5 | 65536;
+                        i5 = 733884;
+                    }
                 }
+                else
+                {
+                    i3 /= 256;
+                }
+            }
 
-                r0++;
+            Result = results.Last().ToString();
+           
+
+            int r0 = 0;
+            var device = new ElfDevice(input, 6);
+            device.Register[0] = r0;
+            while (device.ExecuteInstruction())
+            {
+                //if (device.InstructionPointer == 28)
+                //{
+                //    if (!values.Contains(device.Register[5]))
+                //    {
+                //        Console.WriteLine(device.Register[5]);
+                //        values.Add(device.Register[5]);
+                //    }
+                //    else
+                //    {
+                //        Result = values.Last().ToString();
+                //    }
+                //}
             }
 
             Result = r0.ToString();
