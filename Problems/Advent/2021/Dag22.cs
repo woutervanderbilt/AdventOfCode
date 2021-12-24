@@ -545,6 +545,7 @@ off x=105..106,y=105..106,z=105..120";
 
             long result = switchedOn.Count;
             bigCubes = bigCubes.Reverse().ToList();
+            int count = 0;
             while (bigCubes.Any())
             {
                 var cube = bigCubes.First();
@@ -557,17 +558,20 @@ off x=105..106,y=105..106,z=105..120";
                 IList<Cube> splitCubes = new List<Cube>();
                 foreach (var bigCube in bigCubes)
                 {
+                    int splitcount = -1;
                     foreach (var splitCube in bigCube.CutOut(cube))
                     {
                         splitCubes.Add(splitCube);
+                        splitcount++;
                     }
+                    count += splitcount;
                 }
 
                 bigCubes = splitCubes;
             }
 
 
-            Result = $"{switchedOn.Count} {result}";
+            Result = $"{switchedOn.Count} {result} {count}";
 
             return Task.CompletedTask;
         }
@@ -618,8 +622,8 @@ off x=105..106,y=105..106,z=105..120";
                 Max = max;
             }
 
-            public long Min { get; set; }
-            public long Max { get; set; }
+            public long Min { get; }
+            public long Max { get; }
 
             public IEnumerable<(Range, bool)> Split(Range splitBy)
             {
