@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
@@ -304,9 +305,10 @@ namespace Problems.Advent._2018
 
             private void PerformTurn()
             {
-                Console.WriteLine();
+                Console.SetCursorPosition(0, 0);
                 Console.WriteLine(this);
-                Console.ReadKey();
+                Thread.Sleep(40);
+                //Console.ReadKey();
                 TurnNumber++;
                 foreach (var creature in Elves.Union<Creature>(Goblins).OrderBy(c => c.Location.Coordinate))
                 {
