@@ -76,7 +76,7 @@ namespace Problems.Advent._2019
                     StringBuilder sb = new StringBuilder();
                     for (int x = xMax; x >= xMin; x--)
                     {
-                        sb.Append(Painted.ContainsKey((x, y)) ? (Painted[(x, y)] == 0 ? " " : "*") : ".");
+                        sb.Append(Painted.ContainsKey((x, y)) ? (Painted[(x, y)] == 0 ? " " : "█") : ".");
                     }
 
                     Console.WriteLine(sb);

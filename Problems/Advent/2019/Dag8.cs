@@ -38,7 +38,7 @@ namespace Problems.Advent._2019
                     
                     if (digit == 1)
                     {
-                        image[d/25] = image[d / 25].Remove(d % 25, 1).Insert(d % 25, "*");
+                        image[d/25] = image[d / 25].Remove(d % 25, 1).Insert(d % 25, "█");
                     }
                     else if (digit == 0)
                     {

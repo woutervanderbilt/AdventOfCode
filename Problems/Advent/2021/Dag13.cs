@@ -838,7 +838,7 @@ fold along y=6";
                 var sb = new StringBuilder();
                 for (int x = grid.MinX; x <= grid.MaxX; x++)
                 {
-                    sb.Append(grid[x, y].Found ? "*" : " ");
+                    sb.Append(grid[x, y].Found ? "█" : " ");
                 }
                 Console.WriteLine(sb);
             }
