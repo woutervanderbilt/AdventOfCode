@@ -78,5 +78,23 @@ namespace Algorithms.Extensions
         {
             return list.Aggregate(1L, (a, b) => a * b % modulus);
         }
+
+        public static IEnumerable<TS> AggregateEnumerable<T, TS>(this IEnumerable<T> source, TS seed,
+            Func<TS, T, TS> func)
+        {
+            var current = seed;
+            yield return current;
+            foreach (var t in source)
+            {
+                current = func(current, t);
+                yield return current;
+            }
+        }
+
+        public static IList<TS> AggregateList<T, TS>(this IEnumerable<T> source, TS seed,
+            Func<TS, T, TS> func)
+        {
+            return source.AggregateEnumerable(seed, func).ToList();
+        }
     }
 }

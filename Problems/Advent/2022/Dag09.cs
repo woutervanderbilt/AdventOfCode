@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Algorithms.Extensions;
 
 namespace Problems.Advent._2022
 {
@@ -2011,67 +2012,49 @@ L 10";
 
         public override Task ExecuteAsync()
         {
+            int knotcount = 10;
 
-            IList<(int, int)> nodes = new List<(int, int)>();
-            int nodecount = 10;
-            for (int i = 1; i <= nodecount; i++)
+            Result = input.Split(Environment.NewLine)
+                .Select(s => s.Split())
+                .SelectMany(w => Enumerable.Repeat(ParseDirection(w[0]), int.Parse(w[1])))
+                .AggregateList((IList<(int, int)>)Enumerable.Repeat((0, 0), knotcount).ToList(), ApplyMove)
+                .Select(r => r.Last())
+                .Distinct()
+                .Count()
+                .ToString();
+            return Task.CompletedTask;
+
+            (int, int) ParseDirection(string direction)
             {
-                nodes.Add((0, 0));
-            }
-            HashSet<(int, int)> visited = new HashSet<(int, int)>();
-            visited.Add((0,0));
-            foreach (var line in input.Split(Environment.NewLine))
-            {
-                var words = line.Split();
-                (int, int) direction = words[0] switch
+                return direction switch
                 {
                     "R" => (1, 0),
                     "L" => (-1, 0),
                     "U" => (0, 1),
                     "D" => (0, -1)
                 };
-                var length = int.Parse(words[1]);
-                for (int i = 1; i <= length; i++)
-                {
-                    var head = nodes[0];
-                    head = (head.Item1 + direction.Item1, head.Item2 + direction.Item2);
-                    for (int j = 1; j < nodecount; j++)
-                    {
-                        var tail = nodes[j];
-                        var distance = Math.Max(Math.Abs(head.Item1 - tail.Item1), Math.Abs(head.Item2 - tail.Item2));
-                        if (distance > 1)
-                        {
-                            if (head.Item1 == tail.Item1)
-                            {
-                                tail = (tail.Item1, tail.Item2 + (tail.Item2 > head.Item2 ? -1 : 1));
-                            }
-                            else if (head.Item2 == tail.Item2)
-                            {
-                                tail = (tail.Item1 + (tail.Item1 > head.Item1 ? -1 : 1), tail.Item2);
-                            }
-                            else
-                            {
-                                tail = (tail.Item1 + (tail.Item1 > head.Item1 ? -1 : 1),
-                                    tail.Item2 + (tail.Item2 > head.Item2 ? -1 : 1));
-                            }
-
-                            if (j == nodes.Count - 1)
-                            {
-                                nodes[j] = tail;
-                                visited.Add(tail);
-                            }
-                        }
-
-                        nodes[j - 1] = head;
-                        head = tail;
-                        
-                    }
-                }
             }
 
+            IList<(int, int)> ApplyMove(IList<(int, int)> rope, (int, int) move)
+            {
+                return rope.Skip(1)
+                    .AggregateList((rope[0].Item1 + move.Item1, rope[0].Item2 + move.Item2), MoveTail);
+            }
 
-            Result = visited.Count.ToString();
-            return Task.CompletedTask;
+            (int, int) MoveTail((int, int) head, (int, int) tail)
+            {
+                var dx = head.Item1 - tail.Item1;
+                var dy = head.Item2 - tail.Item2;
+
+                var distance = Math.Max(Math.Abs(head.Item1 - tail.Item1), Math.Abs(head.Item2 - tail.Item2));
+                if (distance > 1)
+                {
+                    return (tail.Item1 + Math.Sign(dx), tail.Item2 + Math.Sign(dy));
+                }
+
+                return tail;
+
+            }
         }
 
         public override int Nummer => 202209;
