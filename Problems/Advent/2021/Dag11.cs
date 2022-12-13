@@ -74,11 +74,11 @@ namespace Problems.Advent._2021
                     {
                         foreach (var neighbour in grid.Neighbours(member, true))
                         {
-                            grid[neighbour.x, neighbour.y]++;
-                            if (neighbour.value >= 9 && !flashed.Contains((neighbour.x, neighbour.y)))
+                            grid[neighbour.X, neighbour.Y]++;
+                            if (neighbour.Value >= 9 && !flashed.Contains((neighbour.X, neighbour.Y)))
                             {
-                                newNewFlashed.Add((neighbour.x, neighbour.y));
-                                flashed.Add((neighbour.x, neighbour.y));
+                                newNewFlashed.Add((neighbour.X, neighbour.Y));
+                                flashed.Add((neighbour.X, neighbour.Y));
                             }
                         }
                     }

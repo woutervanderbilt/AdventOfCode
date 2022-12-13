@@ -29,8 +29,9 @@ namespace Algorithms.Models
         public int MaxY => grid.Keys.Max(k => k.Item2);
         public int Size => grid.Count;
 
+        public Func<GridMember<T>, GridMember<T>, bool> CanMove { get; set; } = (_, _) => true;
 
-        public IEnumerable<(T value, int x, int y)> Neighbours((int, int) location, bool includeDiagonal)
+        public IEnumerable<GridMember<T>> Neighbours((int, int) location, bool includeDiagonal)
         {
             for (int i = -1; i <= 1; i++)
             {
@@ -42,9 +43,9 @@ namespace Algorithms.Models
                     }
 
                     var gridMember = this[location.Item1 + i, location.Item2 + j];
-                    if (gridMember.Found)
+                    if (gridMember.Found && CanMove(grid[location], gridMember))
                     {
-                        yield return (gridMember, location.Item1 + i, location.Item2 + j);
+                        yield return gridMember;
                     }
                 }
             }
@@ -113,11 +114,11 @@ namespace Algorithms.Models
                     {
                         foreach (var c in Neighbours(i, includeDiagonal))
                         {
-                            if (!group.Contains((c.x, c.y)))
+                            if (!group.Contains(c.Location))
                             {
-                                newAdded.Add((c.x, c.y));
-                                group.Add((c.x, c.y));
-                                grouped.Add((c.x, c.y));
+                                newAdded.Add(c.Location);
+                                group.Add(c.Location);
+                                grouped.Add(c.Location);
                             }
                         }
                     }
@@ -127,6 +128,45 @@ namespace Algorithms.Models
             }
 
             return groupCount;
+        }
+
+        public IList<GridMember<T>> ShortestPath(IEnumerable<(int, int)> from, IEnumerable<(int, int)> to, bool includeDiagonal)
+        {
+            var toHash = new HashSet<(int, int)>(to);
+            HashSet<(int, int)> visited = new HashSet<(int, int)>(from);
+            IList<(int, int)> current = new List<(int, int)>(visited);
+            IList<List<GridMember<T>>> paths = current.Select(c => new List<GridMember<T>> { this[c.Item1, c.Item2] }).ToList();
+            int steps = 0;
+            while (true)
+            {
+                steps++;
+                IList<(int, int)> newCurrent = new List<(int, int)>();
+                IList<List<GridMember<T>>> newPaths = new List<List<GridMember<T>>>();
+                int index = 0;
+                foreach (var location in current)
+                {
+                    var path = paths[index];
+                    foreach (var neighbour in Neighbours(location, includeDiagonal))
+                    {
+                        if (!visited.Contains(neighbour.Location))
+                        {
+                            visited.Add(neighbour.Location);
+                            newCurrent.Add(neighbour.Location);
+                            var copy = path.ToList();
+                            copy.Add(neighbour);
+                            newPaths.Add(copy);
+                            if (toHash.Contains(neighbour.Location))
+                            {
+                                return copy;
+                            }
+                        }
+                    }
+
+                    index++;
+                }
+                current = newCurrent;
+                paths = newPaths;
+            }
         }
 
         public Grid<T> Copy()

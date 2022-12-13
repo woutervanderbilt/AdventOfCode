@@ -150,18 +150,18 @@ namespace Problems.Advent._2018
                     }
                     foreach (var neighbour in grid.Neighbours(location, false))
                     {
-                        if (!visited.Contains((neighbour.x, neighbour.y)))
+                        if (!visited.Contains((neighbour.X, neighbour.Y)))
                         {
-                            visited.Add((neighbour.x, neighbour.y));
-                            doorCounter[(neighbour.x, neighbour.y)] = doorCount;
-                            lastStep.Add((neighbour.x, neighbour.y));
+                            visited.Add((neighbour.X, neighbour.Y));
+                            doorCounter[(neighbour.X, neighbour.Y)] = doorCount;
+                            lastStep.Add((neighbour.X, neighbour.Y));
                         }
                         else
                         {
-                            if (doorCount < doorCounter[(neighbour.x, neighbour.y)])
+                            if (doorCount < doorCounter[(neighbour.X, neighbour.Y)])
                             {
-                                doorCounter[(neighbour.x, neighbour.y)] = doorCount;
-                                lastStep.Add((neighbour.x, neighbour.y));
+                                doorCounter[(neighbour.X, neighbour.Y)] = doorCount;
+                                lastStep.Add((neighbour.X, neighbour.Y));
                             }
                         }
                     }

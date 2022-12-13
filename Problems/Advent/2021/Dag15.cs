@@ -177,16 +177,16 @@ namespace Problems.Advent._2021
                     var risk = minRisks[step];
                     foreach (var neighbour in risks.Neighbours(step, false))
                     {
-                        var totalRisk = risk + risks[neighbour.x, neighbour.y];
-                        if(!minRisks.ContainsKey((neighbour.x, neighbour.y)))
+                        var totalRisk = risk + risks[neighbour.X, neighbour.Y];
+                        if(!minRisks.ContainsKey((neighbour.X, neighbour.Y)))
                         {
-                            minRisks[(neighbour.x, neighbour.y)] = totalRisk;
-                            lastSteps.Add((neighbour.x, neighbour.y));
+                            minRisks[(neighbour.X, neighbour.Y)] = totalRisk;
+                            lastSteps.Add((neighbour.X, neighbour.Y));
                         }
-                        else if(minRisks[(neighbour.x, neighbour.y)] > totalRisk)
+                        else if(minRisks[(neighbour.X, neighbour.Y)] > totalRisk)
                         {
-                            minRisks[(neighbour.x, neighbour.y)] = totalRisk;
-                            lastSteps.Add((neighbour.x, neighbour.y));
+                            minRisks[(neighbour.X, neighbour.Y)] = totalRisk;
+                            lastSteps.Add((neighbour.X, neighbour.Y));
                         }
                     }
                 }
