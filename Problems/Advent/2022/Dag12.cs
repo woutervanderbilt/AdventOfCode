@@ -85,6 +85,7 @@ abcccccccccccccccaaaaaaaaccccccccccccaacccacccccccaaaaaaaaaaccccaacccccaaccccccc
             grid.CanMove = (from, to) => to.Value - from.Value <= 1;
 
             var test = grid.ShortestPath(grid.AllMembers().Where(m => m.value == 'a').Select(m => (m.x, m.y)), new List<(int, int)> { target }, false);
+           Console.WriteLine(new string(test.Select(s => s.Value).ToArray()));
             Result = (test.Count - 1).ToString();
             return Task.CompletedTask;
         }

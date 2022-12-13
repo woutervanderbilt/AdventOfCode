@@ -134,38 +134,38 @@ namespace Algorithms.Models
         {
             var toHash = new HashSet<(int, int)>(to);
             HashSet<(int, int)> visited = new HashSet<(int, int)>(from);
-            IList<(int, int)> current = new List<(int, int)>(visited);
-            IList<List<GridMember<T>>> paths = current.Select(c => new List<GridMember<T>> { this[c.Item1, c.Item2] }).ToList();
+            IList<GridMember<T>> current = visited.Select(v => this[v.Item1, v.Item2]).ToList();
+            IDictionary<(int, int), GridMember<T>> paths = new Dictionary<(int, int), GridMember<T>>();
             int steps = 0;
             while (true)
             {
                 steps++;
-                IList<(int, int)> newCurrent = new List<(int, int)>();
-                IList<List<GridMember<T>>> newPaths = new List<List<GridMember<T>>>();
-                int index = 0;
-                foreach (var location in current)
+                IList<GridMember<T>> newCurrent = new List<GridMember<T>>();
+                foreach (var member in current)
                 {
-                    var path = paths[index];
-                    foreach (var neighbour in Neighbours(location, includeDiagonal))
+                    foreach (var neighbour in Neighbours(member.Location, includeDiagonal))
                     {
                         if (!visited.Contains(neighbour.Location))
                         {
                             visited.Add(neighbour.Location);
-                            newCurrent.Add(neighbour.Location);
-                            var copy = path.ToList();
-                            copy.Add(neighbour);
-                            newPaths.Add(copy);
+                            newCurrent.Add(neighbour);
+                            paths[neighbour.Location] = member;
                             if (toHash.Contains(neighbour.Location))
                             {
-                                return copy;
+                                IList<GridMember<T>> path = new List<GridMember<T>>();
+                                var step = neighbour;
+                                path.Add(step);
+                                while (paths.TryGetValue(step.Location, out step))
+                                {
+                                    path.Add(step);
+                                }
+
+                                return path.Reverse().ToList();
                             }
                         }
                     }
-
-                    index++;
                 }
                 current = newCurrent;
-                paths = newPaths;
             }
         }
 
