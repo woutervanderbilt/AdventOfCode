@@ -210,29 +210,17 @@ namespace Problems.Advent._2022
             {
                 map[i, maxY + 2] = '#';
             }
-            minX = map.MinX;
-            maxX = map.MaxX;
-            minY = map.MinY;
-            maxY = map.MaxY;
-
-            for (int x = minX - 1; x <= maxX + 1; x++)
-            {
-                for (int y = 0; y <= maxY; y++)
-                {
-                    if (!map[x, y].Found)
-                    {
-                        map[x, y] = '.';
-                    }
-                }
-            }
-
             map[500, 0] = '+';
+            map.FillBlanks('.');
+            
+            
+            //map.Print(reverseY:true);
             while (Step(out var current))
             {
                 map[current.Item1, current.Item2] = 'o';
             }
-            map.Print(reverseY: true);
-            Result = map.AllMembers().Where(m => m.value == 'o' || m.value == '+').Count().ToString();
+            //map.Print(reverseY: true);
+            Result = map.AllMembers().Count(m => m.value == 'o' || m.value == '+').ToString();
             return Task.CompletedTask;
 
 
