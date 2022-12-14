@@ -165,6 +165,9 @@ namespace Problems.Advent._2021
 
 
             IDictionary<(int, int), int> minRisks = new Dictionary<(int, int), int>();
+            risks.Cost = (_, to) => to;
+            Result = risks.ShortestPath(new List<(int, int)> { (0, 0) },
+                new List<(int, int)> { (risks.MaxX, risks.MaxY) }, false).cost.ToString();
             IList<(int x, int y)> lastSteps = new List<(int x, int y)>();
             minRisks[(0, 0)] = 0;
             lastSteps.Add((0,0));

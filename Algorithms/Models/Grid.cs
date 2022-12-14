@@ -30,6 +30,7 @@ namespace Algorithms.Models
         public int Size => grid.Count;
 
         public Func<GridMember<T>, GridMember<T>, bool> CanMove { get; set; } = (_, _) => true;
+        public Func<GridMember<T>, GridMember<T>, long> Cost { get; set; } = (_, _) => 1;
 
         public IEnumerable<GridMember<T>> Neighbours((int, int) location, bool includeDiagonal)
         {
@@ -130,49 +131,94 @@ namespace Algorithms.Models
             return groupCount;
         }
 
-        public IList<GridMember<T>> ShortestPath(IEnumerable<(int, int)> from, IEnumerable<(int, int)> to, bool includeDiagonal)
+
+        /// <summary>
+        /// Vind het goedkoopste pad van from-lijst naar to-lijst
+        /// In CanMove kan je restricties aangeven of het mogelijk is te bewegen. Default true
+        /// In Cost kan je de kosten van een overgang definieren. Default 1
+        /// </summary>
+        public (IList<GridMember<T>> path, long cost, bool found) ShortestPath(IEnumerable<(int, int)> from, IEnumerable<(int, int)> to, bool includeDiagonal)
         {
             var toHash = new HashSet<(int, int)>(to);
-            HashSet<(int, int)> visited = new HashSet<(int, int)>(from);
-            IList<GridMember<T>> current = visited.Select(v => this[v.Item1, v.Item2]).ToList();
+            IList<GridMember<T>> current = from.Select(v => this[v.Item1, v.Item2]).ToList();
             IDictionary<(int, int), GridMember<T>> paths = new Dictionary<(int, int), GridMember<T>>();
+            IDictionary<(int, int),long> costs = current.ToDictionary(f => f.Location, _ => 0L);
             int steps = 0;
+            long minCost = long.MaxValue;
+            GridMember<T>? finish = null;
             while (true)
             {
                 steps++;
                 IList<GridMember<T>> newCurrent = new List<GridMember<T>>();
+                long min = long.MaxValue;
                 foreach (var member in current)
                 {
+                    var cost = costs[member.Location];
                     foreach (var neighbour in Neighbours(member.Location, includeDiagonal))
                     {
-                        if (!visited.Contains(neighbour.Location))
+                        var newCost = cost + Cost(member, neighbour);
+                        var visited = costs.TryGetValue(neighbour.Location, out var previousCost);
+                        if (!visited || newCost < previousCost)
                         {
-                            visited.Add(neighbour.Location);
+                            min = Math.Min(min, newCost);
                             newCurrent.Add(neighbour);
                             paths[neighbour.Location] = member;
+                            costs[neighbour.Location] = newCost;
                             if (toHash.Contains(neighbour.Location))
                             {
-                                IList<GridMember<T>> path = new List<GridMember<T>>();
-                                var step = neighbour;
-                                path.Add(step);
-                                while (paths.TryGetValue(step.Location, out step))
-                                {
-                                    path.Add(step);
-                                }
-
-                                return path.Reverse().ToList();
+                                minCost = newCost;
+                                finish = neighbour;
                             }
                         }
                     }
                 }
+
+                if (min > minCost || !current.Any())
+                {
+                    if (finish == null)
+                    {
+                        return (new List<GridMember<T>>(), 0, false);
+                    }
+                    IList<GridMember<T>> path = new List<GridMember<T>>();
+                    path.Add(finish);
+                    var step = finish;
+                    while (paths.TryGetValue(step!.Location, out step))
+                    {
+                        path.Add(step);
+                    }
+
+                    return (path, minCost, true);
+                }
                 current = newCurrent;
             }
+        }
+
+        public Grid<T> FillBlanks(T value, int borderX = 0, int borderY = 0)
+        {
+            var minX = MinX;
+            var maxX = MaxX;
+            var minY = MinY;
+            var maxY = MaxY;
+            for (int x = minX - borderX; x <= maxX + borderX; x++)
+            {
+                for (int y = minY - borderY; y <= maxY + borderY; y++)
+                {
+                    if (!this[x, y].Found)
+                    {
+                        this[x, y] = value;
+                    }
+                }
+            }
+
+            return this;
         }
 
         public Grid<T> Copy()
         {
             var copy = new Grid<T>();
             copy.grid = new Dictionary<(int, int), T>(grid);
+            copy.Cost = Cost;
+            copy.CanMove = CanMove;
             return copy;
         }
 

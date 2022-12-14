@@ -7,18 +7,19 @@ namespace Algorithms.Extensions
 {
     public static class GridExtensions
     {
-        public static void Print(this Grid<char> grid, bool switchXandY = false)
+        public static void Print(this Grid<char> grid, bool switchXandY = false, bool reverseY = false)
         {
             var minX = grid.MinX;
             var maxX = grid.MaxX;
-            var minY = grid.MinY;
-            var maxY = grid.MaxY;
+            var minY = reverseY ? grid.MaxY : grid.MinY;
+            var maxY = reverseY ? grid.MinY : grid.MaxY;
+            var dy = reverseY ? -1 : 1;
             if (switchXandY)
             {
 
                 for (int x = minX; x <= maxX; x++)
                 {
-                    for (int y = maxY; y >= minY; y--)
+                    for (int y = maxY; reverseY ? y <= minY : y >= minY; y+= dy)
                     {
                         Console.Write(grid[x, y]);
                     }
@@ -28,7 +29,7 @@ namespace Algorithms.Extensions
             }
             else
             {
-                for (int y = maxY; y >= minY; y--)
+                for (int y = maxY; reverseY ? y <= minY : y >= minY; y -= dy)
                 {
                     for (int x = minX; x <= maxX; x++)
                     {
