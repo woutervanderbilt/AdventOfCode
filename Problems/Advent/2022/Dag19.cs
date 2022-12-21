@@ -57,26 +57,6 @@ Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsid
                 factories.Add(factory);
             }
 
-            //factories = new List<Factory>()
-            //{
-            //    new Factory
-            //    {
-            //        Id = 1,
-            //        OreCost = 4,
-            //        ClayCost = 2,
-            //        ObsidianCost = (3, 14),
-            //        GeodeCost = (2, 7)
-            //    },
-            //    new Factory
-            //    {
-            //        Id = 2,
-            //        OreCost = 2,
-            //        ClayCost = 3,
-            //        ObsidianCost = (3, 8),
-            //        GeodeCost = (3, 12)
-            //    }
-            //};
-
             bool partOne = true;
 
             IList<long> factoryValues = new List<long>();
