@@ -130,7 +130,7 @@ namespace Problems.Advent._2019
 
             void Print()
             {
-                Console.Clear();
+                Console.SetCursorPosition(0, 0);
                 Console.WriteLine($"Score: {score} ball: {ballX} paddle: {paddleX} steps: {steps}");
                 int minX = field.Keys.Min(k => k.Item1);
                 int maxX = field.Keys.Max(k => k.Item1);
