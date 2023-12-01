@@ -10,7 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Advent\2023\Input\202301.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Algorithms\Algorithms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Advent\2023\Input\*.txt">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

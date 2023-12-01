@@ -8,14 +8,13 @@ namespace Problems.Advent._2023
 {
     internal class Dag23 : Problem
     {
-        private const string input = @"";
-        public override Task ExecuteAsync()
+        public override async Task ExecuteAsync()
         {
+            string input = await GetInputAsync();
             foreach (var line in input.Split(Environment.NewLine))
             {
                 
             }
-            return Task.CompletedTask;
         }
 
         public override int Nummer => 202323;
