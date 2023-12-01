@@ -64,7 +64,7 @@ namespace Problems.Advent._2019
                     ConsoleColor.Magenta,
                     ConsoleColor.White,
                 };
-                Console.Clear();
+                Console.SetCursorPosition(0, 0);
                 foreach (var line in image)
                 {
                     Console.ForegroundColor = colors[random.Next(15)];

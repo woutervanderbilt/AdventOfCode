@@ -41,7 +41,7 @@ namespace Algorithms.Extensions
             }
         }
 
-        public static void Print(this Grid<bool> grid, bool switchXandY = false, char t = '█', char f = '.')
+        public static void Print(this Grid<bool> grid, bool switchXandY = false, char t = '#', char f = '.')
         {
             var minX = grid.MinX;
             var maxX = grid.MaxX;

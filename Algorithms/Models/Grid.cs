@@ -23,6 +23,14 @@ namespace Algorithms.Models
             }
         }
 
+        public IEnumerable<GridMember<T>> AllGridMembers()
+        {
+            foreach (var t in grid)
+            {
+                yield return new GridMember<T>(t.Value, t.Key.Item1, t.Key.Item2);
+            }
+        }
+
         public int MinX => grid.Keys.Min(k => k.Item1);
         public int MaxX => grid.Keys.Max(k => k.Item1);
         public int MinY => grid.Keys.Min(k => k.Item2);

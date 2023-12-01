@@ -126,7 +126,7 @@ L.LLLLL.LL";
             while (step.Item2)
             {
                 Thread.Sleep(100);
-                Console.Clear();
+                Console.SetCursorPosition(0, 0);
                 foreach (var line in step.Item1)
                 {
                     Console.WriteLine(line);

@@ -67,7 +67,7 @@ namespace Problems.Advent._2019
                         if (prev)
                         {
                             Thread.Sleep(6);
-                            Console.Clear();
+                            Console.SetCursorPosition(0, 0);
                         }
                         prev = true;
                     }
