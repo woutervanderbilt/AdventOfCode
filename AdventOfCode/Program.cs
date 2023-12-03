@@ -11,7 +11,7 @@ namespace Euler
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Problem problem = null;
             while (problem == null)
@@ -24,7 +24,7 @@ namespace Euler
                     problem = ProblemDefinitions.Problems[nummer];
                     var sw = new Stopwatch();
                     sw.Start();
-                    problem.ExecuteAsync().Wait();
+                    await problem.ExecuteAsync();
                     sw.Stop();
                     Console.WriteLine($"Oplossing: {problem.Result}  ({sw.ElapsedMilliseconds} ms)");
                     if (!string.IsNullOrWhiteSpace(problem.Result))
