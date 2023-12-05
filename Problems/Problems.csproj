@@ -1,41 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Advent\2022\Input\202202.txt" />
-    <None Remove="Advent\2022\Input\202203.txt" />
-    <None Remove="Advent\2022\Input\202204.txt" />
-    <None Remove="Advent\2022\Input\202205.txt" />
-    <None Remove="Advent\2022\Input\202206.txt" />
-    <None Remove="Advent\2022\Input\202207.txt" />
-    <None Remove="Advent\2022\Input\202208.txt" />
-    <None Remove="Advent\2022\Input\202209.txt" />
-    <None Remove="Advent\2022\Input\202210.txt" />
-    <None Remove="Advent\2022\Input\202211.txt" />
-    <None Remove="Advent\2022\Input\202212.txt" />
-    <None Remove="Advent\2022\Input\202213.txt" />
-    <None Remove="Advent\2022\Input\202214.txt" />
-    <None Remove="Advent\2022\Input\202215.txt" />
-    <None Remove="Advent\2022\Input\202216.txt" />
-    <None Remove="Advent\2022\Input\202217.txt" />
-    <None Remove="Advent\2022\Input\202218.txt" />
-    <None Remove="Advent\2022\Input\202219.txt" />
-    <None Remove="Advent\2022\Input\202220.txt" />
-    <None Remove="Advent\2022\Input\202221.txt" />
-    <None Remove="Advent\2022\Input\202222.txt" />
-    <None Remove="Advent\2022\Input\202223.txt" />
-    <None Remove="Advent\2022\Input\202224.txt" />
-    <None Remove="Advent\2022\Input\202225.txt" />
-    <None Remove="Advent\2023\Input\202301.txt" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Algorithms\Algorithms.csproj" />

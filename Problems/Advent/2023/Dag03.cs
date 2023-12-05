@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Algorithms.Extensions;
 using Algorithms.Models;
 
 namespace Problems.Advent._2023
@@ -41,7 +42,7 @@ namespace Problems.Advent._2023
             bool currentAdjacent = false;
             int currentLine = 0;
             HashSet<(int, int)> currentGears = new HashSet<(int, int)>();
-            IDictionary<(int, int), IList<int>> gears = new Dictionary<(int, int), IList<int>>();
+            IDictionary<(int, int), IList<long>> gears = new Dictionary<(int, int), IList<long>>();
             foreach (var member in grid.AllMembers())
             {
                 if (currentLine != member.y || !char.IsDigit(member.value))
@@ -54,7 +55,7 @@ namespace Problems.Advent._2023
                     {
                         if (!gears.ContainsKey(gear))
                         {
-                            gears[gear] = new List<int>();
+                            gears[gear] = new List<long>();
                         }
                         gears[gear].Add(currentValue);
                     }
@@ -83,7 +84,7 @@ namespace Problems.Advent._2023
             {
                 if (gear.Count == 2)
                 {
-                    gearRatio += gear[0] * gear[1];
+                    gearRatio += gear.Product();
                 }
             }
 

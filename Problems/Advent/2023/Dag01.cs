@@ -39,7 +39,7 @@ zoneight234
                 var digitsToUse = reverse ? reverseDigits : digits;
                 if (reverse)
                 {
-                    line = new String(line.Reverse().ToArray());
+                    line = new string(line.Reverse().ToArray());
                 }
 
                 int value = 0;
