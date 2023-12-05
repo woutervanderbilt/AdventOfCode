@@ -3,12 +3,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
+namespace Problems.Advent._2020;
+
+public class Dag02 : Problem
 {
-    public class Dag02 : Problem
-    {
-        #region input
-        private const string input = @"4-5 r: rrrjr
+    #region input
+    private const string input = @"4-5 r: rrrjr
 9-10 x: pxcbpxxwkqjttx
 8-13 b: rjbbbbvgrbrfjx
 3-5 d: dtddsdddddsddddddwd
@@ -1008,32 +1008,31 @@ namespace Problems.Advent._2020
 11-14 l: wlqzllcljjtqglbhl
 17-19 b: bbbbbbbbbbbbbbbbbbq
 3-5 x: xxqxm";
-        #endregion
+    #endregion
 
-        public override Task ExecuteAsync()
-        {
-            var inputlines = input.Split(Environment.NewLine, StringSplitOptions.None);
-            Result = inputlines.Count(p => ValidPass(p, false)).ToString();
+    public override Task ExecuteAsync()
+    {
+        var inputlines = input.Split(Environment.NewLine, StringSplitOptions.None);
+        Result = inputlines.Count(p => ValidPass(p, false)).ToString();
 
-            return Task.CompletedTask;
-        }
-
-        private bool ValidPass(string pass, bool part1)
-        {
-            var parts = pass.Split(' ');
-            char target = parts[1][0];
-            var range = parts[0].Split('-');
-            var min = int.Parse(range[0]);
-            var max = int.Parse(range[1]);
-            if (part1)
-            {
-                var count = parts[2].Count(c => c == target);
-                return min <= count && max >= count;
-            }
-
-            return parts[2][min - 1] == target ^ parts[2][max - 1] == target;
-        }
-
-        public override int Nummer => 202002;
+        return Task.CompletedTask;
     }
+
+    private bool ValidPass(string pass, bool part1)
+    {
+        var parts = pass.Split(' ');
+        char target = parts[1][0];
+        var range = parts[0].Split('-');
+        var min = int.Parse(range[0]);
+        var max = int.Parse(range[1]);
+        if (part1)
+        {
+            var count = parts[2].Count(c => c == target);
+            return min <= count && max >= count;
+        }
+
+        return parts[2][min - 1] == target ^ parts[2][max - 1] == target;
+    }
+
+    public override int Nummer => 202002;
 }

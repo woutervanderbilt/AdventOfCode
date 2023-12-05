@@ -7,14 +7,14 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag10 : Problem
-    {
-        private const long Mod = 100000000019;
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"6354
+public class Dag10 : Problem
+{
+    private const long Mod = 100000000019;
+    #region input
+
+    private const string input = @"6354
 1124
 14121
 16821
@@ -10014,83 +10014,82 @@ namespace Problems.Advent._2020
 6425
 6514
 6334";
-        #endregion
-        public override Task ExecuteAsync()
-        {
-            List<long> values = input.Split(Environment.NewLine).Select(long.Parse).ToList();
-            //var max = values.Max();
-            //var counts = new long[max + 10];
-            //counts[0] = 1;
-            //var values = RandomList(1000000000);
-            long last = 0;
-            BigInteger vLast = 1;
-            BigInteger vLastMinusOne = 0;
-            BigInteger vLastMinusTwo = 0;
+    #endregion
+    public override Task ExecuteAsync()
+    {
+        List<long> values = input.Split(Environment.NewLine).Select(long.Parse).ToList();
+        //var max = values.Max();
+        //var counts = new long[max + 10];
+        //counts[0] = 1;
+        //var values = RandomList(1000000000);
+        long last = 0;
+        BigInteger vLast = 1;
+        BigInteger vLastMinusOne = 0;
+        BigInteger vLastMinusTwo = 0;
 
-            var sw = Stopwatch.StartNew();
-            foreach (var a in values.OrderBy(l => l))
+        var sw = Stopwatch.StartNew();
+        foreach (var a in values.OrderBy(l => l))
+        {
+            var d = a - last;
+            if (d == 1)
             {
-                var d = a - last;
-                if (d == 1)
-                {
-                    (vLast, vLastMinusOne, vLastMinusTwo) = ((vLast + vLastMinusOne + vLastMinusTwo), vLast, vLastMinusOne);
-                }
-                else if (d == 2)
-                {
-                    (vLast, vLastMinusOne, vLastMinusTwo) = ((vLast + vLastMinusOne), 0, vLast);
-                }
-                else
-                {
-                    (vLastMinusOne, vLastMinusTwo) = (0, 0);
-                }
-                last = a;
-                //counts[a] = counts[a - 1] + (a > 1 ? counts[a - 2] : 0) + (a > 2 ? counts[a - 3] : 0);
+                (vLast, vLastMinusOne, vLastMinusTwo) = ((vLast + vLastMinusOne + vLastMinusTwo), vLast, vLastMinusOne);
             }
-            sw.Stop();
-            Console.WriteLine(sw.ElapsedMilliseconds+" ms");
-            Console.WriteLine((((double)sw.ElapsedTicks) / Stopwatch.Frequency) * 1000000000);
-            Result = vLast.ToString();
-            return Task.CompletedTask;
+            else if (d == 2)
+            {
+                (vLast, vLastMinusOne, vLastMinusTwo) = ((vLast + vLastMinusOne), 0, vLast);
+            }
+            else
+            {
+                (vLastMinusOne, vLastMinusTwo) = (0, 0);
+            }
+            last = a;
+            //counts[a] = counts[a - 1] + (a > 1 ? counts[a - 2] : 0) + (a > 2 ? counts[a - 3] : 0);
+        }
+        sw.Stop();
+        Console.WriteLine(sw.ElapsedMilliseconds+" ms");
+        Console.WriteLine((((double)sw.ElapsedTicks) / Stopwatch.Frequency) * 1000000000);
+        Result = vLast.ToString();
+        return Task.CompletedTask;
             
 
 
-            int ones = 0;
-            int threes = 1;
-            long current = 0;
-            foreach (var a in values.OrderBy(l=>l))
-            {
-                var d = a - current;
-                if (d == 1)
-                {
-                    ones++;
-                }
-                else if (d == 3)
-                {
-                    threes++;
-                }
-
-                current = a;
-            }
-
-            Result = (ones * threes).ToString();
-            return Task.CompletedTask;
-        }
-
-        IList<long> RandomList(int length)
+        int ones = 0;
+        int threes = 1;
+        long current = 0;
+        foreach (var a in values.OrderBy(l=>l))
         {
-            var random = new Random();
-            IList<long> list = new List<long>();
-            long last = 0;
-            for (int i = 1; i <= length; i++)
+            var d = a - current;
+            if (d == 1)
             {
-                last = last + random.Next(3) + 1;
-                list.Add(last);
+                ones++;
+            }
+            else if (d == 3)
+            {
+                threes++;
             }
 
-            return list;
+            current = a;
         }
 
-
-        public override int Nummer => 202010;
+        Result = (ones * threes).ToString();
+        return Task.CompletedTask;
     }
+
+    IList<long> RandomList(int length)
+    {
+        var random = new Random();
+        IList<long> list = new List<long>();
+        long last = 0;
+        for (int i = 1; i <= length; i++)
+        {
+            last = last + random.Next(3) + 1;
+            list.Add(last);
+        }
+
+        return list;
+    }
+
+
+    public override int Nummer => 202010;
 }

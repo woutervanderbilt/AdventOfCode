@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2019
+namespace Problems.Advent._2019;
+
+public class Dag6 : Problem
 {
-    public class Dag6 : Problem
-    {
-        private const string input = @"X9V)9CS
+    private const string input = @"X9V)9CS
 5S8)T3W
 R5J)B4C
 4H4)YNF
@@ -1859,7 +1859,7 @@ DTW)VY7
 X3S)F1H
 RHL)9Y9";
 
-        private const string testInput = @"COM)B
+    private const string testInput = @"COM)B
 B)C
 C)D
 D)E
@@ -1871,96 +1871,95 @@ E)J
 J)K
 K)L";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IDictionary<string, OrbitingObject> orbitingObjects = new Dictionary<string, OrbitingObject>();
+        foreach (var orbit in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
         {
-            IDictionary<string, OrbitingObject> orbitingObjects = new Dictionary<string, OrbitingObject>();
-            foreach (var orbit in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+            string[] objects = orbit.Split(')');
+            OrbitingObject orbiter, orbitee;
+            if (!orbitingObjects.ContainsKey(objects[0]))
             {
-                string[] objects = orbit.Split(')');
-                OrbitingObject orbiter, orbitee;
-                if (!orbitingObjects.ContainsKey(objects[0]))
-                {
-                    orbitingObjects[objects[0]] = new OrbitingObject(objects[0]);
-                }
-                orbitee = orbitingObjects[objects[0]];
-                if (!orbitingObjects.ContainsKey(objects[1]))
-                {
-                    orbitingObjects[objects[1]] = new OrbitingObject(objects[1]);
-                }
-                orbiter = orbitingObjects[objects[1]];
-                orbiter.OrbitingAround = orbitee;
-                orbitee.Satellites.Add(orbiter);
-                orbiter.UpdateTotalOrbits(orbitee.TotalOrbits + 1);
+                orbitingObjects[objects[0]] = new OrbitingObject(objects[0]);
             }
-
-            HashSet<string> visitedOrbits = new HashSet<string>();
-            IList<OrbitingObject> currentOrbitingObjects = new List<OrbitingObject>();
-            var you = orbitingObjects["YOU"];
-            visitedOrbits.Add(you.Name);
-            currentOrbitingObjects.Add(you);
-            int step = 0;
-            //while (!visitedOrbits.Contains("SAN"))
+            orbitee = orbitingObjects[objects[0]];
+            if (!orbitingObjects.ContainsKey(objects[1]))
             {
-                step++;
-                IList<OrbitingObject> newOrbitingObjects = new List<OrbitingObject>();
-                foreach (var orbitingObject in currentOrbitingObjects)
-                {
-                    foreach (var satellite in orbitingObject.Satellites)
-                    {
-                        if (!visitedOrbits.Contains(satellite.Name))
-                        {
-                            visitedOrbits.Add(satellite.Name);
-                            newOrbitingObjects.Add(satellite);
-                        }
-                    }
+                orbitingObjects[objects[1]] = new OrbitingObject(objects[1]);
+            }
+            orbiter = orbitingObjects[objects[1]];
+            orbiter.OrbitingAround = orbitee;
+            orbitee.Satellites.Add(orbiter);
+            orbiter.UpdateTotalOrbits(orbitee.TotalOrbits + 1);
+        }
 
-                    if (orbitingObject.OrbitingAround != null)
+        HashSet<string> visitedOrbits = new HashSet<string>();
+        IList<OrbitingObject> currentOrbitingObjects = new List<OrbitingObject>();
+        var you = orbitingObjects["YOU"];
+        visitedOrbits.Add(you.Name);
+        currentOrbitingObjects.Add(you);
+        int step = 0;
+        //while (!visitedOrbits.Contains("SAN"))
+        {
+            step++;
+            IList<OrbitingObject> newOrbitingObjects = new List<OrbitingObject>();
+            foreach (var orbitingObject in currentOrbitingObjects)
+            {
+                foreach (var satellite in orbitingObject.Satellites)
+                {
+                    if (!visitedOrbits.Contains(satellite.Name))
                     {
-                        if (!visitedOrbits.Contains(orbitingObject.OrbitingAround.Name))
-                        {
-                            visitedOrbits.Add(orbitingObject.OrbitingAround.Name);
-                            newOrbitingObjects.Add(orbitingObject.OrbitingAround);
-                        }
+                        visitedOrbits.Add(satellite.Name);
+                        newOrbitingObjects.Add(satellite);
                     }
                 }
 
-                currentOrbitingObjects = newOrbitingObjects;
-            }
-
-            Result = orbitingObjects.Values.Sum(o => o.TotalOrbits).ToString()+" "+step.ToString();
-            return Task.CompletedTask;
-        }
-
-        private class OrbitingObject
-        {
-            public OrbitingObject(string name)
-            {
-                Name = name;
-            }
-
-            public string Name { get; set; }
-
-            public OrbitingObject OrbitingAround { get; set; }
-
-            public IList<OrbitingObject> Satellites { get; set; } = new List<OrbitingObject>();
-
-            public int TotalOrbits { get; set; }
-
-            public void UpdateTotalOrbits(int added)
-            {
-                TotalOrbits += added;
-                foreach (var satellite in Satellites)
+                if (orbitingObject.OrbitingAround != null)
                 {
-                    satellite.UpdateTotalOrbits(added);
+                    if (!visitedOrbits.Contains(orbitingObject.OrbitingAround.Name))
+                    {
+                        visitedOrbits.Add(orbitingObject.OrbitingAround.Name);
+                        newOrbitingObjects.Add(orbitingObject.OrbitingAround);
+                    }
                 }
             }
 
-            public override string ToString()
-            {
-                return $"{Name} {OrbitingAround.Name} {TotalOrbits}";
-            }
+            currentOrbitingObjects = newOrbitingObjects;
         }
 
-        public override int Nummer => 201906;
+        Result = orbitingObjects.Values.Sum(o => o.TotalOrbits).ToString()+" "+step.ToString();
+        return Task.CompletedTask;
     }
+
+    private class OrbitingObject
+    {
+        public OrbitingObject(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; set; }
+
+        public OrbitingObject OrbitingAround { get; set; }
+
+        public IList<OrbitingObject> Satellites { get; set; } = new List<OrbitingObject>();
+
+        public int TotalOrbits { get; set; }
+
+        public void UpdateTotalOrbits(int added)
+        {
+            TotalOrbits += added;
+            foreach (var satellite in Satellites)
+            {
+                satellite.UpdateTotalOrbits(added);
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} {OrbitingAround.Name} {TotalOrbits}";
+        }
+    }
+
+    public override int Nummer => 201906;
 }

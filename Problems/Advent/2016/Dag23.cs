@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent
+namespace Problems.Advent;
+
+public class Dag23 : Problem
 {
-    public class Dag23 : Problem
-    {
-        private const string input = @"cpy a b
+    private const string input = @"cpy a b
 dec b
 cpy a d
 cpy 0 a
@@ -34,22 +34,21 @@ jnz d -2
 inc c
 jnz c -5";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        for (int a = 6; a <= 12; a++)
         {
-            for (int a = 6; a <= 12; a++)
-            {
-                Console.WriteLine(a);
-                var assembunny = new Assembunny(input);
-                assembunny.A = a;
-                assembunny.Run();
-                Result = assembunny.A.ToString();
-                Console.WriteLine(Result);
-                Console.WriteLine();
-            }
-
-            return Task.CompletedTask;
+            Console.WriteLine(a);
+            var assembunny = new Assembunny(input);
+            assembunny.A = a;
+            assembunny.Run();
+            Result = assembunny.A.ToString();
+            Console.WriteLine(Result);
+            Console.WriteLine();
         }
 
-        public override int Nummer => 201623;
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201623;
 }

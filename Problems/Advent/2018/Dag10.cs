@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2018
+namespace Problems.Advent._2018;
+
+public class Dag10 : Problem
 {
-    public class Dag10 : Problem
-    {
-        private const string input = @"position=<-54217, -21587> velocity=< 5,  2>
+    private const string input = @"position=<-54217, -21587> velocity=< 5,  2>
 position=<-54233, -10693> velocity=< 5,  1>
 position=<-54217, -43356> velocity=< 5,  4>
 position=<-32441, -43354> velocity=< 3,  4>
@@ -342,76 +342,75 @@ position=<-54244, -32475> velocity=< 5,  3>
 position=<-32454, -21587> velocity=< 3,  2>
 position=<-32422, -21587> velocity=< 3,  2>
 position=<-43361, -32468> velocity=< 4,  3>";
-        public override Task ExecuteAsync()
-        {
-            var stars = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None)
-                .Select(s => new Star(int.Parse(s.Substring(10, 6)),
-                    int.Parse(s.Substring(18, 6)), int.Parse(s.Substring(36, 2)), int.Parse(s.Substring(40, 2)))).ToList();
+    public override Task ExecuteAsync()
+    {
+        var stars = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None)
+            .Select(s => new Star(int.Parse(s.Substring(10, 6)),
+                int.Parse(s.Substring(18, 6)), int.Parse(s.Substring(36, 2)), int.Parse(s.Substring(40, 2)))).ToList();
 
-            int count = 0;
-            int previousDy = 100;
-            while (true)
-            {
-                count++;
-                Step(stars);
-                var minY = stars.Min(s => s.Y);
+        int count = 0;
+        int previousDy = 100;
+        while (true)
+        {
+            count++;
+            Step(stars);
+            var minY = stars.Min(s => s.Y);
                 
-                var dy = stars.Max(s => s.Y) - minY;
-                if (dy < 40)
+            var dy = stars.Max(s => s.Y) - minY;
+            if (dy < 40)
+            {
+                if (dy > previousDy)
                 {
-                    if (dy > previousDy)
+                    break;
+                }
+                previousDy = dy;
+                var minX = stars.Min(s => s.X);
+                var dx = stars.Max(s => s.X) - minX;
+                StringBuilder sb = new StringBuilder();
+                for (int y = 0; y <= dy; y++)
+                {
+                    sb.Append(Environment.NewLine);
+                    for (int x = 0; x <= dx; x++)
                     {
-                        break;
-                    }
-                    previousDy = dy;
-                    var minX = stars.Min(s => s.X);
-                    var dx = stars.Max(s => s.X) - minX;
-                    StringBuilder sb = new StringBuilder();
-                    for (int y = 0; y <= dy; y++)
-                    {
-                        sb.Append(Environment.NewLine);
-                        for (int x = 0; x <= dx; x++)
+                        if (stars.Any(s => s.X - minX == x && s.Y - minY == y))
                         {
-                            if (stars.Any(s => s.X - minX == x && s.Y - minY == y))
-                            {
-                                sb.Append("X");
-                            }
-                            else
-                            {
-                                sb.Append(" ");
-                            }
+                            sb.Append("X");
+                        }
+                        else
+                        {
+                            sb.Append(" ");
                         }
                     }
-                    Result = sb.AppendLine(count.ToString()).ToString();
                 }
+                Result = sb.AppendLine(count.ToString()).ToString();
             }
-            return Task.CompletedTask;
         }
+        return Task.CompletedTask;
+    }
 
-        private void Step(IList<Star> stars)
+    private void Step(IList<Star> stars)
+    {
+        foreach (var star in stars)
         {
-            foreach (var star in stars)
-            {
-                star.X += star.Vx;
-                star.Y += star.Vy;
-            }
+            star.X += star.Vx;
+            star.Y += star.Vy;
         }
+    }
 
-        public override int Nummer => 201810;
+    public override int Nummer => 201810;
 
-        private class Star
+    private class Star
+    {
+        public Star(int x, int y, int vx, int vy)
         {
-            public Star(int x, int y, int vx, int vy)
-            {
-                X = x;
-                Y = y;
-                Vx = vx;
-                Vy = vy;
-            }
-            public int X { get; set; }
-            public int Y { get; set; }
-            public int Vx { get; set; }
-            public int Vy { get; set; }
+            X = x;
+            Y = y;
+            Vx = vx;
+            Vy = vy;
         }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Vx { get; set; }
+        public int Vy { get; set; }
     }
 }

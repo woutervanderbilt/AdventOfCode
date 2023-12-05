@@ -4,11 +4,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms;
 
-namespace Problems.Advent._2018
+namespace Problems.Advent._2018;
+
+internal class Dag19 : Problem
 {
-    internal class Dag19 : Problem
-    {
-        private const string input = @"#ip 5
+    private const string input = @"#ip 5
 addi 5 16 5
 seti 1 1 4
 seti 1 8 2
@@ -46,24 +46,23 @@ addr 1 3 1
 seti 0 4 0
 seti 0 3 5";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var factorizer = new Factorizer(10551398);
+        Result = factorizer.DivisorSum(10551398).ToString();
+        return Task.CompletedTask;
+
+
+        var elfDevice = new ElfDevice(input, 6);
+        elfDevice.Register[0] = 1;
+        while (elfDevice.ExecuteInstruction())
         {
-            var factorizer = new Factorizer(10551398);
-            Result = factorizer.DivisorSum(10551398).ToString();
-            return Task.CompletedTask;
 
-
-            var elfDevice = new ElfDevice(input, 6);
-            elfDevice.Register[0] = 1;
-            while (elfDevice.ExecuteInstruction())
-            {
-
-            }
-
-            Result = elfDevice.Register[0].ToString();
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201819;
+        Result = elfDevice.Register[0].ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201819;
 }

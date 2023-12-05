@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag06 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"f
+public class Dag06 : Problem
+{
+    #region input
+
+    private const string input = @"f
 v
 ki
 
@@ -2158,33 +2158,32 @@ fxkws
 btxfw
 xewfs
 ofxw";
-        #endregion  
-        public override Task ExecuteAsync()
+    #endregion  
+    public override Task ExecuteAsync()
+    {
+        long result = 0;
+        IEnumerable<char> current = null;
+        foreach (var s in input.Split(Environment.NewLine))
         {
-            long result = 0;
-            IEnumerable<char> current = null;
-            foreach (var s in input.Split(Environment.NewLine))
+            if (string.IsNullOrWhiteSpace(s))
             {
-                if (string.IsNullOrWhiteSpace(s))
-                {
-                    result += current.Distinct().Count();
-                    current = null;
-                }
-                else if(current == null)
-                {
-                    current = s;
-                }
-                else
-                {
-                    current = current.Intersect(s);
-                }
+                result += current.Distinct().Count();
+                current = null;
             }
-            result += current.Distinct().Count();
-
-            Result = result.ToString();
-            return Task.CompletedTask;
+            else if(current == null)
+            {
+                current = s;
+            }
+            else
+            {
+                current = current.Intersect(s);
+            }
         }
+        result += current.Distinct().Count();
 
-        public override int Nummer => 202006;
+        Result = result.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202006;
 }

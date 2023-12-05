@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag18 : Problem
 {
-    internal class Dag18 : Problem
-    {
-        private const string input = @"[[8,8],5]
+    private const string input = @"[[8,8],5]
 [[[[9,0],1],4],[[3,6],[0,5]]]
 [[9,[0,[4,5]]],[1,[[6,8],4]]]
 [[8,7],[[[8,5],[2,0]],[[6,3],[5,0]]]]
@@ -110,281 +110,280 @@ namespace Problems.Advent._2021
 [[[[9,4],[1,8]],[9,[3,7]]],[[6,9],[[7,2],1]]]
 [[[9,3],2],9]";
 
-        private const string testinput = @"[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]
+    private const string testinput = @"[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]
 [[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<SnailFishNumber> snailFishNumbers =
+            input.Split(Environment.NewLine).Select(i => new SnailFishNumber(i)).ToList();
+
+        SnailFishNumber sum = null;
+        foreach (var snailFishNumber in snailFishNumbers)
         {
-            IList<SnailFishNumber> snailFishNumbers =
-                input.Split(Environment.NewLine).Select(i => new SnailFishNumber(i)).ToList();
-
-            SnailFishNumber sum = null;
-            foreach (var snailFishNumber in snailFishNumbers)
+            if (sum == null)
             {
-                if (sum == null)
-                {
-                    sum = snailFishNumber;
-                }
-                else
-                {
-                    sum += snailFishNumber;
-                }
+                sum = snailFishNumber;
             }
-
-            long max = 0;
-            foreach (var snailFishNumber in snailFishNumbers)
+            else
             {
-                foreach (var snailfIshNumber2 in snailFishNumbers)
-                {
-                    var magnitude = (snailFishNumber + snailfIshNumber2).Magnitude();
-                    max = Math.Max(max, magnitude);
-                }
+                sum += snailFishNumber;
             }
-
-
-            Result = $"{sum!.Magnitude()} {max}";
-
-
-            return Task.CompletedTask;
         }
 
-        private class SnailFishNumber
+        long max = 0;
+        foreach (var snailFishNumber in snailFishNumbers)
         {
-            public SnailFishNumber(string input)
+            foreach (var snailfIshNumber2 in snailFishNumbers)
             {
-                if (int.TryParse(input.Substring(0,1), out var value))
+                var magnitude = (snailFishNumber + snailfIshNumber2).Magnitude();
+                max = Math.Max(max, magnitude);
+            }
+        }
+
+
+        Result = $"{sum!.Magnitude()} {max}";
+
+
+        return Task.CompletedTask;
+    }
+
+    private class SnailFishNumber
+    {
+        public SnailFishNumber(string input)
+        {
+            if (int.TryParse(input.Substring(0,1), out var value))
+            {
+                RegularValue = value;
+                IsRegular = true;
+                return;
+            }
+            int depth = 0;
+            int splitIndex = 0;
+            foreach (var c in input)
+            {
+                if (c == '[')
                 {
-                    RegularValue = value;
-                    IsRegular = true;
-                    return;
+                    depth++;
                 }
-                int depth = 0;
-                int splitIndex = 0;
-                foreach (var c in input)
+                else if (c == ']')
                 {
-                    if (c == '[')
-                    {
-                        depth++;
-                    }
-                    else if (c == ']')
-                    {
-                        depth--;
-                    }
-
-                    if (depth == 1 && c == ',')
-                    {
-                        break;
-                    }
-
-                    splitIndex++;
+                    depth--;
                 }
 
-                input = input.Substring(0, input.Length - 1);
-                Left = new SnailFishNumber(input.Substring(1, splitIndex));
-                Left.IsLeftPart = true;
-                Right = new SnailFishNumber(input.Substring(splitIndex+1));
-                Left.Parent = this;
-                Right.Parent = this;
+                if (depth == 1 && c == ',')
+                {
+                    break;
+                }
+
+                splitIndex++;
             }
 
-            public SnailFishNumber()
+            input = input.Substring(0, input.Length - 1);
+            Left = new SnailFishNumber(input.Substring(1, splitIndex));
+            Left.IsLeftPart = true;
+            Right = new SnailFishNumber(input.Substring(splitIndex+1));
+            Left.Parent = this;
+            Right.Parent = this;
+        }
+
+        public SnailFishNumber()
+        {
+        }
+
+
+        public SnailFishNumber Left { get; set; }
+        public SnailFishNumber Right { get; set; }
+        public SnailFishNumber Parent { get; set; }
+        private bool IsRegular { get; set; }
+        private bool IsLeftPart { get; set; }
+        public long RegularValue { get; set; }
+
+        private SnailFishNumber Reduce()
+        {
+            while (Explode(0) || Split())
             {
+
             }
 
+            return this;
+        }
 
-            public SnailFishNumber Left { get; set; }
-            public SnailFishNumber Right { get; set; }
-            public SnailFishNumber Parent { get; set; }
-            private bool IsRegular { get; set; }
-            private bool IsLeftPart { get; set; }
-            public long RegularValue { get; set; }
-
-            private SnailFishNumber Reduce()
+        private bool Explode(int depth)
+        {
+            if (depth < 4)
             {
-                while (Explode(0) || Split())
+                if (!IsRegular)
                 {
-
+                    return Left.Explode(depth + 1) || Right.Explode(depth + 1);
                 }
 
-                return this;
-            }
-
-            private bool Explode(int depth)
-            {
-                if (depth < 4)
-                {
-                    if (!IsRegular)
-                    {
-                        return Left.Explode(depth + 1) || Right.Explode(depth + 1);
-                    }
-
-                    return false;
-                }
-                else
-                {
-                    if (IsRegular)
-                    {
-                        return false;
-                    }
-                    long leftAddition = Left.RegularValue;
-                    long rightAddition = Right.RegularValue;
-                    
-                    if (IsLeftPart)
-                    {
-                        var rightPart = Parent.Right;
-                        while (!rightPart.IsRegular)
-                        {
-                            rightPart = rightPart.Left;
-                        }
-
-                        rightPart.RegularValue += rightAddition;
-                        var parent = Parent;
-                        while (parent is { IsLeftPart: true })
-                        {
-                            parent = parent.Parent;
-                        }
-
-                        if (parent != null && parent.Parent != null)
-                        {
-                            rightPart = parent.Parent.Left;
-                            while (!rightPart.IsRegular)
-                            {
-                                rightPart = rightPart.Right;
-                            }
-
-                            rightPart.RegularValue += leftAddition;
-                        }
-                    }
-                    else
-                    {
-                        var leftPart = Parent.Left;
-                        while (!leftPart.IsRegular)
-                        {
-                            leftPart = leftPart.Right;
-                        }
-
-                        leftPart.RegularValue += leftAddition;
-                        var parent = Parent;
-                        while (parent is { IsLeftPart: false })
-                        {
-                            parent = parent.Parent;
-                        }
-
-                        if (parent != null && parent.Parent != null)
-                        {
-                            leftPart = parent.Parent.Right;
-                            while (!leftPart.IsRegular)
-                            {
-                                leftPart = leftPart.Left;
-                            }
-
-                            leftPart.RegularValue += rightAddition;
-                        }
-                    }
-
-                    Left = null;
-                    Right = null;
-                    IsRegular = true;
-                    RegularValue = 0;
-                    return true;
-                }
-            }
-
-            private bool Split()
-            {
-                if (IsRegular && RegularValue >= 10)
-                {
-                    var split = new SnailFishNumber
-                    {
-                        Parent = Parent,
-                        IsLeftPart = IsLeftPart,
-                        Left = new SnailFishNumber
-                        {
-                            RegularValue = RegularValue / 2,
-                            IsRegular = true,
-                            IsLeftPart = true
-                        },
-                        Right = new SnailFishNumber
-                        {
-                            RegularValue = (RegularValue + 1) / 2,
-                            IsRegular = true
-                        }
-                    };
-                    split.Left.Parent = split;
-                    split.Right.Parent = split;
-                    if (IsLeftPart)
-                    {
-                        Parent.Left = split;
-                    }
-                    else
-                    {
-                        Parent.Right = split;
-                    }
-
-                    return true;
-                }
-                else if (!IsRegular)
-                {
-                    return Left.Split() || Right.Split();
-                }
                 return false;
             }
-
-            public long Magnitude()
+            else
             {
                 if (IsRegular)
                 {
-                    return RegularValue;
+                    return false;
                 }
-
-                return 3 * Left.Magnitude() + 2 * Right.Magnitude();
-            }
-
-            public SnailFishNumber Copy()
-            {
-                return new SnailFishNumber
+                long leftAddition = Left.RegularValue;
+                long rightAddition = Right.RegularValue;
+                    
+                if (IsLeftPart)
                 {
-                    IsRegular = IsRegular,
-                    IsLeftPart = IsLeftPart,
-                    Left = Left?.Copy(),
-                    Right = Right?.Copy(),
-                    RegularValue = RegularValue
-                };
-            }
+                    var rightPart = Parent.Right;
+                    while (!rightPart.IsRegular)
+                    {
+                        rightPart = rightPart.Left;
+                    }
 
-            public override string ToString()
-            {
-                if (IsRegular)
-                {
-                    return $"{RegularValue}";
+                    rightPart.RegularValue += rightAddition;
+                    var parent = Parent;
+                    while (parent is { IsLeftPart: true })
+                    {
+                        parent = parent.Parent;
+                    }
+
+                    if (parent != null && parent.Parent != null)
+                    {
+                        rightPart = parent.Parent.Left;
+                        while (!rightPart.IsRegular)
+                        {
+                            rightPart = rightPart.Right;
+                        }
+
+                        rightPart.RegularValue += leftAddition;
+                    }
                 }
                 else
                 {
-                    return $"[{Left},{Right}]";
+                    var leftPart = Parent.Left;
+                    while (!leftPart.IsRegular)
+                    {
+                        leftPart = leftPart.Right;
+                    }
+
+                    leftPart.RegularValue += leftAddition;
+                    var parent = Parent;
+                    while (parent is { IsLeftPart: false })
+                    {
+                        parent = parent.Parent;
+                    }
+
+                    if (parent != null && parent.Parent != null)
+                    {
+                        leftPart = parent.Parent.Right;
+                        while (!leftPart.IsRegular)
+                        {
+                            leftPart = leftPart.Left;
+                        }
+
+                        leftPart.RegularValue += rightAddition;
+                    }
                 }
-            }
 
-            void SetParent(SnailFishNumber parent)
-            {
-                Parent = parent;
-                Left?.SetParent(this);
-                Right?.SetParent(this);
-            }
-
-            public static SnailFishNumber operator + (SnailFishNumber lhs, SnailFishNumber rhs)
-            {
-                var sum = new SnailFishNumber
-                {
-                    Left = lhs.Copy(),
-                    Right = rhs.Copy()
-                };
-
-                sum.Left.IsLeftPart = true;
-                sum.SetParent(null);
-                return sum.Reduce();
+                Left = null;
+                Right = null;
+                IsRegular = true;
+                RegularValue = 0;
+                return true;
             }
         }
 
-        public override int Nummer => 202118;
+        private bool Split()
+        {
+            if (IsRegular && RegularValue >= 10)
+            {
+                var split = new SnailFishNumber
+                {
+                    Parent = Parent,
+                    IsLeftPart = IsLeftPart,
+                    Left = new SnailFishNumber
+                    {
+                        RegularValue = RegularValue / 2,
+                        IsRegular = true,
+                        IsLeftPart = true
+                    },
+                    Right = new SnailFishNumber
+                    {
+                        RegularValue = (RegularValue + 1) / 2,
+                        IsRegular = true
+                    }
+                };
+                split.Left.Parent = split;
+                split.Right.Parent = split;
+                if (IsLeftPart)
+                {
+                    Parent.Left = split;
+                }
+                else
+                {
+                    Parent.Right = split;
+                }
+
+                return true;
+            }
+            else if (!IsRegular)
+            {
+                return Left.Split() || Right.Split();
+            }
+            return false;
+        }
+
+        public long Magnitude()
+        {
+            if (IsRegular)
+            {
+                return RegularValue;
+            }
+
+            return 3 * Left.Magnitude() + 2 * Right.Magnitude();
+        }
+
+        public SnailFishNumber Copy()
+        {
+            return new SnailFishNumber
+            {
+                IsRegular = IsRegular,
+                IsLeftPart = IsLeftPart,
+                Left = Left?.Copy(),
+                Right = Right?.Copy(),
+                RegularValue = RegularValue
+            };
+        }
+
+        public override string ToString()
+        {
+            if (IsRegular)
+            {
+                return $"{RegularValue}";
+            }
+            else
+            {
+                return $"[{Left},{Right}]";
+            }
+        }
+
+        void SetParent(SnailFishNumber parent)
+        {
+            Parent = parent;
+            Left?.SetParent(this);
+            Right?.SetParent(this);
+        }
+
+        public static SnailFishNumber operator + (SnailFishNumber lhs, SnailFishNumber rhs)
+        {
+            var sum = new SnailFishNumber
+            {
+                Left = lhs.Copy(),
+                Right = rhs.Copy()
+            };
+
+            sum.Left.IsLeftPart = true;
+            sum.SetParent(null);
+            return sum.Reduce();
+        }
     }
+
+    public override int Nummer => 202118;
 }

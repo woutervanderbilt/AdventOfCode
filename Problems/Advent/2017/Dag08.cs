@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag08 : Problem
 {
-    internal class Dag08 : Problem
-    {
-        private const string input = @"smi inc 781 if epx > -2
+    private const string input = @"smi inc 781 if epx > -2
 yrf dec -813 if jzm != 6
 ben dec -383 if sp == 0
 tlj dec -356 if sp <= 4
@@ -1008,51 +1008,50 @@ epx inc 615 if jzm >= -373
 mlp inc -871 if fdv >= -1108
 ih inc -945 if b < -576
 mx dec -934 if w == 4068";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IDictionary<string, long> register = new Dictionary<string, long>();
+        long highest = 0;
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IDictionary<string, long> register = new Dictionary<string, long>();
-            long highest = 0;
-            foreach (var line in input.Split(Environment.NewLine))
+            var words = line.Split(' ');
+            if (!register.ContainsKey(words[0]))
             {
-                var words = line.Split(' ');
-                if (!register.ContainsKey(words[0]))
-                {
-                    register[words[0]] = 0;
-                }
-                if (!register.ContainsKey(words[4]))
-                {
-                    register[words[4]] = 0;
-                }
-
-                if (FullfillsCondition())
-                {
-                    var change = int.Parse(words[2]) * (words[1] == "dec" ? -1 : 1);
-                    register[words[0]] += change;
-                    highest = Math.Max(highest, register[words[0]]);
-                }
-
-
-                bool FullfillsCondition()
-                {
-                    var value = register[words[4]];
-                    var constant = int.Parse(words[6]);
-                    return words[5] switch
-                    {
-                        "<" => value < constant,
-                        "<=" => value <= constant,
-                        "==" => value == constant,
-                        ">=" => value >= constant,
-                        ">" => value > constant,
-                        "!=" => value != constant,
-                        _ => throw new Exception("Onbekende operator")
-                    };
-                }
+                register[words[0]] = 0;
+            }
+            if (!register.ContainsKey(words[4]))
+            {
+                register[words[4]] = 0;
             }
 
-            Result = $"{register.Values.Max().ToString()} {highest}";
-            return Task.CompletedTask;
+            if (FullfillsCondition())
+            {
+                var change = int.Parse(words[2]) * (words[1] == "dec" ? -1 : 1);
+                register[words[0]] += change;
+                highest = Math.Max(highest, register[words[0]]);
+            }
+
+
+            bool FullfillsCondition()
+            {
+                var value = register[words[4]];
+                var constant = int.Parse(words[6]);
+                return words[5] switch
+                {
+                    "<" => value < constant,
+                    "<=" => value <= constant,
+                    "==" => value == constant,
+                    ">=" => value >= constant,
+                    ">" => value > constant,
+                    "!=" => value != constant,
+                    _ => throw new Exception("Onbekende operator")
+                };
+            }
         }
 
-        public override int Nummer => 201708;
+        Result = $"{register.Values.Max().ToString()} {highest}";
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201708;
 }

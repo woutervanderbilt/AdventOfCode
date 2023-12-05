@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2018
+namespace Problems.Advent._2018;
+
+public class Dag16 : Problem
 {
-    public class Dag16 : Problem
-    {
-        #region input
-        private const string input = @"Before: [0, 1, 2, 1]
+    #region input
+    private const string input = @"Before: [0, 1, 2, 1]
 12 3 2 2
 After:  [0, 1, 1, 1]
 
@@ -4062,195 +4062,194 @@ After:  [0, 2, 2, 2]
 7 3 1 3
 9 1 3 1
 8 1 0 0";
-        #endregion
+    #endregion
 
-        private static IList<string> OperatorNames => new List<string>
+    private static IList<string> OperatorNames => new List<string>
+    {
+        "addr",
+        "addi",
+        "mulr",
+        "muli",
+        "banr",
+        "bani",
+        "borr",
+        "bori",
+        "setr",
+        "seti",
+        "gtir",
+        "gtri",
+        "gtrr",
+        "eqir",
+        "eqri",
+        "eqrr"
+    };
+
+    public override Task ExecuteAsync()
+    {
+        IDictionary<int, IList<string>> possibleValues = new Dictionary<int, IList<string>>();
+        for (int i = 0; i <= 15; i++)
         {
-            "addr",
-            "addi",
-            "mulr",
-            "muli",
-            "banr",
-            "bani",
-            "borr",
-            "bori",
-            "setr",
-            "seti",
-            "gtir",
-            "gtri",
-            "gtrr",
-            "eqir",
-            "eqri",
-            "eqrr"
-        };
-
-        public override Task ExecuteAsync()
-        {
-            IDictionary<int, IList<string>> possibleValues = new Dictionary<int, IList<string>>();
-            for (int i = 0; i <= 15; i++)
-            {
-                possibleValues.Add(i, new List<string>(OperatorNames));
-            }
-
-
-            int total = 0;
-            var regelEnumerator = ((IEnumerable<string>)input.Split(new[] {Environment.NewLine}, StringSplitOptions.None)).GetEnumerator();
-            regelEnumerator.MoveNext();
-            while (regelEnumerator.Current.StartsWith("Before"))
-            {
-                string c = regelEnumerator.Current;
-                int[] register = {int.Parse(c.Substring(9,1)), int.Parse(c.Substring(12, 1)), int.Parse(c.Substring(15, 1)), int.Parse(c.Substring(18, 1)) };
-                regelEnumerator.MoveNext();
-                c = regelEnumerator.Current;
-                int[] instructions = c.Split(' ').Select(int.Parse).ToArray();
-                regelEnumerator.MoveNext();
-                c = regelEnumerator.Current;
-                int[] result = { int.Parse(c.Substring(9, 1)), int.Parse(c.Substring(12, 1)), int.Parse(c.Substring(15, 1)), int.Parse(c.Substring(18, 1)) };
-                regelEnumerator.MoveNext();
-                regelEnumerator.MoveNext();
-                var candidates = OperatorNames.Where(o =>
-                    ExecuteInstructions(register, instructions, o).SequenceEqual(result));
-                IList<string> newPossibleValues = new List<string>();
-                foreach (var name in possibleValues[instructions[0]])
-                {
-                    if (candidates.Contains(name))
-                    {
-                        newPossibleValues.Add(name);
-                    }
-                }
-                if (candidates.Count() >= 3)
-                {
-                    total++;
-                }
-
-                possibleValues[instructions[0]] = newPossibleValues;
-            }
-
-            regelEnumerator.MoveNext();
-            IList<int[]> instructionSets = new List<int[]>();
-            while (regelEnumerator.MoveNext())
-            {
-                instructionSets.Add(regelEnumerator.Current.Split(' ').Select(int.Parse).ToArray());
-            }
-
-            IDictionary<int, string> opCodes = SolveOpcodes(possibleValues, new Dictionary<int, string>());
-            var currentRegister = new int[]{0, 0, 0, 0};
-            foreach (var instructionSet in instructionSets)
-            {
-                currentRegister = ExecuteInstructions(currentRegister, instructionSet, opCodes[instructionSet[0]]);
-            }
-            Result = total.ToString()+" "+currentRegister[0];
-            return Task.CompletedTask;
+            possibleValues.Add(i, new List<string>(OperatorNames));
         }
 
-        private IDictionary<int, string> SolveOpcodes(IDictionary<int, IList<string>> possibleValues, IDictionary<int, string> mapped)
+
+        int total = 0;
+        var regelEnumerator = ((IEnumerable<string>)input.Split(new[] {Environment.NewLine}, StringSplitOptions.None)).GetEnumerator();
+        regelEnumerator.MoveNext();
+        while (regelEnumerator.Current.StartsWith("Before"))
         {
-            int? nextKey = null;
-            foreach (var key in possibleValues.OrderBy(kvp => kvp.Value.Count).Select(kvp => kvp.Key))
+            string c = regelEnumerator.Current;
+            int[] register = {int.Parse(c.Substring(9,1)), int.Parse(c.Substring(12, 1)), int.Parse(c.Substring(15, 1)), int.Parse(c.Substring(18, 1)) };
+            regelEnumerator.MoveNext();
+            c = regelEnumerator.Current;
+            int[] instructions = c.Split(' ').Select(int.Parse).ToArray();
+            regelEnumerator.MoveNext();
+            c = regelEnumerator.Current;
+            int[] result = { int.Parse(c.Substring(9, 1)), int.Parse(c.Substring(12, 1)), int.Parse(c.Substring(15, 1)), int.Parse(c.Substring(18, 1)) };
+            regelEnumerator.MoveNext();
+            regelEnumerator.MoveNext();
+            var candidates = OperatorNames.Where(o =>
+                ExecuteInstructions(register, instructions, o).SequenceEqual(result));
+            IList<string> newPossibleValues = new List<string>();
+            foreach (var name in possibleValues[instructions[0]])
             {
-                if (!mapped.Keys.Contains(key))
+                if (candidates.Contains(name))
                 {
-                    nextKey = key;
-                    break;
+                    newPossibleValues.Add(name);
                 }
             }
-
-            if (nextKey == null)
+            if (candidates.Count() >= 3)
             {
-                return null;
-            }
-            foreach (var opcode in possibleValues[nextKey.Value].Where(c => !mapped.Values.Contains(c)))
-            {
-                IDictionary<int, string> newMapped = new Dictionary<int, string>(mapped);
-                newMapped[nextKey.Value] = opcode;
-                if (newMapped.Count == possibleValues.Count)
-                {
-                    return newMapped;
-                }
-
-                var rec = SolveOpcodes(possibleValues, newMapped);
-                if (rec != null)
-                {
-                    return rec;
-                }
-
+                total++;
             }
 
+            possibleValues[instructions[0]] = newPossibleValues;
+        }
+
+        regelEnumerator.MoveNext();
+        IList<int[]> instructionSets = new List<int[]>();
+        while (regelEnumerator.MoveNext())
+        {
+            instructionSets.Add(regelEnumerator.Current.Split(' ').Select(int.Parse).ToArray());
+        }
+
+        IDictionary<int, string> opCodes = SolveOpcodes(possibleValues, new Dictionary<int, string>());
+        var currentRegister = new int[]{0, 0, 0, 0};
+        foreach (var instructionSet in instructionSets)
+        {
+            currentRegister = ExecuteInstructions(currentRegister, instructionSet, opCodes[instructionSet[0]]);
+        }
+        Result = total.ToString()+" "+currentRegister[0];
+        return Task.CompletedTask;
+    }
+
+    private IDictionary<int, string> SolveOpcodes(IDictionary<int, IList<string>> possibleValues, IDictionary<int, string> mapped)
+    {
+        int? nextKey = null;
+        foreach (var key in possibleValues.OrderBy(kvp => kvp.Value.Count).Select(kvp => kvp.Key))
+        {
+            if (!mapped.Keys.Contains(key))
+            {
+                nextKey = key;
+                break;
+            }
+        }
+
+        if (nextKey == null)
+        {
             return null;
         }
-
-        public int[] ExecuteInstructions(int[] register, int[] instructions, string name)
+        foreach (var opcode in possibleValues[nextKey.Value].Where(c => !mapped.Values.Contains(c)))
         {
-            int[] result = new int[4];
-            for (int i = 0; i < 4; i++)
+            IDictionary<int, string> newMapped = new Dictionary<int, string>(mapped);
+            newMapped[nextKey.Value] = opcode;
+            if (newMapped.Count == possibleValues.Count)
             {
-                if (instructions[3] != i)
-                {
-                    result[i] = register[i];
-                }
+                return newMapped;
             }
 
-            int a = instructions[1];
-            int b = instructions[2];
-            int c = instructions[3];
-            int value = 0;
-            switch (name)
+            var rec = SolveOpcodes(possibleValues, newMapped);
+            if (rec != null)
             {
-                case "addr":
-                    value = register[a] + register[b];
-                    break;
-                case "addi":
-                    value = register[a] + b;
-                    break;
-                case "mulr":
-                    value = register[a] * register[b];
-                    break;
-                case "muli":
-                    value = register[a] * b;
-                    break;
-                case "banr":
-                    value = register[a] & register[b];
-                    break;
-                case "bani":
-                    value = register[a] & b;
-                    break;
-                case "borr":
-                    value = register[a] | register[b];
-                    break;
-                case "bori":
-                    value = register[a] | b;
-                    break;
-                case "setr":
-                    value = register[a];
-                    break;
-                case "seti":
-                    value = a;
-                    break;
-                case "gtir":
-                    value = a > register[b] ? 1 : 0;
-                    break;
-                case "gtri":
-                    value = register[a] > b ? 1 : 0;
-                    break;
-                case "gtrr":
-                    value = register[a] > register[b] ? 1 : 0;
-                    break;
-                case "eqir":
-                    value = a == register[b] ? 1 : 0;
-                    break;
-                case "eqri":
-                    value = register[a] == b ? 1 : 0;
-                    break;
-                case "eqrr":
-                    value = register[a] == register[b] ? 1 : 0;
-                    break;
+                return rec;
             }
 
-            result[c] = value;
-
-            return result;
         }
 
-        public override int Nummer => 201816;
+        return null;
     }
+
+    public int[] ExecuteInstructions(int[] register, int[] instructions, string name)
+    {
+        int[] result = new int[4];
+        for (int i = 0; i < 4; i++)
+        {
+            if (instructions[3] != i)
+            {
+                result[i] = register[i];
+            }
+        }
+
+        int a = instructions[1];
+        int b = instructions[2];
+        int c = instructions[3];
+        int value = 0;
+        switch (name)
+        {
+            case "addr":
+                value = register[a] + register[b];
+                break;
+            case "addi":
+                value = register[a] + b;
+                break;
+            case "mulr":
+                value = register[a] * register[b];
+                break;
+            case "muli":
+                value = register[a] * b;
+                break;
+            case "banr":
+                value = register[a] & register[b];
+                break;
+            case "bani":
+                value = register[a] & b;
+                break;
+            case "borr":
+                value = register[a] | register[b];
+                break;
+            case "bori":
+                value = register[a] | b;
+                break;
+            case "setr":
+                value = register[a];
+                break;
+            case "seti":
+                value = a;
+                break;
+            case "gtir":
+                value = a > register[b] ? 1 : 0;
+                break;
+            case "gtri":
+                value = register[a] > b ? 1 : 0;
+                break;
+            case "gtrr":
+                value = register[a] > register[b] ? 1 : 0;
+                break;
+            case "eqir":
+                value = a == register[b] ? 1 : 0;
+                break;
+            case "eqri":
+                value = register[a] == b ? 1 : 0;
+                break;
+            case "eqrr":
+                value = register[a] == register[b] ? 1 : 0;
+                break;
+        }
+
+        result[c] = value;
+
+        return result;
+    }
+
+    public override int Nummer => 201816;
 }

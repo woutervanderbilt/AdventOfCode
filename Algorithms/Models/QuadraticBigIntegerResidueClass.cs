@@ -3,69 +3,68 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace Algorithms.Models
+namespace Algorithms.Models;
+
+public class QuadraticBigIntegerResidueClass
 {
-    public class QuadraticBigIntegerResidueClass
+    public QuadraticBigIntegerResidueClass(QuadraticBigInteger value, BigInteger modulus)
     {
-        public QuadraticBigIntegerResidueClass(QuadraticBigInteger value, BigInteger modulus)
+        Value = new QuadraticBigInteger(value.RationalPart % modulus + (value.RationalPart < 0 ? modulus : 0),
+            value.QuadraticPart % modulus + (value.QuadraticPart < 0 ? modulus : 0), value.Square);
+        Modulus = modulus;
+        Square = value.Square;
+    }
+    public QuadraticBigInteger Value { get; set; }
+    public BigInteger Modulus { get; }
+    public long Square { get; }
+
+    public static QuadraticBigIntegerResidueClass operator +(QuadraticBigIntegerResidueClass l, QuadraticBigIntegerResidueClass r)
+    {
+        if (l.Modulus != r.Modulus)
         {
-            Value = new QuadraticBigInteger(value.RationalPart % modulus + (value.RationalPart < 0 ? modulus : 0),
-                value.QuadraticPart % modulus + (value.QuadraticPart < 0 ? modulus : 0), value.Square);
-            Modulus = modulus;
-            Square = value.Square;
+            throw new ArgumentException("Moduli komen niet overen", nameof(l));
         }
-        public QuadraticBigInteger Value { get; set; }
-        public BigInteger Modulus { get; }
-        public long Square { get; }
+        return new QuadraticBigIntegerResidueClass(l.Value + r.Value, l.Modulus);
+    }
 
-        public static QuadraticBigIntegerResidueClass operator +(QuadraticBigIntegerResidueClass l, QuadraticBigIntegerResidueClass r)
+    public static QuadraticBigIntegerResidueClass operator *(QuadraticBigIntegerResidueClass l, QuadraticBigIntegerResidueClass r)
+    {
+        if (l.Modulus != r.Modulus)
         {
-            if (l.Modulus != r.Modulus)
-            {
-                throw new ArgumentException("Moduli komen niet overen", nameof(l));
-            }
-            return new QuadraticBigIntegerResidueClass(l.Value + r.Value, l.Modulus);
+            throw new ArgumentException("Moduli komen niet overen", nameof(l));
         }
+        return new QuadraticBigIntegerResidueClass(l.Value * r.Value, l.Modulus);
+    }
 
-        public static QuadraticBigIntegerResidueClass operator *(QuadraticBigIntegerResidueClass l, QuadraticBigIntegerResidueClass r)
+    public static QuadraticBigIntegerResidueClass operator -(QuadraticBigIntegerResidueClass l, QuadraticBigIntegerResidueClass r)
+    {
+        if (l.Modulus != r.Modulus)
         {
-            if (l.Modulus != r.Modulus)
-            {
-                throw new ArgumentException("Moduli komen niet overen", nameof(l));
-            }
-            return new QuadraticBigIntegerResidueClass(l.Value * r.Value, l.Modulus);
+            throw new ArgumentException("Moduli komen niet overen", nameof(l));
         }
+        return new QuadraticBigIntegerResidueClass(l.Value - r.Value, l.Modulus);
+    }
 
-        public static QuadraticBigIntegerResidueClass operator -(QuadraticBigIntegerResidueClass l, QuadraticBigIntegerResidueClass r)
+    public QuadraticBigIntegerResidueClass ToThePower(long n)
+    {
+        var result = new QuadraticBigIntegerResidueClass(new QuadraticBigInteger(1, 0, Square), Modulus);
+        var currentPower = this;
+        while (n > 0)
         {
-            if (l.Modulus != r.Modulus)
+            if (n % 2 == 1)
             {
-                throw new ArgumentException("Moduli komen niet overen", nameof(l));
-            }
-            return new QuadraticBigIntegerResidueClass(l.Value - r.Value, l.Modulus);
-        }
-
-        public QuadraticBigIntegerResidueClass ToThePower(long n)
-        {
-            var result = new QuadraticBigIntegerResidueClass(new QuadraticBigInteger(1, 0, Square), Modulus);
-            var currentPower = this;
-            while (n > 0)
-            {
-                if (n % 2 == 1)
-                {
-                    result = result * currentPower;
-                }
-
-                currentPower = currentPower * currentPower;
-                n /= 2;
+                result = result * currentPower;
             }
 
-            return result;
+            currentPower = currentPower * currentPower;
+            n /= 2;
         }
 
-        public override string ToString()
-        {
-            return $"{Value} ({Modulus})";
-        }
+        return result;
+    }
+
+    public override string ToString()
+    {
+        return $"{Value} ({Modulus})";
     }
 }

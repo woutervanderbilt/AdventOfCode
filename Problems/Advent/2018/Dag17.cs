@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2018
-{
-    public class Dag17 : Problem
-    {
-        #region input
+namespace Problems.Advent._2018;
 
-        private const string input = @"y=1493, x=350..366
+public class Dag17 : Problem
+{
+    #region input
+
+    private const string input = @"y=1493, x=350..366
 x=419, y=672..682
 x=475, y=657..659
 y=726, x=165..169
@@ -2241,7 +2241,7 @@ y=203, x=236..249
 x=123, y=958..978
 x=262, y=1535..1547";
 
-        private const string testinput = @"x=495, y=2..7
+    private const string testinput = @"x=495, y=2..7
 y=7, x=495..501
 x=501, y=3..7
 x=498, y=2..4
@@ -2249,125 +2249,124 @@ x=506, y=1..2
 x=498, y=10..13
 x=504, y=10..13
 y=13, x=498..504";
-        #endregion
+    #endregion
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        HashSet<(int x, int y)> clayLocations = new HashSet<(int x, int y)>();
+        foreach (var line in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
         {
-            HashSet<(int x, int y)> clayLocations = new HashSet<(int x, int y)>();
-            foreach (var line in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+            var split = line.Split(',');
+            var range = split[1].Split(new[] {".."}, StringSplitOptions.None);
+            if (line.StartsWith("x"))
             {
-                var split = line.Split(',');
-                var range = split[1].Split(new[] {".."}, StringSplitOptions.None);
-                if (line.StartsWith("x"))
+                int x = int.Parse(split[0].Substring(2));
+                for (int y = int.Parse(range[0].Substring(3)); y <= int.Parse(range[1]); y++)
                 {
-                    int x = int.Parse(split[0].Substring(2));
-                    for (int y = int.Parse(range[0].Substring(3)); y <= int.Parse(range[1]); y++)
-                    {
-                        clayLocations.Add((x, y));
-                    }
-                }
-                else
-                {
-                    int y = int.Parse(split[0].Substring(2));
-                    for (int x = int.Parse(range[0].Substring(3)); x <= int.Parse(range[1]); x++)
-                    {
-                        clayLocations.Add((x, y));
-                    }
+                    clayLocations.Add((x, y));
                 }
             }
-
-            var bottomY = clayLocations.Max(c => c.y);
-            var topY = clayLocations.Min(c => c.y);
-
-            HashSet<(int x, int y)> waterLocations = new HashSet<(int x, int y)>();
-            waterLocations.Add((500, 0));
-
-            Stack<(int x, int y)> flowLocations = new Stack<(int x, int y)>();
-            flowLocations.Push((500,0));
-            HashSet<(int x, int y)> flowDownLocations = new HashSet<(int x, int y)>();
-            while (flowLocations.TryPeek(out var currentFlowLocation))
+            else
             {
-                var down = (currentFlowLocation.x, currentFlowLocation.y + 1);
-                var left = (currentFlowLocation.x - 1, currentFlowLocation.y);
-                var right = (currentFlowLocation.x + 1, currentFlowLocation.y);
-                if (IsEmpty(down))
+                int y = int.Parse(split[0].Substring(2));
+                for (int x = int.Parse(range[0].Substring(3)); x <= int.Parse(range[1]); x++)
                 {
-                    AddWater(down);
-                    flowLocations.Push(down);
-                }
-                else if (IsFlowDown(down))
-                {
-                    flowDownLocations.Add(currentFlowLocation);
-                    flowLocations.Pop();
-                }
-                else if (IsEmpty(left))
-                {
-                    AddWater(left);
-                    flowLocations.Push(left);
-                }
-                else if (IsEmpty(right))
-                {
-                    AddWater(right);
-                    flowLocations.Push(right);
-                }
-                else
-                {
-                    if (IsFlowDown(left))
-                    {
-                        var w = currentFlowLocation;
-                        while (waterLocations.Contains(w))
-                        {
-                            flowDownLocations.Add(w);
-                            w = (w.x + 1, w.y);
-                        }
-                    }
-
-                    if (IsFlowDown(right))
-                    {
-                        var w = currentFlowLocation;
-                        while (waterLocations.Contains(w))
-                        {
-                            flowDownLocations.Add(w);
-                            w = (w.x - 1, w.y);
-                        }
-                    }
-                    flowLocations.Pop();
+                    clayLocations.Add((x, y));
                 }
             }
-
-            int maxX = waterLocations.Max(w => w.x) + 1;
-            int minX = maxX - 235;//Math.Min(waterLocations.Min(w => w.x), clayLocations.Min(c => c.x));
-            for (int y = 0; y <= bottomY; y++)
-            {
-                var sb = new StringBuilder();
-                for (int x = minX; x <= maxX; x++)
-                {
-                    sb.Append(flowDownLocations.Contains((x,y)) ? '|' : waterLocations.Contains((x, y)) ? '~' : clayLocations.Contains((x, y)) ? '#' : '.');
-                }
-
-                Console.WriteLine(sb);
-            }
-
-            Result = (waterLocations.Count(w => w.y <= bottomY && w.y >= topY) - flowDownLocations.Count(w => w.y <= bottomY && w.y >= topY)).ToString();
-            return Task.CompletedTask;
-
-            bool IsEmpty((int x, int y) location)
-            {
-                return location.y <= bottomY && !clayLocations.Contains(location) && !waterLocations.Contains(location);
-            }
-
-            bool IsFlowDown((int x, int y) location)
-            {
-                return location.y > bottomY || flowDownLocations.Contains(location);
-            }
-
-            void AddWater((int x, int y) location)
-            {
-                waterLocations.Add(location);
-            }
-
         }
 
-        public override int Nummer => 201817;
+        var bottomY = clayLocations.Max(c => c.y);
+        var topY = clayLocations.Min(c => c.y);
+
+        HashSet<(int x, int y)> waterLocations = new HashSet<(int x, int y)>();
+        waterLocations.Add((500, 0));
+
+        Stack<(int x, int y)> flowLocations = new Stack<(int x, int y)>();
+        flowLocations.Push((500,0));
+        HashSet<(int x, int y)> flowDownLocations = new HashSet<(int x, int y)>();
+        while (flowLocations.TryPeek(out var currentFlowLocation))
+        {
+            var down = (currentFlowLocation.x, currentFlowLocation.y + 1);
+            var left = (currentFlowLocation.x - 1, currentFlowLocation.y);
+            var right = (currentFlowLocation.x + 1, currentFlowLocation.y);
+            if (IsEmpty(down))
+            {
+                AddWater(down);
+                flowLocations.Push(down);
+            }
+            else if (IsFlowDown(down))
+            {
+                flowDownLocations.Add(currentFlowLocation);
+                flowLocations.Pop();
+            }
+            else if (IsEmpty(left))
+            {
+                AddWater(left);
+                flowLocations.Push(left);
+            }
+            else if (IsEmpty(right))
+            {
+                AddWater(right);
+                flowLocations.Push(right);
+            }
+            else
+            {
+                if (IsFlowDown(left))
+                {
+                    var w = currentFlowLocation;
+                    while (waterLocations.Contains(w))
+                    {
+                        flowDownLocations.Add(w);
+                        w = (w.x + 1, w.y);
+                    }
+                }
+
+                if (IsFlowDown(right))
+                {
+                    var w = currentFlowLocation;
+                    while (waterLocations.Contains(w))
+                    {
+                        flowDownLocations.Add(w);
+                        w = (w.x - 1, w.y);
+                    }
+                }
+                flowLocations.Pop();
+            }
+        }
+
+        int maxX = waterLocations.Max(w => w.x) + 1;
+        int minX = maxX - 235;//Math.Min(waterLocations.Min(w => w.x), clayLocations.Min(c => c.x));
+        for (int y = 0; y <= bottomY; y++)
+        {
+            var sb = new StringBuilder();
+            for (int x = minX; x <= maxX; x++)
+            {
+                sb.Append(flowDownLocations.Contains((x,y)) ? '|' : waterLocations.Contains((x, y)) ? '~' : clayLocations.Contains((x, y)) ? '#' : '.');
+            }
+
+            Console.WriteLine(sb);
+        }
+
+        Result = (waterLocations.Count(w => w.y <= bottomY && w.y >= topY) - flowDownLocations.Count(w => w.y <= bottomY && w.y >= topY)).ToString();
+        return Task.CompletedTask;
+
+        bool IsEmpty((int x, int y) location)
+        {
+            return location.y <= bottomY && !clayLocations.Contains(location) && !waterLocations.Contains(location);
+        }
+
+        bool IsFlowDown((int x, int y) location)
+        {
+            return location.y > bottomY || flowDownLocations.Contains(location);
+        }
+
+        void AddWater((int x, int y) location)
+        {
+            waterLocations.Add(location);
+        }
+
     }
+
+    public override int Nummer => 201817;
 }

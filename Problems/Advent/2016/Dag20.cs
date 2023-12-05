@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Problems.Advent._2020;
 
-namespace Problems.Advent
+namespace Problems.Advent;
+
+public class Dag20 : Problem
 {
-    public class Dag20 : Problem
-    {
-        private const string input = @"420604416-480421096
+    private const string input = @"420604416-480421096
 172102328-195230700
 613677102-639635955
 1689844284-1724152701
@@ -968,50 +968,49 @@ namespace Problems.Advent
 1671431570-1689108789
 151189360-154214893";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<(long, long)> ranges = input.Split(Environment.NewLine).Select(s => s.Split('-'))
+            .Select(s => (long.Parse(s[0]), long.Parse(s[1]))).OrderBy(l => l.Item1).ToList();
+        long min = 0;
+        long result = 0;
+        while (min < 4294967295)
         {
-            IList<(long, long)> ranges = input.Split(Environment.NewLine).Select(s => s.Split('-'))
-                .Select(s => (long.Parse(s[0]), long.Parse(s[1]))).OrderBy(l => l.Item1).ToList();
-            long min = 0;
-            long result = 0;
-            while (min < 4294967295)
+            bool changed = false;
+            long max = 0;
+            foreach (var range in ranges)
             {
-                bool changed = false;
-                long max = 0;
-                foreach (var range in ranges)
+                if (range.Item1 <= min)
                 {
-                    if (range.Item1 <= min)
+                    if (range.Item2 > max && range.Item2 > min)
                     {
-                        if (range.Item2 > max && range.Item2 > min)
-                        {
-                            max = range.Item2;
-                            changed = true;
-                        }
-                    }
-                }
-
-                if (changed)
-                {
-                    min = max + 1;
-                }
-                else
-                {
-                    foreach (var range in ranges)
-                    {
-                        if (range.Item1 > min)
-                        {
-                            result += range.Item1 - min;
-                            min = range.Item1;
-                            break;
-                        }
+                        max = range.Item2;
+                        changed = true;
                     }
                 }
             }
 
-            Result = result.ToString();
-            return Task.CompletedTask;
+            if (changed)
+            {
+                min = max + 1;
+            }
+            else
+            {
+                foreach (var range in ranges)
+                {
+                    if (range.Item1 > min)
+                    {
+                        result += range.Item1 - min;
+                        min = range.Item1;
+                        break;
+                    }
+                }
+            }
         }
 
-        public override int Nummer => 201620;
+        Result = result.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201620;
 }

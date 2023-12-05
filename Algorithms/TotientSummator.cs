@@ -4,57 +4,56 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Algorithms
+namespace Algorithms;
+
+public class TotientSummator
 {
-    public class TotientSummator
+    private readonly long modulus;
+    private IDictionary<long, long> TotientSums { get; }
+
+    public TotientSummator(long modulus)
     {
-        private readonly long modulus;
-        private IDictionary<long, long> TotientSums { get; }
+        this.modulus = modulus;
+        TotientSums = new Dictionary<long, long>();
+    }
 
-        public TotientSummator(long modulus)
+    public long GetTotientSum(long l)
+    {
+        if (TotientSums.ContainsKey(l))
         {
-            this.modulus = modulus;
-            TotientSums = new Dictionary<long, long>();
+            return TotientSums[l];
         }
 
-        public long GetTotientSum(long l)
+        var s = ComputeTotientSum(l);
+        TotientSums[l] = s;
+        return s;
+    }
+
+    private long ComputeTotientSum(long l)
+    {
+        var lmod = l % modulus;
+        var result = ((lmod * (lmod + 1)) / 2) % modulus;
+        for (long m = 2; m * m <= l; m++)
         {
-            if (TotientSums.ContainsKey(l))
+            result = result - GetTotientSum(l / m);
+            if (result < 0)
             {
-                return TotientSums[l];
+                result += modulus;
             }
-
-            var s = ComputeTotientSum(l);
-            TotientSums[l] = s;
-            return s;
         }
 
-        private long ComputeTotientSum(long l)
+        for (long d = 1; d * d <= l; d++)
         {
-            var lmod = l % modulus;
-            var result = ((lmod * (lmod + 1)) / 2) % modulus;
-            for (long m = 2; m * m <= l; m++)
+            if (d != l / d)
             {
-                result = result - GetTotientSum(l / m);
+                result = result - (l / d - l / (d + 1)) * GetTotientSum(d);
                 if (result < 0)
                 {
                     result += modulus;
                 }
             }
-
-            for (long d = 1; d * d <= l; d++)
-            {
-                if (d != l / d)
-                {
-                    result = result - (l / d - l / (d + 1)) * GetTotientSum(d);
-                    if (result < 0)
-                    {
-                        result += modulus;
-                    }
-                }
-            }
-
-            return result;
         }
+
+        return result;
     }
 }

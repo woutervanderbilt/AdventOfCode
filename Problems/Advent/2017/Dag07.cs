@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag07 : Problem
 {
-    internal class Dag07 : Problem
-    {
-        private const string input = @"xsddbi (61)
+    private const string input = @"xsddbi (61)
 nqtowev (11)
 xwohr (82)
 flejt (36)
@@ -1431,74 +1431,73 @@ dbpkf (169) -> zzcqptv, vfykuuv
 wqokqz (50)
 xufneyr (153)";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IDictionary<string, Program> programs = new Dictionary<string, Program>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IDictionary<string, Program> programs = new Dictionary<string, Program>();
-            foreach (var line in input.Split(Environment.NewLine))
+            var words = line.Split(' ');
+            Program program = programs.ContainsKey(words[0]) ? programs[words[0]] : new Program();
+            program.Name = words[0];
+            program.Weight = int.Parse(words[1].Replace("(", "").Replace(")", ""));
+            if (words.Length > 2)
             {
-                var words = line.Split(' ');
-                Program program = programs.ContainsKey(words[0]) ? programs[words[0]] : new Program();
-                program.Name = words[0];
-                program.Weight = int.Parse(words[1].Replace("(", "").Replace(")", ""));
-                if (words.Length > 2)
+                for (int i = 3; i < words.Length; i++)
                 {
-                    for (int i = 3; i < words.Length; i++)
-                    {
-                        var name = words[i].Replace(",", "");
-                        var heldProgram = programs.ContainsKey(name) ? programs[name] : new Program();
-                        heldProgram.HeldBy = program;
-                        program.Holding.Add(heldProgram);
-                        programs[name] = heldProgram;
-                    }
-                }
-
-                programs[program.Name] = program;
-            }
-
-            var p = programs.Values.First();
-            while (p.HeldBy != null)
-            {
-                p = p.HeldBy;
-            }
-
-            int diff = 0;
-            while (p.Holding.Any())
-            {
-                var counter = new Counter<int>();
-                foreach (var program in p.Holding)
-                {
-                    counter[program.TotalWeight()]++;
-                }
-
-                if (counter.Keys.Count() == 1)
-                {
-                    Result = (p.Weight - diff).ToString();
-                    return Task.CompletedTask;
-                }
-                else
-                {
-                    var wrongWeight = counter.Keys.Single(w => counter[w] == 1);
-                    p = p.Holding.Single(p => p.TotalWeight() == wrongWeight);
-                    diff = wrongWeight - counter.Keys.Single(w => w != wrongWeight);
+                    var name = words[i].Replace(",", "");
+                    var heldProgram = programs.ContainsKey(name) ? programs[name] : new Program();
+                    heldProgram.HeldBy = program;
+                    program.Holding.Add(heldProgram);
+                    programs[name] = heldProgram;
                 }
             }
 
-            Result = p.Name;
-            return Task.CompletedTask;
+            programs[program.Name] = program;
         }
 
-        public override int Nummer => 201707;
-
-        private class Program
+        var p = programs.Values.First();
+        while (p.HeldBy != null)
         {
-            public string Name { get; set; }
-            public int Weight { get; set; }
-            public IList<Program> Holding { get; set; } = new List<Program>();
-            public Program HeldBy { get; set; }
-            public int TotalWeight()
+            p = p.HeldBy;
+        }
+
+        int diff = 0;
+        while (p.Holding.Any())
+        {
+            var counter = new Counter<int>();
+            foreach (var program in p.Holding)
             {
-                return Weight + Holding.Sum(h => h.TotalWeight());
+                counter[program.TotalWeight()]++;
             }
+
+            if (counter.Keys.Count() == 1)
+            {
+                Result = (p.Weight - diff).ToString();
+                return Task.CompletedTask;
+            }
+            else
+            {
+                var wrongWeight = counter.Keys.Single(w => counter[w] == 1);
+                p = p.Holding.Single(p => p.TotalWeight() == wrongWeight);
+                diff = wrongWeight - counter.Keys.Single(w => w != wrongWeight);
+            }
+        }
+
+        Result = p.Name;
+        return Task.CompletedTask;
+    }
+
+    public override int Nummer => 201707;
+
+    private class Program
+    {
+        public string Name { get; set; }
+        public int Weight { get; set; }
+        public IList<Program> Holding { get; set; } = new List<Program>();
+        public Program HeldBy { get; set; }
+        public int TotalWeight()
+        {
+            return Weight + Holding.Sum(h => h.TotalWeight());
         }
     }
 }

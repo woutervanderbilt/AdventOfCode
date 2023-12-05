@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Problems.Advent
+namespace Problems.Advent;
+
+public class Dag07 : Problem
 {
-    public class Dag07 : Problem
-    {
-        private const string input = @"dnwtsgywerfamfv[gwrhdujbiowtcirq]bjbhmuxdcasenlctwgh
+    private const string input = @"dnwtsgywerfamfv[gwrhdujbiowtcirq]bjbhmuxdcasenlctwgh
 rnqfzoisbqxbdlkgfh[lwlybvcsiupwnsyiljz]kmbgyaptjcsvwcltrdx[ntrpwgkrfeljpye]jxjdlgtntpljxaojufe
 jgltdnjfjsbrffzwbv[nclpjchuobdjfrpavcq]sbzanvbimpahadkk[yyoasqmddrzunoyyk]knfdltzlirrbypa
 vvrchszuidkhtwx[ebqaetowcthddea]cxgxbffcoudllbtxsa
@@ -2008,130 +2008,129 @@ cygilweroxmbmbmx[hopxissehjarmezawol]exywzaffjuhehvmbm
 nbndomwcaauiluzbg[qjxqxhccqsvtkwm]oazwbouchccdhtrbnbv[vetwfilwgnxxxrhxar]mrbcnwlpciwpizkxj
 xuabbxdwkutpsogcfea[tgetfqpgstsxrokcemk]cbftstsldgcqbxf[vwjejomptmifhdulc]ejeroshnazbwjjzofbe";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        Console.WriteLine(CheckIp("abba[mnop]qrst"));
+        Console.WriteLine(CheckIp("abcd[bddb]xyyx"));
+        Console.WriteLine(CheckIp("aaaa[qwer]tyui"));
+        Console.WriteLine(CheckIp("ioxxoj[asdfgh]zxcvbn"));
+
+        Result = input.Split(Environment.NewLine).Count(CheckIpForSSL).ToString();
+
+        return Task.CompletedTask;
+
+
+
+        bool CheckIpForSSL(string ip)
         {
-            Console.WriteLine(CheckIp("abba[mnop]qrst"));
-            Console.WriteLine(CheckIp("abcd[bddb]xyyx"));
-            Console.WriteLine(CheckIp("aaaa[qwer]tyui"));
-            Console.WriteLine(CheckIp("ioxxoj[asdfgh]zxcvbn"));
-
-            Result = input.Split(Environment.NewLine).Count(CheckIpForSSL).ToString();
-
-            return Task.CompletedTask;
-
-
-
-            bool CheckIpForSSL(string ip)
+            char? c1 = null;
+            char? c2 = null;
+            HashSet<string> aba = new HashSet<string>();
+            HashSet<string> bab = new HashSet<string>();
+            bool inside = false;
+            foreach (var c in ip)
             {
-                char? c1 = null;
-                char? c2 = null;
-                HashSet<string> aba = new HashSet<string>();
-                HashSet<string> bab = new HashSet<string>();
-                bool inside = false;
-                foreach (var c in ip)
+                if (c == '[')
                 {
-                    if (c == '[')
-                    {
-                        inside = true;
-                        c1 = null;
-                        c2 = null;
-                    }
-                    else if (c == ']')
-                    {
-                        inside = false;
-                        c1 = null;
-                        c2 = null;
-                    }
-                    else
-                    {
-                        if (c1 != c2 && c1 == c)
-                        {
-                            if (inside)
-                            {
-                                if (bab.Contains($"{c2}{c1}{c2}"))
-                                {
-                                    return true;
-                                }
-
-                                aba.Add($"{c1}{c2}{c1}");
-                            }
-                            else
-                            {
-                                if (aba.Contains($"{c2}{c1}{c2}"))
-                                {
-                                    return true;
-                                }
-
-                                bab.Add($"{c1}{c2}{c1}");
-                            }
-                        }
-
-                        (c1, c2) = (c2, c);
-                    }
+                    inside = true;
+                    c1 = null;
+                    c2 = null;
                 }
-
-                return false;
-            }
-
-            bool CheckIp(string ip)
-            {
-                char? c1 = null;
-                char? c2 = null;
-                bool inside = false;
-                bool abba = false;
-                char? abb = null;
-                foreach (var c in ip)
+                else if (c == ']')
                 {
-                    if (c == '[')
+                    inside = false;
+                    c1 = null;
+                    c2 = null;
+                }
+                else
+                {
+                    if (c1 != c2 && c1 == c)
                     {
-                        inside = true;
-                        c1 = null;
-                        c2 = null;
-                        abb = null;
-                    }
-                    else if (c == ']')
-                    {
-                        inside = false;
-                        c1 = null;
-                        c2 = null;
-                        abb = null;
-                    }
-                    else
-                    {
-                        if (abb.HasValue)
+                        if (inside)
                         {
-                            if (c == abb)
+                            if (bab.Contains($"{c2}{c1}{c2}"))
                             {
-                                if (inside)
-                                {
-                                    return false;
-                                }
-
-                                abba = true;
+                                return true;
                             }
-                        }
 
-                        if (c1 != c2 && c == c2)
-                        {
-                            abb = c1;
+                            aba.Add($"{c1}{c2}{c1}");
                         }
                         else
                         {
-                            abb = null;
+                            if (aba.Contains($"{c2}{c1}{c2}"))
+                            {
+                                return true;
+                            }
+
+                            bab.Add($"{c1}{c2}{c1}");
                         }
-
-                        (c1, c2) = (c2, c);
                     }
-                }
 
-                if (abba)
-                {
-                    Console.WriteLine(ip);
+                    (c1, c2) = (c2, c);
                 }
-                return abba;
             }
+
+            return false;
         }
 
-        public override int Nummer => 201607;
+        bool CheckIp(string ip)
+        {
+            char? c1 = null;
+            char? c2 = null;
+            bool inside = false;
+            bool abba = false;
+            char? abb = null;
+            foreach (var c in ip)
+            {
+                if (c == '[')
+                {
+                    inside = true;
+                    c1 = null;
+                    c2 = null;
+                    abb = null;
+                }
+                else if (c == ']')
+                {
+                    inside = false;
+                    c1 = null;
+                    c2 = null;
+                    abb = null;
+                }
+                else
+                {
+                    if (abb.HasValue)
+                    {
+                        if (c == abb)
+                        {
+                            if (inside)
+                            {
+                                return false;
+                            }
+
+                            abba = true;
+                        }
+                    }
+
+                    if (c1 != c2 && c == c2)
+                    {
+                        abb = c1;
+                    }
+                    else
+                    {
+                        abb = null;
+                    }
+
+                    (c1, c2) = (c2, c);
+                }
+            }
+
+            if (abba)
+            {
+                Console.WriteLine(ip);
+            }
+            return abba;
+        }
     }
+
+    public override int Nummer => 201607;
 }

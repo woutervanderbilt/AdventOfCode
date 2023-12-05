@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2018
+namespace Problems.Advent._2018;
+
+internal class Dag25 : Problem
 {
-    internal class Dag25 : Problem
-    {
-        private const string input = @"-6,2,-8,3
+    private const string input = @"-6,2,-8,3
 7,8,-1,-8
 7,-2,-4,-2
 4,-4,2,7
@@ -1256,82 +1256,81 @@ namespace Problems.Advent._2018
 3,-4,-5,-1
 -1,-5,6,-1
 -8,4,-5,1";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var points = new List<(int x, int y, int z, int t)>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            var points = new List<(int x, int y, int z, int t)>();
-            foreach (var line in input.Split(Environment.NewLine))
-            {
-                var words = line.Split(',').Select(int.Parse).ToList();
-                points.Add((words[0], words[1], words[2], words[3]));
-            }
-            points.Sort();
-            IList<IList<int>> neighbours = new List<IList<int>>();
-            for (int i = 0; i < points.Count; i++)
-            {
-                neighbours.Add(new List<int>());
-            }
+            var words = line.Split(',').Select(int.Parse).ToList();
+            points.Add((words[0], words[1], words[2], words[3]));
+        }
+        points.Sort();
+        IList<IList<int>> neighbours = new List<IList<int>>();
+        for (int i = 0; i < points.Count; i++)
+        {
+            neighbours.Add(new List<int>());
+        }
 
-            for (int i = 0; i < points.Count; i++)
+        for (int i = 0; i < points.Count; i++)
+        {
+            var p1 = points[i];
+            for (int j = i + 1; j < points.Count; j++)
             {
-                var p1 = points[i];
-                for (int j = i + 1; j < points.Count; j++)
-                {
-                    var p2 = points[j];
-                    if (p1.x < p2.x - 3)
-                    {
-                        break;
-                    }
-
-                    if (Math.Abs(p1.x - p2.x) + Math.Abs(p1.y - p2.y) + Math.Abs(p1.z - p2.z) + Math.Abs(p1.t - p2.t) <= 3)
-                    {
-                        neighbours[i].Add(j);
-                        neighbours[j].Add(i);
-                    }
-                }
-            }
-
-            int groupCount = 0;
-            HashSet<int> grouped = new HashSet<int>();
-            int seed = 0;
-            while (true)
-            {
-                while (grouped.Contains(seed))
-                {
-                    seed++;
-                }
-                
-                if (seed == points.Count)
+                var p2 = points[j];
+                if (p1.x < p2.x - 3)
                 {
                     break;
                 }
-                groupCount++;
-                HashSet<int> group = new HashSet<int> { seed };
-                IList<int> added = new List<int> { seed };
-                grouped.Add(seed);
-                while (added.Any())
-                {
-                    IList<int> newAdded = new List<int>();
-                    foreach (var i in added)
-                    {
-                        foreach (var c in neighbours[i])
-                        {
-                            if (!group.Contains(c))
-                            {
-                                newAdded.Add(c);
-                                group.Add(c);
-                                grouped.Add(c);
-                            }
-                        }
-                    }
 
-                    added = newAdded;
+                if (Math.Abs(p1.x - p2.x) + Math.Abs(p1.y - p2.y) + Math.Abs(p1.z - p2.z) + Math.Abs(p1.t - p2.t) <= 3)
+                {
+                    neighbours[i].Add(j);
+                    neighbours[j].Add(i);
                 }
             }
-
-            Result = groupCount.ToString();
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201825;
+        int groupCount = 0;
+        HashSet<int> grouped = new HashSet<int>();
+        int seed = 0;
+        while (true)
+        {
+            while (grouped.Contains(seed))
+            {
+                seed++;
+            }
+                
+            if (seed == points.Count)
+            {
+                break;
+            }
+            groupCount++;
+            HashSet<int> group = new HashSet<int> { seed };
+            IList<int> added = new List<int> { seed };
+            grouped.Add(seed);
+            while (added.Any())
+            {
+                IList<int> newAdded = new List<int>();
+                foreach (var i in added)
+                {
+                    foreach (var c in neighbours[i])
+                    {
+                        if (!group.Contains(c))
+                        {
+                            newAdded.Add(c);
+                            group.Add(c);
+                            grouped.Add(c);
+                        }
+                    }
+                }
+
+                added = newAdded;
+            }
+        }
+
+        Result = groupCount.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201825;
 }

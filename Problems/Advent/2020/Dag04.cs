@@ -5,13 +5,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag04 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"byr:1983 iyr:2017
+public class Dag04 : Problem
+{
+    #region input
+
+    private const string input = @"byr:1983 iyr:2017
 pid:796082981 cid:129 eyr:2030
 ecl:oth hgt:182cm
 
@@ -1157,133 +1157,132 @@ eyr:2023 hgt:193cm pid:494553757
 cid:331
 ecl:blu eyr:2021 hcl:#733820 hgt:174cm
 iyr:2010 byr:1950 pid:405416908";
-        #endregion
-        public override Task ExecuteAsync()
+    #endregion
+    public override Task ExecuteAsync()
+    {
+        IList<Passport> passports = new List<Passport>();
+        Passport current = new Passport();
+        passports.Add(current);
+        foreach (var s in input.Split(Environment.NewLine))
         {
-            IList<Passport> passports = new List<Passport>();
-            Passport current = new Passport();
-            passports.Add(current);
-            foreach (var s in input.Split(Environment.NewLine))
+            if (string.IsNullOrWhiteSpace(s))
             {
-                if (string.IsNullOrWhiteSpace(s))
+                current = new Passport();
+                passports.Add(current);
+            }
+            else
+            {
+                foreach (var kvp in s.Split(' '))
                 {
-                    current = new Passport();
-                    passports.Add(current);
-                }
-                else
-                {
-                    foreach (var kvp in s.Split(' '))
+                    var split = kvp.Split(':');
+                    switch (split[0])
                     {
-                        var split = kvp.Split(':');
-                        switch (split[0])
-                        {
-                            case "byr":
-                                current.Byr = split[1];
-                                break;
-                            case "iyr":
-                                current.Iyr = split[1];
-                                break;
-                            case "eyr":
-                                current.Eyr = split[1];
-                                break;
-                            case "hgt":
-                                current.Hgt = split[1];
-                                break;
-                            case "hcl":
-                                current.Hcl = split[1];
-                                break;
-                            case "ecl":
-                                current.Ecl = split[1];
-                                break;
-                            case "pid":
-                                current.Pid = split[1];
-                                break;
-                            case "cid":
-                                current.Cid = split[1];
-                                break;
-                        }
+                        case "byr":
+                            current.Byr = split[1];
+                            break;
+                        case "iyr":
+                            current.Iyr = split[1];
+                            break;
+                        case "eyr":
+                            current.Eyr = split[1];
+                            break;
+                        case "hgt":
+                            current.Hgt = split[1];
+                            break;
+                        case "hcl":
+                            current.Hcl = split[1];
+                            break;
+                        case "ecl":
+                            current.Ecl = split[1];
+                            break;
+                        case "pid":
+                            current.Pid = split[1];
+                            break;
+                        case "cid":
+                            current.Cid = split[1];
+                            break;
                     }
                 }
             }
-
-            Result = passports.Count(p => p.IsValid()).ToString();
-            return Task.CompletedTask;
         }
 
-        private class Passport
-        {
-            public string Byr { get; set; }
-            public string Iyr { get; set; }
-            public string Eyr { get; set; }
-            public string Hgt { get; set; }
-            public string Hcl { get; set; }
-            public string Ecl { get; set; }
-            public string Pid { get; set; }
-            public string Cid { get; set; }
-
-            public bool IsValid()
-            {
-                if (string.IsNullOrEmpty(Byr) ||
-                    string.IsNullOrEmpty(Iyr) ||
-                    string.IsNullOrEmpty(Eyr) ||
-                    string.IsNullOrEmpty(Hgt) ||
-                    string.IsNullOrEmpty(Hcl) ||
-                    string.IsNullOrEmpty(Ecl) ||
-                    string.IsNullOrEmpty(Pid))
-                {
-                    return false;
-                }
-
-                if (!int.TryParse(Byr, out int birthyear) || birthyear < 1920 || birthyear > 2002)
-                {
-                    return false;
-                }
-                if (!int.TryParse(Iyr, out int issueyear) || issueyear < 2010 || issueyear > 2020)
-                {
-                    return false;
-                }
-                if (!int.TryParse(Eyr, out int expyear) || expyear < 2020 || expyear > 2030)
-                {
-                    return false;
-                }
-
-                if (Hgt.EndsWith("cm"))
-                {
-                    if (!int.TryParse(Hgt.Substring(0, Hgt.Length - 2), out var height) || height < 150 || height > 193)
-                    {
-                        return false;
-                    }
-                }
-                else if (Hgt.EndsWith("in"))
-                {
-                    if (!int.TryParse(Hgt.Substring(0, Hgt.Length - 2), out var height) || height < 59 || height > 76)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-
-                if (!new Regex("^#[0-9a-f]{6}$").IsMatch(Hcl))
-                {
-                    return false;
-                }
-
-                if (!new List<string> {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}.Contains(Ecl))
-                {
-                    return false;
-                }
-
-                if (!int.TryParse(Pid, out _) || !(Pid.Length == 9))
-                {
-                    return false;
-                }
-                return true;
-            }
-        }
-
-        public override int Nummer => 202004;
+        Result = passports.Count(p => p.IsValid()).ToString();
+        return Task.CompletedTask;
     }
+
+    private class Passport
+    {
+        public string Byr { get; set; }
+        public string Iyr { get; set; }
+        public string Eyr { get; set; }
+        public string Hgt { get; set; }
+        public string Hcl { get; set; }
+        public string Ecl { get; set; }
+        public string Pid { get; set; }
+        public string Cid { get; set; }
+
+        public bool IsValid()
+        {
+            if (string.IsNullOrEmpty(Byr) ||
+                string.IsNullOrEmpty(Iyr) ||
+                string.IsNullOrEmpty(Eyr) ||
+                string.IsNullOrEmpty(Hgt) ||
+                string.IsNullOrEmpty(Hcl) ||
+                string.IsNullOrEmpty(Ecl) ||
+                string.IsNullOrEmpty(Pid))
+            {
+                return false;
+            }
+
+            if (!int.TryParse(Byr, out int birthyear) || birthyear < 1920 || birthyear > 2002)
+            {
+                return false;
+            }
+            if (!int.TryParse(Iyr, out int issueyear) || issueyear < 2010 || issueyear > 2020)
+            {
+                return false;
+            }
+            if (!int.TryParse(Eyr, out int expyear) || expyear < 2020 || expyear > 2030)
+            {
+                return false;
+            }
+
+            if (Hgt.EndsWith("cm"))
+            {
+                if (!int.TryParse(Hgt.Substring(0, Hgt.Length - 2), out var height) || height < 150 || height > 193)
+                {
+                    return false;
+                }
+            }
+            else if (Hgt.EndsWith("in"))
+            {
+                if (!int.TryParse(Hgt.Substring(0, Hgt.Length - 2), out var height) || height < 59 || height > 76)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            if (!new Regex("^#[0-9a-f]{6}$").IsMatch(Hcl))
+            {
+                return false;
+            }
+
+            if (!new List<string> {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}.Contains(Ecl))
+            {
+                return false;
+            }
+
+            if (!int.TryParse(Pid, out _) || !(Pid.Length == 9))
+            {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    public override int Nummer => 202004;
 }

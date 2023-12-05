@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms;
 
-namespace Problems.Advent._2015
+namespace Problems.Advent._2015;
+
+internal class Dag02 : Problem
 {
-    internal class Dag02 : Problem
-    {
-        private const string input = @"4x23x21
+    private const string input = @"4x23x21
 22x29x19
 11x4x11
 8x10x5
@@ -1010,32 +1010,31 @@ namespace Problems.Advent._2015
 20x29x30
 23x11x5";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<(int x, int y, int z)> boxes = input.Split(Environment.NewLine).Select(l =>
         {
-            IList<(int x, int y, int z)> boxes = input.Split(Environment.NewLine).Select(l =>
-            {
-                var s = l.Split('x');
-                return (int.Parse(s[0]), int.Parse(s[1]), int.Parse(s[2]));
-            }).ToList();
+            var s = l.Split('x');
+            return (int.Parse(s[0]), int.Parse(s[1]), int.Parse(s[2]));
+        }).ToList();
 
-            Result = boxes.Sum(b => RequiredRibbon(b.x, b.y, b.z)).ToString();
+        Result = boxes.Sum(b => RequiredRibbon(b.x, b.y, b.z)).ToString();
 
-            int RequiredArea(int x, int y, int z)
-            {
-                var xy = x * y;
-                var xz = x * z;
-                var yz = y * z;
-                return 2 * (xy + xz + yz) + Math.Min(xy, Math.Min(xz, yz));
-            }
-
-            int RequiredRibbon(int x, int y, int z)
-            {
-                return x * y * z + 2 * (x + y + z - Math.Max(x, Math.Max(y, z)));
-            }
-
-            return Task.CompletedTask;
+        int RequiredArea(int x, int y, int z)
+        {
+            var xy = x * y;
+            var xz = x * z;
+            var yz = y * z;
+            return 2 * (xy + xz + yz) + Math.Min(xy, Math.Min(xz, yz));
         }
 
-        public override int Nummer => 201502;
+        int RequiredRibbon(int x, int y, int z)
+        {
+            return x * y * z + 2 * (x + y + z - Math.Max(x, Math.Max(y, z)));
+        }
+
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201502;
 }

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag05 : Problem
 {
-    internal class Dag05 : Problem
-    {
-        private const string input = @"2
+    private const string input = @"2
 1
 2
 -2
@@ -1098,31 +1098,30 @@ namespace Problems.Advent._2017
 -155
 -971
 -1074";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var list = input.Split(Environment.NewLine).Select(int.Parse).ToList();
+        int index = 0;
+        int steps = 0;
+        while (index >= 0 && index < list.Count)
         {
-            var list = input.Split(Environment.NewLine).Select(int.Parse).ToList();
-            int index = 0;
-            int steps = 0;
-            while (index >= 0 && index < list.Count)
+            var jump = list[index];
+            if (jump >= 3)
             {
-                var jump = list[index];
-                if (jump >= 3)
-                {
-                    list[index]--;
-                }
-                else
-                {
-                    list[index]++;
-                }
-
-                index += jump;
-                steps++;
+                list[index]--;
+            }
+            else
+            {
+                list[index]++;
             }
 
-            Result = steps.ToString();
-            return Task.CompletedTask;
+            index += jump;
+            steps++;
         }
 
-        public override int Nummer => 201705;
+        Result = steps.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201705;
 }

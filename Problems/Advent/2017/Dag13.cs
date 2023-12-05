@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag13 : Problem
 {
-    internal class Dag13 : Problem
-    {
-        private const string input = @"0: 3
+    private const string input = @"0: 3
 1: 2
 2: 4
 4: 6
@@ -53,32 +53,31 @@ namespace Problems.Advent._2017
 96: 20
 98: 24";
 
-        private const string testinput = @"0: 3
+    private const string testinput = @"0: 3
 1: 2
 4: 4
 6: 4";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IDictionary<int, int> firewall = input.Split(Environment.NewLine)
+            .Select(l => l.Replace(":", "").Split(' ').Select(int.Parse).ToList())
+            .ToDictionary(l => l[0], l => l[1]);
+        int i = 0;
+        while (true)
         {
-            IDictionary<int, int> firewall = input.Split(Environment.NewLine)
-                .Select(l => l.Replace(":", "").Split(' ').Select(int.Parse).ToList())
-                .ToDictionary(l => l[0], l => l[1]);
-            int i = 0;
-            while (true)
+            //var damage = firewall.Where(f => (f.Key + i) % (2 * f.Value - 2) == 0).Sum(f => f.Key * f.Value);
+            var hit = firewall.Any(f => (f.Key + i) % (2 * f.Value - 2) == 0);
+            if (!hit)
             {
-                //var damage = firewall.Where(f => (f.Key + i) % (2 * f.Value - 2) == 0).Sum(f => f.Key * f.Value);
-                var hit = firewall.Any(f => (f.Key + i) % (2 * f.Value - 2) == 0);
-                if (!hit)
-                {
-                    break;
-                }
-
-                i++;
+                break;
             }
 
-            Result = i.ToString();
-            return Task.CompletedTask;
+            i++;
         }
 
-        public override int Nummer => 201713;
+        Result = i.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201713;
 }

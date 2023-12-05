@@ -4,11 +4,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2015
+namespace Problems.Advent._2015;
+
+internal class Dag05 : Problem
 {
-    internal class Dag05 : Problem
-    {
-        private const string input = @"sszojmmrrkwuftyv
+    private const string input = @"sszojmmrrkwuftyv
 isaljhemltsdzlum
 fujcyucsrxgatisb
 qiqqlmcgnhzparyg
@@ -1009,24 +1009,23 @@ iduapzclhhyfladn
 fbpyzxdfmkrtfaeg
 yzsmlbnftftgwadz";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var regex = new Regex(@"^(?=.*(.)\1.*)(?=.*(.*[aioeu].*){3,}.*)(?!.*(ab|cd|pq|xy))");
+        var regex2 = new Regex(@"^(?=.*(..).*\1)(?=.*(.).\2)");
+        int ct = 0;
+        foreach (var s in input.Split(Environment.NewLine))
         {
-            var regex = new Regex(@"^(?=.*(.)\1.*)(?=.*(.*[aioeu].*){3,}.*)(?!.*(ab|cd|pq|xy))");
-            var regex2 = new Regex(@"^(?=.*(..).*\1)(?=.*(.).\2)");
-            int ct = 0;
-            foreach (var s in input.Split(Environment.NewLine))
+            if (regex2.IsMatch(s))
             {
-                if (regex2.IsMatch(s))
-                {
-                    Console.WriteLine(s);
-                    ct++;
-                }
+                Console.WriteLine(s);
+                ct++;
             }
-
-            Result = ct.ToString();
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201505;
+        Result = ct.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201505;
 }

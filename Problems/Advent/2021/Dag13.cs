@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag13 : Problem
 {
-    internal class Dag13 : Problem
-    {
-        const string input = @"241,142
+    const string input = @"241,142
 57,889
 1131,239
 1076,828
@@ -805,83 +805,82 @@ fold along y=27
 fold along y=13
 fold along y=6";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var grid = new Grid<bool>();
+        IList<(bool, int)> folds = new List<(bool, int)>();
+        bool inputFoldPart = false;
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            var grid = new Grid<bool>();
-            IList<(bool, int)> folds = new List<(bool, int)>();
-            bool inputFoldPart = false;
-            foreach (var line in input.Split(Environment.NewLine))
+            if (string.IsNullOrWhiteSpace(line))
             {
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    inputFoldPart = true;
-                }
-                else if(inputFoldPart)
-                {
-                    var fold = line.Split(' ').Last().Split('=');
-                    folds.Add((fold[0] == "x", int.Parse(fold[1])));
-                }
-                else
-                {
-                    var parts = line.Split(',');
-                    grid[int.Parse(parts[0]), int.Parse(parts[1])] = true;
-                }
+                inputFoldPart = true;
             }
-
-            foreach (var fold in folds)
+            else if(inputFoldPart)
             {
-                grid = Fold(fold.Item1, fold.Item2);
+                var fold = line.Split(' ').Last().Split('=');
+                folds.Add((fold[0] == "x", int.Parse(fold[1])));
             }
-
-            for (int y = grid.MinY; y <= grid.MaxY; y++)
+            else
             {
-                var sb = new StringBuilder();
-                for (int x = grid.MinX; x <= grid.MaxX; x++)
-                {
-                    sb.Append(grid[x, y].Found ? "█" : " ");
-                }
-                Console.WriteLine(sb);
+                var parts = line.Split(',');
+                grid[int.Parse(parts[0]), int.Parse(parts[1])] = true;
             }
+        }
 
+        foreach (var fold in folds)
+        {
+            grid = Fold(fold.Item1, fold.Item2);
+        }
 
-            Result = grid.AllMembers().Count().ToString();
-
-
-            Grid<bool> Fold(bool foldOnX, int index)
+        for (int y = grid.MinY; y <= grid.MaxY; y++)
+        {
+            var sb = new StringBuilder();
+            for (int x = grid.MinX; x <= grid.MaxX; x++)
             {
-                var result = new Grid<bool>();
-                foreach (var location in grid.AllMembers())
+                sb.Append(grid[x, y].Found ? "█" : " ");
+            }
+            Console.WriteLine(sb);
+        }
+
+
+        Result = grid.AllMembers().Count().ToString();
+
+
+        Grid<bool> Fold(bool foldOnX, int index)
+        {
+            var result = new Grid<bool>();
+            foreach (var location in grid.AllMembers())
+            {
+                if (foldOnX)
                 {
-                    if (foldOnX)
+                    if (location.x < index)
                     {
-                        if (location.x < index)
-                        {
-                            result[location.x, location.y] = true;
-                        }
-                        else
-                        {
-                            result[2 * index - location.x, location.y] = true;
-                        }
+                        result[location.x, location.y] = true;
                     }
                     else
                     {
-                        if (location.y < index)
-                        {
-                            result[location.x, location.y] = true;
-                        }
-                        else
-                        {
-                            result[location.x, 2 * index - location.y] = true;
-                        }
+                        result[2 * index - location.x, location.y] = true;
                     }
                 }
-
-                return result;
+                else
+                {
+                    if (location.y < index)
+                    {
+                        result[location.x, location.y] = true;
+                    }
+                    else
+                    {
+                        result[location.x, 2 * index - location.y] = true;
+                    }
+                }
             }
 
-            return Task.CompletedTask;
+            return result;
         }
 
-        public override int Nummer => 202113;
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202113;
 }

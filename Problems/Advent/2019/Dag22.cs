@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2019
+namespace Problems.Advent._2019;
+
+public class Dag22 : Problem
 {
-    public class Dag22 : Problem
-    {
-        private const string input = @"deal with increment 31
+    private const string input = @"deal with increment 31
 deal into new stack
 cut -7558
 deal with increment 49
@@ -111,7 +111,7 @@ deal into new stack
 cut 897
 deal with increment 36";
 
-        private const string testinput = @"deal into new stack
+    private const string testinput = @"deal into new stack
 cut -2
 deal with increment 7
 cut 8
@@ -122,47 +122,46 @@ deal with increment 9
 deal with increment 3
 cut -1";
 
-        private const string testinput2 = @"deal with increment 7
+    private const string testinput2 = @"deal with increment 7
 deal with increment 9
 cut -2";
 
 
-        private const long Modulus = 119315717514047;
-        private const long Shuffles = 101741582076661;
+    private const long Modulus = 119315717514047;
+    private const long Shuffles = 101741582076661;
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var a = new ResidueClassBigInt(1, Modulus);
+        var b = new ResidueClassBigInt(0, Modulus);
+        foreach (var instruction in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
         {
-            var a = new ResidueClassBigInt(1, Modulus);
-            var b = new ResidueClassBigInt(0, Modulus);
-            foreach (var instruction in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
+            if (instruction.StartsWith("deal into"))
             {
-                if (instruction.StartsWith("deal into"))
-                {
-                    a = -a;
-                    b = -b - new ResidueClassBigInt(1, Modulus);
-                }
-                else if (instruction.StartsWith("deal with increment"))
-                {
-                    var increment = new ResidueClassBigInt(int.Parse(instruction.Split(' ').Last()), Modulus);
-                    a *= increment;
-                    b *= increment;
-
-                }
-                else
-                {
-                    var n = new ResidueClassBigInt(int.Parse(instruction.Split(' ').Last()), Modulus);
-                    b = b - n;
-                }
+                a = -a;
+                b = -b - new ResidueClassBigInt(1, Modulus);
             }
+            else if (instruction.StartsWith("deal with increment"))
+            {
+                var increment = new ResidueClassBigInt(int.Parse(instruction.Split(' ').Last()), Modulus);
+                a *= increment;
+                b *= increment;
 
-            var aa = a.ToThePower(Shuffles);
-            var bb = (a.ToThePower(Shuffles) - new ResidueClassBigInt(1, Modulus)) *
-                      (a - new ResidueClassBigInt(1, Modulus)).Inverse() * b;
-            Result = ((new ResidueClassBigInt(2020, Modulus) - bb) * aa.Inverse()).ToString();
-
-            return Task.CompletedTask;
+            }
+            else
+            {
+                var n = new ResidueClassBigInt(int.Parse(instruction.Split(' ').Last()), Modulus);
+                b = b - n;
+            }
         }
 
-        public override int Nummer => 201922;
+        var aa = a.ToThePower(Shuffles);
+        var bb = (a.ToThePower(Shuffles) - new ResidueClassBigInt(1, Modulus)) *
+                 (a - new ResidueClassBigInt(1, Modulus)).Inverse() * b;
+        Result = ((new ResidueClassBigInt(2020, Modulus) - bb) * aa.Inverse()).ToString();
+
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201922;
 }

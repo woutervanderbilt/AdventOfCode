@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2020
-{
-    public class Dag09 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"8
+public class Dag09 : Problem
+{
+    #region input
+
+    private const string input = @"8
 11
 27
 48
@@ -1012,88 +1012,87 @@ namespace Problems.Advent._2020
 57763965648871
 114764565928529
 70006357515771";
-        #endregion
-        public override Task ExecuteAsync()
+    #endregion
+    public override Task ExecuteAsync()
+    {
+        IList<long> list = input.Split(Environment.NewLine).Select(long.Parse).ToList();
+        var counts = new Counter<long>();
+        for (int i = 0; i < 25; i++)
         {
-            IList<long> list = input.Split(Environment.NewLine).Select(long.Parse).ToList();
-            var counts = new Counter<long>();
-            for (int i = 0; i < 25; i++)
+            var ith = list[i];
+            for (int j = i + 1; j < 25; j++)
             {
-                var ith = list[i];
-                for (int j = i + 1; j < 25; j++)
+                var jth = list[j];
+                if (ith != jth)
                 {
-                    var jth = list[j];
-                    if (ith != jth)
-                    {
-                        counts[ith + jth]++;
-                    }
+                    counts[ith + jth]++;
                 }
             }
-
-            int index = 25;
-            long target = 0;
-            while (index < list.Count)
-            {
-                var value = list[index];
-                if (counts[value] == 0)
-                {
-                    target = value;
-                    break;
-                }
-
-                var first = list[index - 25];
-                for (int j = index-24; j < index; j++)
-                {
-                    var jth = list[j];
-                    if (first != jth)
-                    {
-                        counts[first + jth]--;
-                    }
-
-                    if (jth != value)
-                    {
-                        counts[jth + value]++;
-                    }
-                }
-                index++;
-            }
-
-            var sums = new Dictionary<long, int>();
-            sums[0] = -1;
-            long sum = 0;
-            index = 0;
-            foreach (var l in list)
-            {
-                sum += l;
-                sums.Add(sum, index);
-                if (sums.ContainsKey(sum - target))
-                {
-                    long min = long.MaxValue;
-                    long max = long.MinValue;
-                    for (int k = sums[sum - target] + 1; k <= index; k++)
-                    {
-                        var v = list[k];
-                        if (v < min)
-                        {
-                            min = v;
-                        }
-
-                        if (v > max)
-                        {
-                            max = v;
-                        }
-                    }
-
-                    Result = (min + max).ToString();
-                    break;
-                }
-                index++;
-            }
-
-
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 202009;
+        int index = 25;
+        long target = 0;
+        while (index < list.Count)
+        {
+            var value = list[index];
+            if (counts[value] == 0)
+            {
+                target = value;
+                break;
+            }
+
+            var first = list[index - 25];
+            for (int j = index-24; j < index; j++)
+            {
+                var jth = list[j];
+                if (first != jth)
+                {
+                    counts[first + jth]--;
+                }
+
+                if (jth != value)
+                {
+                    counts[jth + value]++;
+                }
+            }
+            index++;
+        }
+
+        var sums = new Dictionary<long, int>();
+        sums[0] = -1;
+        long sum = 0;
+        index = 0;
+        foreach (var l in list)
+        {
+            sum += l;
+            sums.Add(sum, index);
+            if (sums.ContainsKey(sum - target))
+            {
+                long min = long.MaxValue;
+                long max = long.MinValue;
+                for (int k = sums[sum - target] + 1; k <= index; k++)
+                {
+                    var v = list[k];
+                    if (v < min)
+                    {
+                        min = v;
+                    }
+
+                    if (v > max)
+                    {
+                        max = v;
+                    }
+                }
+
+                Result = (min + max).ToString();
+                break;
+            }
+            index++;
+        }
+
+
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202009;
 }

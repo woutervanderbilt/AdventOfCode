@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag14 : Problem
 {
-    internal class Dag14 : Problem
-    {
-        private const string input = @"CKKOHNSBPCPCHVNKHFFK
+    private const string input = @"CKKOHNSBPCPCHVNKHFFK
 
 KO -> C
 SO -> S
@@ -112,7 +112,7 @@ HC -> O
 PN -> F
 OH -> H";
 
-        private const string testinput = @"NNCB
+    private const string testinput = @"NNCB
 
 CH -> B
 HH -> N
@@ -130,75 +130,74 @@ BB -> N
 BC -> B
 CC -> N
 CN -> C";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        long mod = 1000000007;
+        int numberOfLetters = 10;
+        var size = numberOfLetters * numberOfLetters;
+        IDictionary<string, string> substitutions = new Dictionary<string, string>();
+        string start = "";
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            long mod = 1000000007;
-            int numberOfLetters = 10;
-            var size = numberOfLetters * numberOfLetters;
-            IDictionary<string, string> substitutions = new Dictionary<string, string>();
-            string start = "";
-            foreach (var line in input.Split(Environment.NewLine))
+            if (string.IsNullOrWhiteSpace(line))
             {
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    continue;
-                }
-                else if (string.IsNullOrWhiteSpace(start))
-                {
-                    start = line;
-                }
-                else
-                {
-                    var words = line.Split(' ');
-                    substitutions[words[0]] = words[2];
-                }
+                continue;
             }
-
-            var pairs = substitutions.Keys.ToList();
-
-            var matrix = new SquareMatrix(size, mod);
-            for (int i = 0; i < size; i++)
+            else if (string.IsNullOrWhiteSpace(start))
             {
-                var a = pairs[i];
-                var b = substitutions[a];
-                var i1 = pairs.IndexOf($"{a[0]}{b}");
-                var i2 = pairs.IndexOf($"{b}{a[1]}");
-                matrix[i, i1] = 1;
-                matrix[i, i2] = 1;
+                start = line;
             }
-
-            var vector = new Matrix(1, size, mod);
-            var s = "";
-            foreach (var c in start)
+            else
             {
-                s += c;
-                if (s.Length == 3)
-                {
-                    s = s.Substring(1);
-                }
-
-                if (s.Length == 2)
-                {
-                    vector[0, pairs.IndexOf(s)]++;
-                }
+                var words = line.Split(' ');
+                substitutions[words[0]] = words[2];
             }
-
-            vector = vector.Times(matrix.PowerMod(40));
-
-            var counter = new CounterLong<char>(mod);
-
-            for (int i = 0; i < size; i++)
-            {
-                var pair = pairs[i];
-                counter[pair[0]] += vector[0, i];
-            }
-            counter[start.Last()]++;
-
-            Result = (counter.Values.Max() - counter.Values.Min()).ToString();
-
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 202114;
+        var pairs = substitutions.Keys.ToList();
+
+        var matrix = new SquareMatrix(size, mod);
+        for (int i = 0; i < size; i++)
+        {
+            var a = pairs[i];
+            var b = substitutions[a];
+            var i1 = pairs.IndexOf($"{a[0]}{b}");
+            var i2 = pairs.IndexOf($"{b}{a[1]}");
+            matrix[i, i1] = 1;
+            matrix[i, i2] = 1;
+        }
+
+        var vector = new Matrix(1, size, mod);
+        var s = "";
+        foreach (var c in start)
+        {
+            s += c;
+            if (s.Length == 3)
+            {
+                s = s.Substring(1);
+            }
+
+            if (s.Length == 2)
+            {
+                vector[0, pairs.IndexOf(s)]++;
+            }
+        }
+
+        vector = vector.Times(matrix.PowerMod(40));
+
+        var counter = new CounterLong<char>(mod);
+
+        for (int i = 0; i < size; i++)
+        {
+            var pair = pairs[i];
+            counter[pair[0]] += vector[0, i];
+        }
+        counter[start.Last()]++;
+
+        Result = (counter.Values.Max() - counter.Values.Min()).ToString();
+
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202114;
 }

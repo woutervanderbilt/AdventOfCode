@@ -6,13 +6,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag14 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"mask = X1011100000X111X01001000001110X00000
+public class Dag14 : Problem
+{
+    #region input
+
+    private const string input = @"mask = X1011100000X111X01001000001110X00000
 mem[4616] = 8311689
 mem[8936] = 240
 mem[58007] = 369724
@@ -598,104 +598,103 @@ mem[7604] = 2997382
 mem[16594] = 858806
 mem[47216] = 549
 mem[15386] = 126092";
-        #endregion
+    #endregion
 
-        private const string testinput = @"mask = 000000000000000000000000000000X1001X
+    private const string testinput = @"mask = 000000000000000000000000000000X1001X
 mem[42] = 100
 mask = 00000000000000000000000000000000X0XX
 mem[26] = 1";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IDictionary<int, bool> mask = new Dictionary<int, bool>();
+        IDictionary<long, long> mem = new Dictionary<long, long>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IDictionary<int, bool> mask = new Dictionary<int, bool>();
-            IDictionary<long, long> mem = new Dictionary<long, long>();
-            foreach (var line in input.Split(Environment.NewLine))
+            var split = line.Split(" ");
+            if (split[0] == "mask")
             {
-                var split = line.Split(" ");
-                if (split[0] == "mask")
+                mask = new Dictionary<int, bool>();
+                int index = 0;
+                foreach (var c in split[2].Reverse())
                 {
-                    mask = new Dictionary<int, bool>();
-                    int index = 0;
-                    foreach (var c in split[2].Reverse())
+                    if (c == '0')
                     {
-                        if (c == '0')
-                        {
-                            mask[index] = false;
-                        }
-                        else if (c == '1')
-                        {
-                            mask[index] = true;
-                        }
-
-                        index++;
+                        mask[index] = false;
                     }
-                }
-                else
-                {
-                    var location = long.Parse(new Regex(@"(?<=\[)\d*(?=\])").Match(split[0]).Value);
-                    var value = long.Parse(split[2]);
-                    IList<long> locations = new List<long>{0};
-                    long power = 1;
-                    for (int i = 0; i < 36; i++)
+                    else if (c == '1')
                     {
-                        IList<long> newLocations = new List<long>();
-                        foreach (var l in locations)
+                        mask[index] = true;
+                    }
+
+                    index++;
+                }
+            }
+            else
+            {
+                var location = long.Parse(new Regex(@"(?<=\[)\d*(?=\])").Match(split[0]).Value);
+                var value = long.Parse(split[2]);
+                IList<long> locations = new List<long>{0};
+                long power = 1;
+                for (int i = 0; i < 36; i++)
+                {
+                    IList<long> newLocations = new List<long>();
+                    foreach (var l in locations)
+                    {
+                        if (mask.ContainsKey(i))
                         {
-                            if (mask.ContainsKey(i))
+                            if (mask[i])
                             {
-                                if (mask[i])
-                                {
-                                    newLocations.Add(l + power);
-                                }
-                                else
-                                {
-                                    newLocations.Add(l + (location & power));
-                                }
+                                newLocations.Add(l + power);
                             }
                             else
                             {
-                                newLocations.Add(l);
-                                newLocations.Add(l + power);
+                                newLocations.Add(l + (location & power));
                             }
                         }
-
-                        locations = newLocations;
-                        power *= 2;
+                        else
+                        {
+                            newLocations.Add(l);
+                            newLocations.Add(l + power);
+                        }
                     }
 
-                    foreach (var l in locations)
-                    {
-                        mem[l] = value;
-                    }
-
-
-                    //long res = 0;
-                    //long power = 1;
-                    //for (int i = 0; i <= 50; i++)
-                    //{
-                    //    if (mask.ContainsKey(i))
-                    //    {
-                    //        if (mask[i])
-                    //        {
-                    //            res += power;
-                    //        }
-                    //    }
-                    //    else
-                    //    {
-                    //        res += value & power;
-                    //    }
-
-                    //    power *= 2;
-                    //}
-
-                    //mem[location] = res;
+                    locations = newLocations;
+                    power *= 2;
                 }
-            }
 
-            Result = mem.Values.Sum().ToString();
-            return Task.CompletedTask;
+                foreach (var l in locations)
+                {
+                    mem[l] = value;
+                }
+
+
+                //long res = 0;
+                //long power = 1;
+                //for (int i = 0; i <= 50; i++)
+                //{
+                //    if (mask.ContainsKey(i))
+                //    {
+                //        if (mask[i])
+                //        {
+                //            res += power;
+                //        }
+                //    }
+                //    else
+                //    {
+                //        res += value & power;
+                //    }
+
+                //    power *= 2;
+                //}
+
+                //mem[location] = res;
+            }
         }
 
-        public override int Nummer => 202014;
+        Result = mem.Values.Sum().ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202014;
 }

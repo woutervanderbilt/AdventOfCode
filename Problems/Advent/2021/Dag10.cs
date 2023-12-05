@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag10 : Problem
 {
-    internal class Dag10 : Problem
-    {
-        private const string input = @"[{[[{(((<[{{((()<>)(<><>))[{{}{}}((){})]}[<<()[]>[{}()]>[{<>{}}<()()>]]}{{[[{}<>]({}{})]<[{}
+    private const string input = @"[{[[{(((<[{{((()<>)(<><>))[{{}{}}((){})]}[<<()[]>[{}()]>[{<>{}}<()()>]]}{{[[{}<>]({}{})]<[{}
 <[({(([<[[<([[(){}]<()()>])>[[(({})[<>()])]]]<[(({()[]})[{<>{}>(<>{})])<({<>()}[<>{}])(({}<>){()<>
 ([{[([(((<<<{({}())<()[]>}<[[]()]{<>{}})>[{[[][]]{<><>}}]>>)[[[{{({}<>)([]<>)}}({(()[])<()[]>})](<[[()()]<{}
 (<([<<({<[[[([[]{})<()[]>)(<[]()>[{}<>])]<[{[]{}}<()[]>]<[<><>]>>]<{[({})[<>{}]]<[()[]](()<>)>}{((()
@@ -104,100 +104,99 @@ namespace Problems.Advent._2021
 (<{(([{{<[([[<()<>>(<>)]<([])[(){}]>]){{[<[]<>>{{}{}}]}({[{}]}[{()[]}{{}<>}])}]>{<<{{<(){}>({}{}
 ({{(<{{[[<{<[{{}{}}{<>[]}][(<>{}>(()<>)]>}[{<{{}<>}><{()<>}<[]()>>}]>({[{{{}{}}<{}{}>}(((){})[[]<>])]({<[][]>";
 
-        private const string testinput = @"{([(<{}[<>[]}>{[]{[(<()>
+    private const string testinput = @"{([(<{}[<>[]}>{[]{[(<()>
 [[<[([]))<([[{}[[()]]]
 [{[{({}]{}}([{[{{{}}([]
 [<(<(<(<{}))><([]([]()
 <{([([[(<>()){}]>(<<{{";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        long score = 0;
+        IList<long> scores = new List<long>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            long score = 0;
-            IList<long> scores = new List<long>();
-            foreach (var line in input.Split(Environment.NewLine))
+            Stack<char> stack = new Stack<char>();
+            bool correct = true;
+            foreach (var c in line)
             {
-                Stack<char> stack = new Stack<char>();
-                bool correct = true;
-                foreach (var c in line)
+                if (c is '(' or '<' or '{' or '[')
                 {
-                    if (c is '(' or '<' or '{' or '[')
-                    {
-                        stack.Push(c);
-                    }
-                    else
-                    {
-                        if (c == ')')
-                        {
-                            if (stack.Pop() != '(')
-                            {
-                                score += 3;
-                                correct = false;
-                                break;
-                            }
-                        }
-                        if (c == ']')
-                        {
-                            if (stack.Pop() != '[')
-                            {
-                                score += 57;
-                                correct = false;
-                                break;
-                            }
-                        }
-                        if (c == '}')
-                        {
-                            if (stack.Pop() != '{')
-                            {
-                                score += 1197;
-                                correct = false;
-                                break;
-                            }
-                        }
-                        if (c == '>')
-                        {
-                            if (stack.Pop() != '<')
-                            {
-                                score += 25137;
-                                correct = false;
-                                break;
-                            }
-                        }
-                    }
+                    stack.Push(c);
                 }
-
-                if (correct)
+                else
                 {
-                    long linescore = 0;
-                    while (stack.TryPop(out var c))
+                    if (c == ')')
                     {
-                        linescore *= 5;
-                        if(c == '(')
+                        if (stack.Pop() != '(')
                         {
-                            linescore++;
-                        }
-                        else if (c == '[')
-                        {
-                            linescore += 2;
-                        }
-                        else if (c == '{')
-                        {
-                            linescore += 3;
-                        }
-                        else
-                        {
-                            linescore += 4;
+                            score += 3;
+                            correct = false;
+                            break;
                         }
                     }
-
-                    scores.Add(linescore);
+                    if (c == ']')
+                    {
+                        if (stack.Pop() != '[')
+                        {
+                            score += 57;
+                            correct = false;
+                            break;
+                        }
+                    }
+                    if (c == '}')
+                    {
+                        if (stack.Pop() != '{')
+                        {
+                            score += 1197;
+                            correct = false;
+                            break;
+                        }
+                    }
+                    if (c == '>')
+                    {
+                        if (stack.Pop() != '<')
+                        {
+                            score += 25137;
+                            correct = false;
+                            break;
+                        }
+                    }
                 }
             }
 
-            var score2 = scores.OrderBy(s => s).ToList()[scores.Count / 2];
+            if (correct)
+            {
+                long linescore = 0;
+                while (stack.TryPop(out var c))
+                {
+                    linescore *= 5;
+                    if(c == '(')
+                    {
+                        linescore++;
+                    }
+                    else if (c == '[')
+                    {
+                        linescore += 2;
+                    }
+                    else if (c == '{')
+                    {
+                        linescore += 3;
+                    }
+                    else
+                    {
+                        linescore += 4;
+                    }
+                }
 
-            Result = $"{score} {score2}";
-            return Task.CompletedTask;
+                scores.Add(linescore);
+            }
         }
 
-        public override int Nummer => 202110;
+        var score2 = scores.OrderBy(s => s).ToList()[scores.Count / 2];
+
+        Result = $"{score} {score2}";
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202110;
 }

@@ -4,13 +4,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 
-namespace Problems.Advent._2020
-{
-    public class Dag03 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"....#...##.#.........#....#....
+public class Dag03 : Problem
+{
+    #region input
+
+    private const string input = @"....#...##.#.........#....#....
 #.......#...#...#.#............
 #..#..#.#.##....#.#........#...
 ........##...................#.
@@ -333,36 +333,35 @@ namespace Problems.Advent._2020
 .#............#.....#.......#..
 ...#..#...............#........
 .....#.........................";
-        #endregion
+    #endregion
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var map = input.Split(Environment.NewLine);
+        var width = map[0].Length;
+        long result = CountBySlope(1, 1) * CountBySlope(1, 3) * CountBySlope(1, 5) * CountBySlope(1, 7) *
+                      CountBySlope(2,1);
+
+        long CountBySlope(int dx, int dy)
         {
-            var map = input.Split(Environment.NewLine);
-            var width = map[0].Length;
-            long result = CountBySlope(1, 1) * CountBySlope(1, 3) * CountBySlope(1, 5) * CountBySlope(1, 7) *
-                          CountBySlope(2,1);
-
-            long CountBySlope(int dx, int dy)
+            (int x, int y) location = (0, 0);
+            int count = 0;
+            while (location.x < map.Length)
             {
-                (int x, int y) location = (0, 0);
-                int count = 0;
-                while (location.x < map.Length)
+                if (map[location.x][location.y % width] == '#')
                 {
-                    if (map[location.x][location.y % width] == '#')
-                    {
-                        count++;
-                    }
-
-                    location = (location.x + dx, location.y + dy);
+                    count++;
                 }
 
-                return count;
+                location = (location.x + dx, location.y + dy);
             }
 
-            Result = result.ToString();
-            return Task.CompletedTask;
+            return count;
         }
 
-        public override int Nummer => 202003;
+        Result = result.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202003;
 }

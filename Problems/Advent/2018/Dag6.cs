@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2018
+namespace Problems.Advent._2018;
+
+public class Dag6 : Problem
 {
-    public class Dag6 : Problem
-    {
-        private const string input = @"124, 262
+    private const string input = @"124, 262
 182, 343
 79, 341
 44, 244
@@ -58,168 +58,167 @@ namespace Problems.Advent._2018
 267, 147
 248, 271";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<Point> points = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None).Select((s) =>
         {
-            IList<Point> points = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None).Select((s) =>
+            var ss = s.Split(',');
+            return new Point (int.Parse(ss[0]),int.Parse(ss[1]));
+        }).ToList();
+        int minX = points.Min(p => p.X);
+        int maxX = points.Max(p => p.X);
+        int minY = points.Min(p => p.Y);
+        int maxY = points.Max(p => p.Y);
+        int count = 0;
+        for (int x = minX; x <= maxX; x++)
+        {
+            for (int y = minY; y <= maxY; y++)
             {
-                var ss = s.Split(',');
-                return new Point (int.Parse(ss[0]),int.Parse(ss[1]));
-            }).ToList();
-            int minX = points.Min(p => p.X);
-            int maxX = points.Max(p => p.X);
-            int minY = points.Min(p => p.Y);
-            int maxY = points.Max(p => p.Y);
-            int count = 0;
-            for (int x = minX; x <= maxX; x++)
-            {
-                for (int y = minY; y <= maxY; y++)
+                int totalDistance = 0;
+                foreach (var point in points)
                 {
-                    int totalDistance = 0;
-                    foreach (var point in points)
+                    totalDistance += Math.Abs(point.X - x) + Math.Abs(point.Y - y);
+                    if (totalDistance >= 10000)
                     {
-                        totalDistance += Math.Abs(point.X - x) + Math.Abs(point.Y - y);
-                        if (totalDistance >= 10000)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (totalDistance < 10000)
-                    {
-                        count++;
+                        break;
                     }
                 }
-            }
 
-
-
-
-            IDictionary<Point, ClosestValue> currentClosestValues = new Dictionary<Point, ClosestValue>();
-            IDictionary<Point, ClosestValue> allClosestValues = new Dictionary<Point, ClosestValue>();
-            foreach (var point in points)
-            {
-                var closestValue = new ClosestValue(0, point);
-                allClosestValues.Add(point, closestValue);
-                currentClosestValues.Add(point, closestValue);
-            }
-
-            while (currentClosestValues.Any())
-            {
-                IDictionary<Point, ClosestValue> newClosestValues = new Dictionary<Point, ClosestValue>();
-                foreach (var currentClosestValue in currentClosestValues)
+                if (totalDistance < 10000)
                 {
-                    foreach (var point in currentClosestValue.Key.Neighbours())
+                    count++;
+                }
+            }
+        }
+
+
+
+
+        IDictionary<Point, ClosestValue> currentClosestValues = new Dictionary<Point, ClosestValue>();
+        IDictionary<Point, ClosestValue> allClosestValues = new Dictionary<Point, ClosestValue>();
+        foreach (var point in points)
+        {
+            var closestValue = new ClosestValue(0, point);
+            allClosestValues.Add(point, closestValue);
+            currentClosestValues.Add(point, closestValue);
+        }
+
+        while (currentClosestValues.Any())
+        {
+            IDictionary<Point, ClosestValue> newClosestValues = new Dictionary<Point, ClosestValue>();
+            foreach (var currentClosestValue in currentClosestValues)
+            {
+                foreach (var point in currentClosestValue.Key.Neighbours())
+                {
+                    if (point.X < minX || point.X > maxX || point.Y < minY || point.Y > maxY)
                     {
-                        if (point.X < minX || point.X > maxX || point.Y < minY || point.Y > maxY)
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        if (allClosestValues.ContainsKey(point))
-                        {
-                            continue;
-                        }
+                    if (allClosestValues.ContainsKey(point))
+                    {
+                        continue;
+                    }
 
-                        if (newClosestValues.ContainsKey(point))
+                    if (newClosestValues.ContainsKey(point))
+                    {
+                        foreach (var origin in currentClosestValue.Value.Points)
                         {
-                            foreach (var origin in currentClosestValue.Value.Points)
+                            if (!newClosestValues[point].Points.Contains(origin))
                             {
-                                if (!newClosestValues[point].Points.Contains(origin))
-                                {
-                                    newClosestValues[point].Points.Add(origin);
-                                }
+                                newClosestValues[point].Points.Add(origin);
                             }
                         }
-                        else
-                        {
-                            newClosestValues[point] = new ClosestValue(currentClosestValue.Value);
-                        }
                     }
-                }
-
-                foreach (var newClosestValue in newClosestValues)
-                {
-                    allClosestValues[newClosestValue.Key] = newClosestValue.Value;
-                }
-                currentClosestValues = newClosestValues;
-            }
-            IList<Point> borderPoints = new List<Point>();
-            foreach (var borderPoint in allClosestValues.Keys.Where(p => p.X == minX || p.X == maxX || p.Y ==minY || p.Y == maxY))
-            {
-                foreach (var point in allClosestValues[borderPoint].Points)
-                {
-                    if (!borderPoints.Contains(point))
+                    else
                     {
-                        borderPoints.Add(point);
+                        newClosestValues[point] = new ClosestValue(currentClosestValue.Value);
                     }
                 }
             }
-            IDictionary<Point, int> finiteAreas = new Dictionary<Point, int>();
-            foreach (var closestValue in allClosestValues.Values)
+
+            foreach (var newClosestValue in newClosestValues)
             {
-                if (closestValue.Points.Count == 1)
+                allClosestValues[newClosestValue.Key] = newClosestValue.Value;
+            }
+            currentClosestValues = newClosestValues;
+        }
+        IList<Point> borderPoints = new List<Point>();
+        foreach (var borderPoint in allClosestValues.Keys.Where(p => p.X == minX || p.X == maxX || p.Y ==minY || p.Y == maxY))
+        {
+            foreach (var point in allClosestValues[borderPoint].Points)
+            {
+                if (!borderPoints.Contains(point))
                 {
-                    var point = closestValue.Points.Single();
-                    if (!borderPoints.Contains(point))
+                    borderPoints.Add(point);
+                }
+            }
+        }
+        IDictionary<Point, int> finiteAreas = new Dictionary<Point, int>();
+        foreach (var closestValue in allClosestValues.Values)
+        {
+            if (closestValue.Points.Count == 1)
+            {
+                var point = closestValue.Points.Single();
+                if (!borderPoints.Contains(point))
+                {
+                    if (finiteAreas.ContainsKey(point))
                     {
-                        if (finiteAreas.ContainsKey(point))
-                        {
-                            finiteAreas[point]++;
-                        }
-                        else
-                        {
-                            finiteAreas[point] = 1;
-                        }
+                        finiteAreas[point]++;
+                    }
+                    else
+                    {
+                        finiteAreas[point] = 1;
                     }
                 }
             }
-
-            Result = finiteAreas.Values.Max()+" "+count;
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201806;
+        Result = finiteAreas.Values.Max()+" "+count;
+        return Task.CompletedTask;
+    }
+
+    public override int Nummer => 201806;
 
 
-        private class ClosestValue
+    private class ClosestValue
+    {
+        public ClosestValue(ClosestValue closestValue)
         {
-            public ClosestValue(ClosestValue closestValue)
+            Distance = closestValue.Distance;
+            Points = new HashSet<Point>();
+            foreach (var point in closestValue.Points)
             {
-                Distance = closestValue.Distance;
-                Points = new HashSet<Point>();
-                foreach (var point in closestValue.Points)
-                {
-                    Points.Add(point);
-                }
+                Points.Add(point);
             }
-
-            public ClosestValue(int distance, Point point)
-            {
-                Distance = distance;
-                Points = new HashSet<Point>{ point };
-            }
-            public int Distance { get; }
-            public HashSet<Point> Points { get; }
         }
-        private struct Point
+
+        public ClosestValue(int distance, Point point)
         {
-            public Point(int x, int y)
-            {
-                X = x;
-                Y = y;
-            }
-
-            public int X { get; }
-            public int Y { get; }
-
-            public IEnumerable<Point> Neighbours()
-            {
-                yield return new Point(X - 1, Y);
-                yield return new Point(X + 1, Y);
-                yield return new Point(X, Y - 1);
-                yield return new Point(X, Y + 1);
-            }
-
+            Distance = distance;
+            Points = new HashSet<Point>{ point };
         }
+        public int Distance { get; }
+        public HashSet<Point> Points { get; }
+    }
+    private struct Point
+    {
+        public Point(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public int X { get; }
+        public int Y { get; }
+
+        public IEnumerable<Point> Neighbours()
+        {
+            yield return new Point(X - 1, Y);
+            yield return new Point(X + 1, Y);
+            yield return new Point(X, Y - 1);
+            yield return new Point(X, Y + 1);
+        }
+
     }
 }

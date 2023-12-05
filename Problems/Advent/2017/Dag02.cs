@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag02 : Problem
 {
-    internal class Dag02 : Problem
-    {
-        private const string input = @"157	564	120	495	194	520	510	618	244	443	471	473	612	149	506	138
+    private const string input = @"157	564	120	495	194	520	510	618	244	443	471	473	612	149	506	138
 1469	670	47	604	1500	238	1304	1426	54	749	1218	1409	60	51	1436	598
 578	184	2760	3057	994	167	2149	191	2913	2404	213	1025	1815	588	2421	3138
 935	850	726	155	178	170	275	791	1028	75	781	138	176	621	773	688
@@ -25,20 +25,19 @@ namespace Problems.Advent._2017
 2837	2747	2856	426	72	78	2361	96	2784	2780	98	2041	2444	1267	2167	2480
 411	178	4263	4690	3653	162	3201	4702	3129	2685	3716	147	3790	4888	79	165";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        long result = 0;
+        long result2 = 0;
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            long result = 0;
-            long result2 = 0;
-            foreach (var line in input.Split(Environment.NewLine))
-            {
-                var numbers = line.Split("\t").Where(n => !string.IsNullOrWhiteSpace(n)).Select(int.Parse).ToList();
-                result += numbers.Max() - numbers.Min();
-                result2 += numbers.Max(n => numbers.Max(n2 => n % n2 == 0 ? n / n2 : 0));
-            }
-            Result = $"{result}  {result2}";
-            return Task.CompletedTask;
+            var numbers = line.Split("\t").Where(n => !string.IsNullOrWhiteSpace(n)).Select(int.Parse).ToList();
+            result += numbers.Max() - numbers.Min();
+            result2 += numbers.Max(n => numbers.Max(n2 => n % n2 == 0 ? n / n2 : 0));
         }
-
-        public override int Nummer => 201702;
+        Result = $"{result}  {result2}";
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201702;
 }

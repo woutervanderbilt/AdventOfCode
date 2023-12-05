@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent
+namespace Problems.Advent;
+
+public class Dag10 : Problem
 {
-    public class Dag10 : Problem
-    {
-        private const string input = @"bot 76 gives low to bot 191 and high to bot 21
+    private const string input = @"bot 76 gives low to bot 191 and high to bot 21
 bot 193 gives low to bot 118 and high to bot 145
 bot 173 gives low to bot 91 and high to bot 36
 value 23 goes to bot 68
@@ -239,174 +239,173 @@ bot 123 gives low to bot 33 and high to bot 195
 bot 183 gives low to bot 83 and high to bot 90
 bot 71 gives low to bot 152 and high to bot 121";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IDictionary<int, Bot> bots = new Dictionary<int, Bot>();
+        IDictionary<int, Output> outputs = new Dictionary<int, Output>();
+        Bot startBot = null;
+        var outputreader = new OutputReader();
+        foreach (var instruction in input.Split(Environment.NewLine))
         {
-            IDictionary<int, Bot> bots = new Dictionary<int, Bot>();
-            IDictionary<int, Output> outputs = new Dictionary<int, Output>();
-            Bot startBot = null;
-            var outputreader = new OutputReader();
-            foreach (var instruction in input.Split(Environment.NewLine))
+            if (instruction.StartsWith("bot"))
             {
-                if (instruction.StartsWith("bot"))
-                {
-                    var split = instruction.Split(' ');
-                    var botnumber = int.Parse(split[1]);
-                    var bot = GetBot(botnumber);
-                    int low = int.Parse(split[6]);
-                    int high = int.Parse(split[11]);
-                    bot.GiveLowTo = split[5] == "bot" ? GetBot(low) : GetOutput(low);
-                    bot.GiveHighTo = split[10] == "bot" ? GetBot(high) : GetOutput(high);
+                var split = instruction.Split(' ');
+                var botnumber = int.Parse(split[1]);
+                var bot = GetBot(botnumber);
+                int low = int.Parse(split[6]);
+                int high = int.Parse(split[11]);
+                bot.GiveLowTo = split[5] == "bot" ? GetBot(low) : GetOutput(low);
+                bot.GiveHighTo = split[10] == "bot" ? GetBot(high) : GetOutput(high);
 
-                }
-                else if (instruction.StartsWith("value"))
-                {
-                    var split = instruction.Split(' ');
-                    var botnumber = int.Parse(split[5]);
-                    var bot = GetBot(botnumber);
-                    if (bot.Receive(int.Parse(split[1])))
-                    {
-                        startBot = bot;
-                    }
-                }
             }
-            startBot.Give();
-
-
-            Bot GetBot(int botnumber)
+            else if (instruction.StartsWith("value"))
             {
-                if (!bots.ContainsKey(botnumber))
+                var split = instruction.Split(' ');
+                var botnumber = int.Parse(split[5]);
+                var bot = GetBot(botnumber);
+                if (bot.Receive(int.Parse(split[1])))
                 {
-                    bots[botnumber] = new Bot(botnumber);
-                }
-
-                return bots[botnumber];
-            }
-
-            Output GetOutput(int outputnumber)
-            {
-                if (!outputs.ContainsKey(outputnumber))
-                {
-                    outputs[outputnumber] = new Output(outputnumber, outputreader);
-                }
-
-                return outputs[outputnumber];
-            }
-
-            return Task.CompletedTask;
-        }
-
-        private interface IGiveTo
-        {
-            public int Number { get; }
-            bool Receive(int number);
-            void Give();
-        }
-
-        private class OutputReader
-        {
-            private int? Output0 { get; set; }
-            private int? Output1 { get; set; }
-            private int? Output2 { get; set; }
-
-
-            public void Read(int outputnumber, int output)
-            {
-                if (outputnumber == 0 && !Output0.HasValue)
-                {
-                    Output0 = output;
-                }
-                if (outputnumber == 1 && !Output1.HasValue)
-                {
-                    Output1 = output;
-                }
-                if (outputnumber == 2 && !Output2.HasValue)
-                {
-                    Output2 = output;
-                }
-
-                if (Output0 * Output1 * Output2 != null)
-                {
-                    Console.WriteLine(Output0 * Output1 * Output2);
+                    startBot = bot;
                 }
             }
         }
+        startBot.Give();
 
-        private class Output : IGiveTo
+
+        Bot GetBot(int botnumber)
         {
-            private readonly OutputReader outputReader;
-
-            public Output(int number, OutputReader outputReader)
+            if (!bots.ContainsKey(botnumber))
             {
-                this.outputReader = outputReader;
-                Number = number;
+                bots[botnumber] = new Bot(botnumber);
             }
 
-            public int Number { get; }
+            return bots[botnumber];
+        }
 
-            public bool Receive(int number)
+        Output GetOutput(int outputnumber)
+        {
+            if (!outputs.ContainsKey(outputnumber))
             {
-                outputReader.Read(Number, number);
+                outputs[outputnumber] = new Output(outputnumber, outputreader);
+            }
+
+            return outputs[outputnumber];
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private interface IGiveTo
+    {
+        public int Number { get; }
+        bool Receive(int number);
+        void Give();
+    }
+
+    private class OutputReader
+    {
+        private int? Output0 { get; set; }
+        private int? Output1 { get; set; }
+        private int? Output2 { get; set; }
+
+
+        public void Read(int outputnumber, int output)
+        {
+            if (outputnumber == 0 && !Output0.HasValue)
+            {
+                Output0 = output;
+            }
+            if (outputnumber == 1 && !Output1.HasValue)
+            {
+                Output1 = output;
+            }
+            if (outputnumber == 2 && !Output2.HasValue)
+            {
+                Output2 = output;
+            }
+
+            if (Output0 * Output1 * Output2 != null)
+            {
+                Console.WriteLine(Output0 * Output1 * Output2);
+            }
+        }
+    }
+
+    private class Output : IGiveTo
+    {
+        private readonly OutputReader outputReader;
+
+        public Output(int number, OutputReader outputReader)
+        {
+            this.outputReader = outputReader;
+            Number = number;
+        }
+
+        public int Number { get; }
+
+        public bool Receive(int number)
+        {
+            outputReader.Read(Number, number);
+            return false;
+        }
+        public void Give()
+        {}
+    }
+
+    private class Bot : IGiveTo
+    {
+        public Bot(int number)
+        {
+            Number = number;
+        }
+
+        public int? Value1 { get; set; }
+        public int? Value2 { get; set; }
+
+        public IGiveTo GiveHighTo { get; set; }
+        public IGiveTo GiveLowTo { get; set; }
+
+
+        public int Number { get; }
+
+        public bool Receive(int number)
+        {
+            if (Value1.HasValue)
+            {
+                Value2 = number;
+                return true;
+            }
+            else
+            {
+                Value1 = number;
                 return false;
             }
-            public void Give()
-            {}
         }
 
-        private class Bot : IGiveTo
+        public void Give()
         {
-            public Bot(int number)
+            if (Value1 > Value2)
             {
-                Number = number;
+                (Value1, Value2) = (Value2, Value1);
             }
 
-            public int? Value1 { get; set; }
-            public int? Value2 { get; set; }
-
-            public IGiveTo GiveHighTo { get; set; }
-            public IGiveTo GiveLowTo { get; set; }
-
-
-            public int Number { get; }
-
-            public bool Receive(int number)
+            if (Value1 == 17 && Value2 == 61)
             {
-                if (Value1.HasValue)
-                {
-                    Value2 = number;
-                    return true;
-                }
-                else
-                {
-                    Value1 = number;
-                    return false;
-                }
+
+            }
+            bool high = GiveHighTo.Receive(Value2!.Value);
+            bool low = GiveLowTo.Receive(Value1!.Value);
+            if (high)
+            {
+                GiveHighTo.Give();
             }
 
-            public void Give()
+            if (low)
             {
-                if (Value1 > Value2)
-                {
-                    (Value1, Value2) = (Value2, Value1);
-                }
-
-                if (Value1 == 17 && Value2 == 61)
-                {
-
-                }
-                bool high = GiveHighTo.Receive(Value2!.Value);
-                bool low = GiveLowTo.Receive(Value1!.Value);
-                if (high)
-                {
-                    GiveHighTo.Give();
-                }
-
-                if (low)
-                {
-                    GiveLowTo.Give();
-                }
+                GiveLowTo.Give();
             }
         }
-
-        public override int Nummer => 201610;
     }
+
+    public override int Nummer => 201610;
 }

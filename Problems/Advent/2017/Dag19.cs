@@ -4,11 +4,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag19 : Problem
 {
-    internal class Dag19 : Problem
-    {
-        private const string input = @"               |                                                                                                                                                                                         
+    private const string input = @"               |                                                                                                                                                                                         
              +---------------------------------------------------+                 +-+         +-----+       +-------------------------------+     +-------------------------------------+         +---+ 
              | |                                                 |                 | |         |     |       |                               |     |                                     |         |   | 
              | |         +-----+     +---------------------------|-------------------|---------+     |       |                               |     |                             +-----+ |         |   | 
@@ -210,97 +210,96 @@ namespace Problems.Advent._2017
  +-----------------+                     +-+ +-------------------+       +---+                   +-----------------------------------+                                                     +---+         
                                                                                                                                                                                                          ";
 
-        private const string testinput = @"     |          
+    private const string testinput = @"     |          
      |  +--+    
      A  |  C    
  F---|--|-E---+ 
      |  |  |  D 
      +B-+  +--+";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        Grid<char> grid = new Grid<char>();
+        int y = 0;
+        int startX = 0;
+        foreach (var line in testinput.Split(Environment.NewLine))
         {
-            Grid<char> grid = new Grid<char>();
-            int y = 0;
-            int startX = 0;
-            foreach (var line in testinput.Split(Environment.NewLine))
+            int x = 0;
+            foreach (var c in line)
             {
-                int x = 0;
-                foreach (var c in line)
+                if (c != ' ')
                 {
-                    if (c != ' ')
+                    if (y == 0)
                     {
-                        if (y == 0)
-                        {
-                            startX = x;
-                        }
-                        grid[x, y] = c;
+                        startX = x;
                     }
-                    x++;
+                    grid[x, y] = c;
                 }
-                y--;
+                x++;
+            }
+            y--;
+        }
+
+        var direction = GridDirection.South;
+        (int x, int y) location = (startX, 0);
+        var encountered = new StringBuilder();
+
+        int count = 1;
+        while (Move())
+        {
+            count++;
+        }
+
+        Result = $"{encountered}  {count}";
+
+        bool Move()
+        {
+            var next = grid.MoveInDirection(location, direction);
+            if (!next.Found)
+            {
+                return false;
             }
 
-            var direction = GridDirection.South;
-            (int x, int y) location = (startX, 0);
-            var encountered = new StringBuilder();
-
-            int count = 1;
-            while (Move())
+            location = next.Location;
+            if (next.Value != '+')
             {
-                count++;
-            }
-
-            Result = $"{encountered}  {count}";
-
-            bool Move()
-            {
-                var next = grid.MoveInDirection(location, direction);
-                if (!next.Found)
+                if (next.Value is not '-' and not '|')
                 {
-                    return false;
+                    encountered.Append(next.Value);
                 }
-
-                location = next.Location;
-                if (next.Value != '+')
+            }
+            else
+            {
+                if (direction is GridDirection.North or GridDirection.South)
                 {
-                    if (next.Value is not '-' and not '|')
+                    var east = grid.MoveInDirection(next.Location, GridDirection.East);
+                    if (!east.Found || east.Value == '|')
                     {
-                        encountered.Append(next.Value);
+                        direction = GridDirection.West;
+                    }
+                    else
+                    {
+                        direction = GridDirection.East;
                     }
                 }
                 else
                 {
-                    if (direction is GridDirection.North or GridDirection.South)
+                    var north = grid.MoveInDirection(next.Location, GridDirection.North);
+                    if (!north.Found || north.Value == '-')
                     {
-                        var east = grid.MoveInDirection(next.Location, GridDirection.East);
-                        if (!east.Found || east.Value == '|')
-                        {
-                            direction = GridDirection.West;
-                        }
-                        else
-                        {
-                            direction = GridDirection.East;
-                        }
+                        direction = GridDirection.South;
                     }
                     else
                     {
-                        var north = grid.MoveInDirection(next.Location, GridDirection.North);
-                        if (!north.Found || north.Value == '-')
-                        {
-                            direction = GridDirection.South;
-                        }
-                        else
-                        {
-                            direction = GridDirection.North;
-                        }
+                        direction = GridDirection.North;
                     }
                 }
-
-                return true;
             }
 
-            return Task.CompletedTask;
+            return true;
         }
-        
-        public override int Nummer => 201719;
+
+        return Task.CompletedTask;
     }
+        
+    public override int Nummer => 201719;
 }

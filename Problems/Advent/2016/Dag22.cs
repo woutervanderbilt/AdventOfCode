@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent
+namespace Problems.Advent;
+
+public class Dag22 : Problem
 {
-    public class Dag22 : Problem
-    {
-        #region input
-        private const string input = @"root@ebhq-gridcenter# df -h
+    #region input
+    private const string input = @"root@ebhq-gridcenter# df -h
 Filesystem              Size  Used  Avail  Use%
 /dev/grid/node-x0-y0     91T   71T    20T   78%
 /dev/grid/node-x0-y1     88T   72T    16T   81%
@@ -1065,289 +1065,288 @@ Filesystem              Size  Used  Avail  Use%
 /dev/grid/node-x33-y28   90T   73T    17T   81%
 /dev/grid/node-x33-y29   87T   68T    19T   78%
 /dev/grid/node-x33-y30   94T   66T    28T   70%";
-        #endregion
+    #endregion
         
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<Node> nodes = new List<Node>();
+
+        var grid = new Grid();
+        grid.Nodes = new Dictionary<(int, int), Node>();
+        grid.PossibleMoves = new List<(int sx, int sy, int tx, int ty)>();
+        foreach (var line in input.Split(Environment.NewLine).Skip(2))
         {
-            IList<Node> nodes = new List<Node>();
-
-            var grid = new Grid();
-            grid.Nodes = new Dictionary<(int, int), Node>();
-            grid.PossibleMoves = new List<(int sx, int sy, int tx, int ty)>();
-            foreach (var line in input.Split(Environment.NewLine).Skip(2))
-            {
-                var words = line.Split(' ').Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
-                var nodeLocation = words[0].Split('-');
-                var x = int.Parse(nodeLocation[1].Replace("x", string.Empty));
-                var y = int.Parse(nodeLocation[2].Replace("y", string.Empty));
-                var size = int.Parse(words[1].Replace("T", string.Empty));
-                var used = int.Parse(words[2].Replace("T", string.Empty));
-                var node = new Node {X = x, Y = y, Size = size, Used = used};
-                nodes.Add(node);
-                grid.Nodes[(x, y)] = node;
-            }
-
-            int count = 0;
-            foreach (var node1 in nodes)
-            {
-                foreach (var node2 in nodes)
-                {
-                    if (node1.X == node2.X && Math.Abs(node1.Y - node2.Y) == 1
-                        || node1.Y == node2.Y && Math.Abs(node1.X - node2.X) == 1)
-                    {
-                        if (node1.IsEmpty && node1.Available >= node2.Used)
-                        {
-                            grid.PossibleMoves.Add((node2.X, node2.Y, node1.X, node1.Y));
-                        }
-                    }
-                }
-            }
-
-            grid.TargetX = grid.Nodes.Keys.Max(k => k.Item1);
-            grid.TargetY = 0;
-
-            HashSet<Grid> visited = new HashSet<Grid>();
-            visited.Add(grid);
-            IList<Grid> current = new List<Grid>();
-            current.Add(grid);
-            int step = 0;
-
-            var ordered = nodes.OrderBy(n => n.Used);
-
-            int width = grid.Nodes.Keys.Max(k => k.Item2);
-
-            var barSb = new StringBuilder();
-            for (int i = 0; i <= width; i++)
-            {
-                barSb.Append("+-");
-            }
-
-            barSb.Append("+");
-            var bar = barSb.ToString();
-            Console.WriteLine(bar);
-            for (int x = 0; x <= grid.TargetX ;x++)
-            {
-                var sb = new StringBuilder("|");
-                for (int y = 0; y <= width; y++)
-                {
-                    var node = grid.Nodes[(x, y)];
-                    sb.Append(node.IsEmpty ? "O" : (node.Size > 200 ? "#" : (x == grid.TargetX && y == grid.TargetY ? "X" : "."))).Append("|");
-                }
-                Console.WriteLine(sb);
-                Console.WriteLine(bar);
-            }
-
-
-            while (true)
-            {
-                Console.WriteLine($"{step} {current.Count}");
-                step++;
-                IList<Grid> next = new List<Grid>();
-                foreach (var grid1 in current)
-                {
-                    foreach (var possibleGrid in grid1.PossibleGrids())
-                    {
-                        if(possibleGrid.TargetX == 0 && possibleGrid.TargetY == 0)
-                        {
-                            Result = step.ToString();
-                            return Task.CompletedTask;
-                        }
-
-                        if (!visited.Contains(possibleGrid))
-                        {
-                            visited.Add(possibleGrid);
-                            next.Add(possibleGrid);
-                        }
-                    }
-
-                    current = next;
-                }
-            }
-
-            Result = count.ToString();
-            return Task.CompletedTask;
+            var words = line.Split(' ').Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+            var nodeLocation = words[0].Split('-');
+            var x = int.Parse(nodeLocation[1].Replace("x", string.Empty));
+            var y = int.Parse(nodeLocation[2].Replace("y", string.Empty));
+            var size = int.Parse(words[1].Replace("T", string.Empty));
+            var used = int.Parse(words[2].Replace("T", string.Empty));
+            var node = new Node {X = x, Y = y, Size = size, Used = used};
+            nodes.Add(node);
+            grid.Nodes[(x, y)] = node;
         }
 
-        private class Grid
+        int count = 0;
+        foreach (var node1 in nodes)
         {
-            public IDictionary<(int, int), Node> Nodes { get; set; }
-            public IList<(int sx, int sy, int tx, int ty)> PossibleMoves { get; set; }
-            public int TargetX { get; set; }
-            public int TargetY { get; set; }
-
-            public IEnumerable<Grid> PossibleGrids()
+            foreach (var node2 in nodes)
             {
-                foreach (var move in PossibleMoves)
+                if (node1.X == node2.X && Math.Abs(node1.Y - node2.Y) == 1
+                    || node1.Y == node2.Y && Math.Abs(node1.X - node2.X) == 1)
                 {
-                    yield return ExecuteMove();
-
-                    Grid ExecuteMove()
+                    if (node1.IsEmpty && node1.Available >= node2.Used)
                     {
-                        var grid = new Grid()
-                        {
-                            Nodes = new Dictionary<(int, int), Node>(),
-                            PossibleMoves = new List<(int sx, int sy, int tx, int ty)>(),
-                            TargetX = TargetX,
-                            TargetY = TargetY
-                        };
-                        foreach (var node in Nodes)
-                        {
-                            grid.Nodes[node.Key] = node.Value.Clone();
-                        }
-                        var source = grid.Nodes[(move.sx, move.sy)];
-                        var target = grid.Nodes[(move.tx, move.ty)];
-                        target.Used += source.Used;
-                        source.Used = 0;
-                        if (TargetX == source.X && TargetY == source.Y)
-                        {
-                            grid.TargetX = move.tx;
-                            grid.TargetY = move.ty;
-                        }
-                        foreach (var possibleMove in grid.PossibleMoves)
-                        {
-                            if (move.sx == possibleMove.sx && move.sy == possibleMove.sy
-                                || move.tx == possibleMove.tx && move.ty == possibleMove.ty)
-                            {
-                                continue;
-                            }
-
-                            grid.PossibleMoves.Add(possibleMove);
-                        }
-
-                        Node neighbour;
-                        if (grid.Nodes.TryGetValue((move.sx - 1, move.sy), out neighbour))
-                        {
-                            AddPossibleMove(source, neighbour);
-                        }
-                        if (grid.Nodes.TryGetValue((move.sx + 1, move.sy), out neighbour))
-                        {
-                            AddPossibleMove(source, neighbour);
-
-                        }
-                        if (grid.Nodes.TryGetValue((move.sx, move.sy - 1), out neighbour))
-                        {
-                            AddPossibleMove(source, neighbour);
-                        }
-                        if (grid.Nodes.TryGetValue((move.sx, move.sy + 1), out neighbour))
-                        {
-                            AddPossibleMove(source, neighbour);
-                        }
-                        if (grid.Nodes.TryGetValue((move.tx - 1, move.ty), out neighbour))
-                        {
-                            AddPossibleMove(target, neighbour);
-                        }
-                        if (grid.Nodes.TryGetValue((move.tx + 1, move.ty), out neighbour))
-                        {
-                            AddPossibleMove(target, neighbour);
-                        }
-                        if (grid.Nodes.TryGetValue((move.tx, move.ty - 1), out neighbour))
-                        {
-                            AddPossibleMove(target, neighbour);
-                        }
-                        if (grid.Nodes.TryGetValue((move.tx, move.ty + 1), out neighbour))
-                        {
-                            AddPossibleMove(target, neighbour);
-                        }
-
-                        return grid;
-
-                        void AddPossibleMove(Node node, Node neighbour)
-                        {
-                            if (neighbour.IsEmpty && neighbour.Available >= node.Used)
-                            {
-                                if (!grid.PossibleMoves.Contains((node.X, node.Y, neighbour.X, neighbour.Y)))
-                                {
-                                    grid.PossibleMoves.Add((node.X, node.Y, neighbour.X, neighbour.Y));
-                                }
-                            }
-                            if (node.IsEmpty && node.Available >= neighbour.Used)
-                            {
-                                if (!grid.PossibleMoves.Contains((neighbour.X, neighbour.Y, node.X, node.Y)))
-                                {
-                                    grid.PossibleMoves.Add((neighbour.X, neighbour.Y, node.X, node.Y));
-                                }
-                            }
-                        }
+                        grid.PossibleMoves.Add((node2.X, node2.Y, node1.X, node1.Y));
                     }
                 }
             }
+        }
 
-            public override bool Equals(object? obj)
+        grid.TargetX = grid.Nodes.Keys.Max(k => k.Item1);
+        grid.TargetY = 0;
+
+        HashSet<Grid> visited = new HashSet<Grid>();
+        visited.Add(grid);
+        IList<Grid> current = new List<Grid>();
+        current.Add(grid);
+        int step = 0;
+
+        var ordered = nodes.OrderBy(n => n.Used);
+
+        int width = grid.Nodes.Keys.Max(k => k.Item2);
+
+        var barSb = new StringBuilder();
+        for (int i = 0; i <= width; i++)
+        {
+            barSb.Append("+-");
+        }
+
+        barSb.Append("+");
+        var bar = barSb.ToString();
+        Console.WriteLine(bar);
+        for (int x = 0; x <= grid.TargetX ;x++)
+        {
+            var sb = new StringBuilder("|");
+            for (int y = 0; y <= width; y++)
             {
-                return Equals((Grid)obj);
+                var node = grid.Nodes[(x, y)];
+                sb.Append(node.IsEmpty ? "O" : (node.Size > 200 ? "#" : (x == grid.TargetX && y == grid.TargetY ? "X" : "."))).Append("|");
             }
+            Console.WriteLine(sb);
+            Console.WriteLine(bar);
+        }
 
-            protected bool Equals(Grid other)
+
+        while (true)
+        {
+            Console.WriteLine($"{step} {current.Count}");
+            step++;
+            IList<Grid> next = new List<Grid>();
+            foreach (var grid1 in current)
             {
-                if (TargetX == other.TargetX && TargetY == other.TargetY)
+                foreach (var possibleGrid in grid1.PossibleGrids())
                 {
+                    if(possibleGrid.TargetX == 0 && possibleGrid.TargetY == 0)
+                    {
+                        Result = step.ToString();
+                        return Task.CompletedTask;
+                    }
+
+                    if (!visited.Contains(possibleGrid))
+                    {
+                        visited.Add(possibleGrid);
+                        next.Add(possibleGrid);
+                    }
+                }
+
+                current = next;
+            }
+        }
+
+        Result = count.ToString();
+        return Task.CompletedTask;
+    }
+
+    private class Grid
+    {
+        public IDictionary<(int, int), Node> Nodes { get; set; }
+        public IList<(int sx, int sy, int tx, int ty)> PossibleMoves { get; set; }
+        public int TargetX { get; set; }
+        public int TargetY { get; set; }
+
+        public IEnumerable<Grid> PossibleGrids()
+        {
+            foreach (var move in PossibleMoves)
+            {
+                yield return ExecuteMove();
+
+                Grid ExecuteMove()
+                {
+                    var grid = new Grid()
+                    {
+                        Nodes = new Dictionary<(int, int), Node>(),
+                        PossibleMoves = new List<(int sx, int sy, int tx, int ty)>(),
+                        TargetX = TargetX,
+                        TargetY = TargetY
+                    };
                     foreach (var node in Nodes)
                     {
-                        if (!node.Value.Equals(other.Nodes[node.Key]))
+                        grid.Nodes[node.Key] = node.Value.Clone();
+                    }
+                    var source = grid.Nodes[(move.sx, move.sy)];
+                    var target = grid.Nodes[(move.tx, move.ty)];
+                    target.Used += source.Used;
+                    source.Used = 0;
+                    if (TargetX == source.X && TargetY == source.Y)
+                    {
+                        grid.TargetX = move.tx;
+                        grid.TargetY = move.ty;
+                    }
+                    foreach (var possibleMove in grid.PossibleMoves)
+                    {
+                        if (move.sx == possibleMove.sx && move.sy == possibleMove.sy
+                            || move.tx == possibleMove.tx && move.ty == possibleMove.ty)
                         {
-                            return false;
+                            continue;
                         }
+
+                        grid.PossibleMoves.Add(possibleMove);
                     }
 
-                    return true;
+                    Node neighbour;
+                    if (grid.Nodes.TryGetValue((move.sx - 1, move.sy), out neighbour))
+                    {
+                        AddPossibleMove(source, neighbour);
+                    }
+                    if (grid.Nodes.TryGetValue((move.sx + 1, move.sy), out neighbour))
+                    {
+                        AddPossibleMove(source, neighbour);
+
+                    }
+                    if (grid.Nodes.TryGetValue((move.sx, move.sy - 1), out neighbour))
+                    {
+                        AddPossibleMove(source, neighbour);
+                    }
+                    if (grid.Nodes.TryGetValue((move.sx, move.sy + 1), out neighbour))
+                    {
+                        AddPossibleMove(source, neighbour);
+                    }
+                    if (grid.Nodes.TryGetValue((move.tx - 1, move.ty), out neighbour))
+                    {
+                        AddPossibleMove(target, neighbour);
+                    }
+                    if (grid.Nodes.TryGetValue((move.tx + 1, move.ty), out neighbour))
+                    {
+                        AddPossibleMove(target, neighbour);
+                    }
+                    if (grid.Nodes.TryGetValue((move.tx, move.ty - 1), out neighbour))
+                    {
+                        AddPossibleMove(target, neighbour);
+                    }
+                    if (grid.Nodes.TryGetValue((move.tx, move.ty + 1), out neighbour))
+                    {
+                        AddPossibleMove(target, neighbour);
+                    }
+
+                    return grid;
+
+                    void AddPossibleMove(Node node, Node neighbour)
+                    {
+                        if (neighbour.IsEmpty && neighbour.Available >= node.Used)
+                        {
+                            if (!grid.PossibleMoves.Contains((node.X, node.Y, neighbour.X, neighbour.Y)))
+                            {
+                                grid.PossibleMoves.Add((node.X, node.Y, neighbour.X, neighbour.Y));
+                            }
+                        }
+                        if (node.IsEmpty && node.Available >= neighbour.Used)
+                        {
+                            if (!grid.PossibleMoves.Contains((neighbour.X, neighbour.Y, node.X, node.Y)))
+                            {
+                                grid.PossibleMoves.Add((neighbour.X, neighbour.Y, node.X, node.Y));
+                            }
+                        }
+                    }
                 }
-
-                return false;
             }
+        }
 
-            public override int GetHashCode()
+        public override bool Equals(object? obj)
+        {
+            return Equals((Grid)obj);
+        }
+
+        protected bool Equals(Grid other)
+        {
+            if (TargetX == other.TargetX && TargetY == other.TargetY)
             {
-                var hashCode = new HashCode();
-                hashCode.Add(TargetX);
-                hashCode.Add(TargetY);
                 foreach (var node in Nodes)
                 {
-                    hashCode.Add(node.Value.GetHashCode());
+                    if (!node.Value.Equals(other.Nodes[node.Key]))
+                    {
+                        return false;
+                    }
                 }
 
-                return hashCode.ToHashCode();
+                return true;
             }
+
+            return false;
         }
 
-        private class Node
+        public override int GetHashCode()
         {
-            public int X { get; set; }
-            public int Y { get; set; }
-            public int Size { get; set; }
-            public int Used { get; set; }
-            public int Available => Size - Used;
-            public bool IsEmpty => Used == 0;
-
-            public Node Clone()
+            var hashCode = new HashCode();
+            hashCode.Add(TargetX);
+            hashCode.Add(TargetY);
+            foreach (var node in Nodes)
             {
-                return new Node()
-                {
-                    X = X,
-                    Y=Y,
-                    Size = Size,
-                    Used = Used
-                };
+                hashCode.Add(node.Value.GetHashCode());
             }
 
-            public override bool Equals(object? obj)
-            {
-                return Equals((Node)obj);
-            }
+            return hashCode.ToHashCode();
+        }
+    }
 
-            protected bool Equals(Node other)
-            {
-                return X == other.X && Y == other.Y && Size == other.Size && Used == other.Used;
-            }
+    private class Node
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Size { get; set; }
+        public int Used { get; set; }
+        public int Available => Size - Used;
+        public bool IsEmpty => Used == 0;
 
-            public override int GetHashCode()
+        public Node Clone()
+        {
+            return new Node()
             {
-                return HashCode.Combine(X, Y, Size, Used);
-            }
+                X = X,
+                Y=Y,
+                Size = Size,
+                Used = Used
+            };
         }
 
+        public override bool Equals(object? obj)
+        {
+            return Equals((Node)obj);
+        }
 
+        protected bool Equals(Node other)
+        {
+            return X == other.X && Y == other.Y && Size == other.Size && Used == other.Used;
+        }
 
-
-        public override int Nummer => 201622;
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(X, Y, Size, Used);
+        }
     }
+
+
+
+
+    public override int Nummer => 201622;
 }

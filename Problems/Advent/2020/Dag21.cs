@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag21 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"jtgktc gnvtb sfb vdlsx sdh przbq cvslrn ccntj hvbfjv rkvs jctgkq cfkv kjz rkkrx fvxql pgfzp vrqkb bqkndvb bmrmhm frdf xgms pvhf cccmn glbktsc phxqzn hqqt bqtvr qxgsq gpddp dtsjv jcpb txjkrbh cnj rlvkp ldxh qlcsjhg fcfvhz vflms zcx jrvgpbht bxtztd bvpq rgf qzkjrtl xfsrjp mzvqjf rtjzgg sbkztg lrc bbkzrl hfrhh hnbvdq snhrpv qknlg khjjdk (contains shellfish, fish)
+public class Dag21 : Problem
+{
+    #region input
+
+    private const string input = @"jtgktc gnvtb sfb vdlsx sdh przbq cvslrn ccntj hvbfjv rkvs jctgkq cfkv kjz rkkrx fvxql pgfzp vrqkb bqkndvb bmrmhm frdf xgms pvhf cccmn glbktsc phxqzn hqqt bqtvr qxgsq gpddp dtsjv jcpb txjkrbh cnj rlvkp ldxh qlcsjhg fcfvhz vflms zcx jrvgpbht bxtztd bvpq rgf qzkjrtl xfsrjp mzvqjf rtjzgg sbkztg lrc bbkzrl hfrhh hnbvdq snhrpv qknlg khjjdk (contains shellfish, fish)
 qgbft rkkrx ljrblp htjggs bqtvr frlgls sbkztg fcgbkq zhqlcr qlcsjhg bxtztd mtdbxq hzdk gnvtb fjvdbs nljs mmhv lffcp lrc hvtzz glbktsc phqjq czvjt fglxll hnknpb hqqt sdh bmrmhm ltftm cfkv bqkndvb bdqbc jmctq jkrsn qzkjrtl gbpqhk vflms tplzk nsdrd qtdhj snhrpv fcfvhz rtjzgg dgmb nfrln trl bbkzrl frdf vknkn hnbvdq rlvkp jvrhm pzzkssr sbvcdk tzdz qgqbpmp lrzfcf fvxql mcsbdnpt zfrp phxqzn tqsjd shmzdgxm sqp zlxtk mmzn gpddp drgqqp ldxls (contains peanuts)
 bmrmhm kjz fjvdbs dtsjv khjjdk vrqkb zhqlcr sqp jrvgpbht ttvvt vxkzt nrrh przbq phqjq gpddp htcblx htsrn tplzk frdf mtdbxq bdqbc fcfkxs rh ltftm frlgls zfrp sdh drgqqp nfrln qlkdr bxtztd pzzkssr htrvf qzkjrtl jctgkq dgmb nhxjbx hfrhh rkkrx gnrxbp trpllnr lflxjnh fsskh hrbrc gbpqhk rkvs zmb gbqfd szj snhrpv ggkz pgfzp jkrsn ldxls fqxx lzbjg lxfd phxqzn qlcsjhg qgbft vflms bqtvr nbzxn (contains peanuts)
 drgqqp sqp jlvmh shmzdgxm pgkttq lrc vflms nfzn jvpslhn dcqz nhxjbx bmppb czvjt bmrmhm snhrpv qmlndrj qvmtms lgtnxs jrvgpbht nrhftzl htcblx fvxql gpddp svqtgll lrzfcf fjvdbs vfgqpk fglxll vrqkb ztmkvt lxfm tplzk bqkndvb xfsrjp zlxtk mtdbxq htsrn ttvvt hfrhh rkkrx sbvcdk mcsbdnpt sdh msrg zmb tcbbkg trl bqtvr gbpqhk jkrsn hskzxjz (contains peanuts, nuts)
@@ -54,80 +54,79 @@ rlvkp hskzxjz glbktsc vrqkb gcgqb kjz cnj ddt trpllnr ldxh bmrmhm gpddp nbzxn lf
 rxbx dtsjv snhrpv phqjq mn pgkttq krzchjs hzdk vflms fsskh ltftm qgqbpmp zmb hmjs tbb cgplg sbvcdk cjgxf bmrmhm bqtvr qzkjrtl zfrp ldxh fjphsbb nhxjbx ccntj zhqlcr lzbjg szj vfgqpk qlcsjhg qxgsq hqqt bvv dcqz vdlsx jvpslhn lxfm pzzkssr hmzvmm rxv qvmtms qbnzjb fdl jmctq przbq jslg zhnlt pvhf szdnqf gbqfd lffcp qlkdr bqkndvb gpddp gnvtb (contains eggs, dairy, peanuts)
 bdqbc ggkz szdnqf fsskh nbzxn dtsjv clcr qxgsq jlvmh mzvqjf fcgbkq hqqt rkkrx mmhv vtxnv gzlj zkhdzrb jrjfv vfgqpk qgbft fdl lgtnxs snhrpv fglxll jvpslhn pfszh bqtvr bqkndvb zcx pvhf jcpb hxs przbq vvrdp nrrh tqsjd hzdk ldxh qvmtms hcgsh vflms mcsbdnpt gbqtp zlxtk qzkjrtl kjz gcgqb bxtztd szj nrhftzl srzvnxlx tplzk bmrmhm ghljzv lzbjg jvrhm dgmb nhxjbx lxfd (contains peanuts, shellfish)
 qzkjrtl zkhdzrb tbb pgkttq gbqfd jctgkq vprjz rkkrx zhnlt frlgls qbnzjb ggkz msrg bmppb shmzdgxm jcgfs nhxjbx lnrd zfrp jrjfv cccmn vvpxz pvhf nljs tqsjd qlcsjhg tktj fglxll qvmtms nxnbpj mmhv kqsnfjf hnbvdq fqxx nrhftzl nfzn lflxjnh jjjjkmnt svqtgll dsjvgg gpddp kxbvz hfrhh dcqz ddt bqkndvb vtxnv lkfzc jslg zmb krzchjs cfkv hmjs lrzfcf mmzn nrrh bqtvr qbcg vflms hvtzz jkrsn ccntj vfgqpk lzbjg htrvf dkgs rxp gzlj hxs lxfm jlvmh gbqtp khjjdk bmrmhm (contains peanuts)";
-        #endregion
-        public override Task ExecuteAsync()
+    #endregion
+    public override Task ExecuteAsync()
+    {
+        IList<Food> foods = new List<Food>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IList<Food> foods = new List<Food>();
-            foreach (var line in input.Split(Environment.NewLine))
+            Food food = new Food();
+            var split = line.Split("(");
+            foreach (var ingredient in split[0].Split(" ").Where(i => !string.IsNullOrEmpty(i)))
             {
-                Food food = new Food();
-                var split = line.Split("(");
-                foreach (var ingredient in split[0].Split(" ").Where(i => !string.IsNullOrEmpty(i)))
-                {
-                    food.Ingredients.Add(ingredient);
-                }
-
-                foreach (var allergene in split[1].Substring(9).Split(","))
-                {
-                    food.Allergenes.Add(allergene.Trim().Replace(")",""));
-                }
-                foods.Add(food);
+                food.Ingredients.Add(ingredient);
             }
 
-            IDictionary<string, IList<string>> possibleIngredients = new Dictionary<string, IList<string>>();
-            foreach (var food in foods)
+            foreach (var allergene in split[1].Substring(9).Split(","))
             {
-                foreach (var allergene in food.Allergenes)
-                {
-                    if (!possibleIngredients.ContainsKey(allergene))
-                    {
-                        possibleIngredients[allergene] = food.Ingredients.ToList();
-                    }
-                    else
-                    {
-                        possibleIngredients[allergene] =
-                            possibleIngredients[allergene].Intersect(food.Ingredients).ToList();
-                    }
-                }
+                food.Allergenes.Add(allergene.Trim().Replace(")",""));
             }
-
-            foreach (var possibleIngredient in possibleIngredients)
-            {
-                Console.WriteLine($"{possibleIngredient.Key} :  {string.Join(',',possibleIngredient.Value)}");
-            }
-
-            HashSet<string> ingredients = new HashSet<string>();
-            foreach (var possibleIngredient in possibleIngredients)
-            {
-                foreach (var ingredient in possibleIngredient.Value)
-                {
-                    ingredients.Add(ingredient);
-                }
-            }
-
-            long result = 0;
-            foreach (var food in foods)
-            {
-                foreach (var foodIngredient in food.Ingredients)
-                {
-                    if (!ingredients.Contains(foodIngredient))
-                    {
-                        result++;
-                    }
-                }
-            }
-
-            Result = result.ToString();
-
-            return Task.CompletedTask;
+            foods.Add(food);
         }
 
-        public class Food
+        IDictionary<string, IList<string>> possibleIngredients = new Dictionary<string, IList<string>>();
+        foreach (var food in foods)
         {
-            public IList<string> Ingredients { get; set; } = new List<string>();
-            public IList<string> Allergenes { get; set; } = new List<string>();
+            foreach (var allergene in food.Allergenes)
+            {
+                if (!possibleIngredients.ContainsKey(allergene))
+                {
+                    possibleIngredients[allergene] = food.Ingredients.ToList();
+                }
+                else
+                {
+                    possibleIngredients[allergene] =
+                        possibleIngredients[allergene].Intersect(food.Ingredients).ToList();
+                }
+            }
         }
 
-        public override int Nummer => 202021;
+        foreach (var possibleIngredient in possibleIngredients)
+        {
+            Console.WriteLine($"{possibleIngredient.Key} :  {string.Join(',',possibleIngredient.Value)}");
+        }
+
+        HashSet<string> ingredients = new HashSet<string>();
+        foreach (var possibleIngredient in possibleIngredients)
+        {
+            foreach (var ingredient in possibleIngredient.Value)
+            {
+                ingredients.Add(ingredient);
+            }
+        }
+
+        long result = 0;
+        foreach (var food in foods)
+        {
+            foreach (var foodIngredient in food.Ingredients)
+            {
+                if (!ingredients.Contains(foodIngredient))
+                {
+                    result++;
+                }
+            }
+        }
+
+        Result = result.ToString();
+
+        return Task.CompletedTask;
     }
+
+    public class Food
+    {
+        public IList<string> Ingredients { get; set; } = new List<string>();
+        public IList<string> Allergenes { get; set; } = new List<string>();
+    }
+
+    public override int Nummer => 202021;
 }

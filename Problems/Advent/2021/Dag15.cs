@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag15 : Problem
 {
-    internal class Dag15 : Problem
-    {
-        private const string input = @"9319927879926693924289292981328319987931316578169277696988783869228544279445229463567277999867998995
+    private const string input = @"9319927879926693924289292981328319987931316578169277696988783869228544279445229463567277999867998995
 6782137819885688871167116696955987679771519589461881979722694422956389229653389717969915178729293921
 4196967349617789911994968389594625922499998784199978769463894298119929998523419691416468995851998897
 9939549347377981757829782892395742812959699849785339689589677539252217513971891798498155499956285578
@@ -110,7 +110,7 @@ namespace Problems.Advent._2021
 5819878197925797859196414992974686679674969364619688199911487117949926999488799995986788649369962889
 1611181455799765871782419643336499989899999864957323699781212598968286442487972619699128531368991998";
 
-        private const string testinput = @"1163751742
+    private const string testinput = @"1163751742
 1381373672
 2136511328
 3694931569
@@ -120,85 +120,84 @@ namespace Problems.Advent._2021
 3125421639
 1293138521
 2311944581";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var risks = new Grid<int>();
         {
-            var risks = new Grid<int>();
+            int y = 0;
+            foreach (var line in input.Split(Environment.NewLine))
             {
-                int y = 0;
-                foreach (var line in input.Split(Environment.NewLine))
+                var x = 0;
+                foreach (var c in line)
                 {
-                    var x = 0;
-                    foreach (var c in line)
-                    {
-                        risks[x, y] = int.Parse(c.ToString());
-                        x++;
-                    }
-
-                    y++;
+                    risks[x, y] = int.Parse(c.ToString());
+                    x++;
                 }
-            }
-            var size = risks.MaxX + 1;
-            for (int x = 0; x < 5; x++)
-            {
-                for (int y = 0; y < 5; y++)
-                {
-                    if (x + y == 0)
-                    {
-                        continue;
-                    }
 
-                    for (int x1 = x * size; x1 < x * size + size; x1++)
+                y++;
+            }
+        }
+        var size = risks.MaxX + 1;
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < 5; y++)
+            {
+                if (x + y == 0)
+                {
+                    continue;
+                }
+
+                for (int x1 = x * size; x1 < x * size + size; x1++)
+                {
+                    for (int y1 = y * size; y1 < y * size + size; y1++)
                     {
-                        for (int y1 = y * size; y1 < y * size + size; y1++)
+                        var value = x > 0 ? risks[x1 - size, y1] : risks[x1, y1 - size];
+                        value++;
+                        if (value == 10)
                         {
-                            var value = x > 0 ? risks[x1 - size, y1] : risks[x1, y1 - size];
-                            value++;
-                            if (value == 10)
-                            {
-                                value = 1;
-                            }
-                            risks[x1,y1] = value;
+                            value = 1;
                         }
+                        risks[x1,y1] = value;
                     }
                 }
             }
-
-
-            IDictionary<(int, int), int> minRisks = new Dictionary<(int, int), int>();
-            risks.Cost = (_, to) => to;
-            Result = risks.ShortestPath(new List<(int, int)> { (0, 0) },
-                new List<(int, int)> { (risks.MaxX, risks.MaxY) }, false).cost.ToString();
-            IList<(int x, int y)> lastSteps = new List<(int x, int y)>();
-            minRisks[(0, 0)] = 0;
-            lastSteps.Add((0,0));
-            while (lastSteps.Any())
-            {
-                var loop = lastSteps.ToList();
-                lastSteps = new List<(int x, int y)>();
-                foreach (var step in loop)
-                {
-                    var risk = minRisks[step];
-                    foreach (var neighbour in risks.Neighbours(step, false))
-                    {
-                        var totalRisk = risk + risks[neighbour.X, neighbour.Y];
-                        if(!minRisks.ContainsKey((neighbour.X, neighbour.Y)))
-                        {
-                            minRisks[(neighbour.X, neighbour.Y)] = totalRisk;
-                            lastSteps.Add((neighbour.X, neighbour.Y));
-                        }
-                        else if(minRisks[(neighbour.X, neighbour.Y)] > totalRisk)
-                        {
-                            minRisks[(neighbour.X, neighbour.Y)] = totalRisk;
-                            lastSteps.Add((neighbour.X, neighbour.Y));
-                        }
-                    }
-                }
-            }
-
-            Result = minRisks[(risks.MaxX, risks.MaxY)].ToString();
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 202115;
+
+        IDictionary<(int, int), int> minRisks = new Dictionary<(int, int), int>();
+        risks.Cost = (_, to) => to;
+        Result = risks.ShortestPath(new List<(int, int)> { (0, 0) },
+            new List<(int, int)> { (risks.MaxX, risks.MaxY) }, false).cost.ToString();
+        IList<(int x, int y)> lastSteps = new List<(int x, int y)>();
+        minRisks[(0, 0)] = 0;
+        lastSteps.Add((0,0));
+        while (lastSteps.Any())
+        {
+            var loop = lastSteps.ToList();
+            lastSteps = new List<(int x, int y)>();
+            foreach (var step in loop)
+            {
+                var risk = minRisks[step];
+                foreach (var neighbour in risks.Neighbours(step, false))
+                {
+                    var totalRisk = risk + risks[neighbour.X, neighbour.Y];
+                    if(!minRisks.ContainsKey((neighbour.X, neighbour.Y)))
+                    {
+                        minRisks[(neighbour.X, neighbour.Y)] = totalRisk;
+                        lastSteps.Add((neighbour.X, neighbour.Y));
+                    }
+                    else if(minRisks[(neighbour.X, neighbour.Y)] > totalRisk)
+                    {
+                        minRisks[(neighbour.X, neighbour.Y)] = totalRisk;
+                        lastSteps.Add((neighbour.X, neighbour.Y));
+                    }
+                }
+            }
+        }
+
+        Result = minRisks[(risks.MaxX, risks.MaxY)].ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202115;
 }

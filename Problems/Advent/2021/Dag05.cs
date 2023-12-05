@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag05 : Problem
 {
-    internal class Dag05 : Problem
-    {
-        private const string input = @"527,299 -> 430,299
+    private const string input = @"527,299 -> 430,299
 828,228 -> 81,228
 40,126 -> 842,928
 30,390 -> 30,741
@@ -510,7 +510,7 @@ namespace Problems.Advent._2021
 22,952 -> 961,13
 982,555 -> 982,21";
 
-        private const string testinput = @"0,9 -> 5,9
+    private const string testinput = @"0,9 -> 5,9
 8,0 -> 0,8
 9,4 -> 3,4
 2,2 -> 2,1
@@ -521,50 +521,49 @@ namespace Problems.Advent._2021
 0,0 -> 8,8
 5,5 -> 8,2";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var lines = input.Split(Environment.NewLine);
+        Counter<(int, int)> counter = new Counter<(int, int)>(); 
+        foreach (var line in lines)
         {
-            var lines = input.Split(Environment.NewLine);
-            Counter<(int, int)> counter = new Counter<(int, int)>(); 
-            foreach (var line in lines)
+            var words = line.Split(' ');
+            var from = words[0].Split(',');
+            var to = words[2].Split(',');
+            (int fromX, int fromY, int toX, int toY) = (int.Parse(from[0]), int.Parse(from[1]), int.Parse(to[0]),
+                int.Parse(to[1]));
+            if (fromX == toX)
             {
-                var words = line.Split(' ');
-                var from = words[0].Split(',');
-                var to = words[2].Split(',');
-                (int fromX, int fromY, int toX, int toY) = (int.Parse(from[0]), int.Parse(from[1]), int.Parse(to[0]),
-                    int.Parse(to[1]));
-                if (fromX == toX)
+                for (int y = Math.Min(fromY, toY); y <= Math.Max(fromY, toY); y++)
                 {
-                    for (int y = Math.Min(fromY, toY); y <= Math.Max(fromY, toY); y++)
-                    {
-                        counter[(fromX, y)]++;
-                    }
-                }
-                else if (fromY == toY)
-                {
-                    for (int x = Math.Min(fromX, toX); x <= Math.Max(fromX, toX); x++)
-                    {
-                        counter[(x, fromY)]++;
-                    }
-                }
-                else
-                {
-                    var x = fromX;
-                    var y = fromY;
-                    var dx = fromX < toX ? 1 : -1;
-                    var dy = fromY < toY ? 1 : -1;
-                    for (int i = 0; i <= Math.Abs(fromX - toX); i++)
-                    {
-                        counter[(x,y)]++;
-                        x += dx;
-                        y += dy;
-                    }
+                    counter[(fromX, y)]++;
                 }
             }
-
-            Result = counter.Values.Count(p => p > 1).ToString();
-            return Task.CompletedTask;
+            else if (fromY == toY)
+            {
+                for (int x = Math.Min(fromX, toX); x <= Math.Max(fromX, toX); x++)
+                {
+                    counter[(x, fromY)]++;
+                }
+            }
+            else
+            {
+                var x = fromX;
+                var y = fromY;
+                var dx = fromX < toX ? 1 : -1;
+                var dy = fromY < toY ? 1 : -1;
+                for (int i = 0; i <= Math.Abs(fromX - toX); i++)
+                {
+                    counter[(x,y)]++;
+                    x += dx;
+                    y += dy;
+                }
+            }
         }
 
-        public override int Nummer => 202105;
+        Result = counter.Values.Count(p => p > 1).ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202105;
 }

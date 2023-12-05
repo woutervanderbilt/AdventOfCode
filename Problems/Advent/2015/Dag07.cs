@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2015
+namespace Problems.Advent._2015;
+
+internal class Dag07 : Problem
 {
-    internal class Dag07 : Problem
-    {
-        private const string input = @"lf AND lq -> ls
+    private const string input = @"lf AND lq -> ls
 iu RSHIFT 1 -> jn
 bo OR bu -> bv
 gj RSHIFT 1 -> hc
@@ -348,173 +348,172 @@ NOT h -> i
 NOT hn -> ho
 he RSHIFT 5 -> hh";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IDictionary<string, int> signals = new Dictionary<string, int>();
+        IDictionary<string, IList<Instruction>> instructions = new Dictionary<string, IList<Instruction>>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IDictionary<string, int> signals = new Dictionary<string, int>();
-            IDictionary<string, IList<Instruction>> instructions = new Dictionary<string, IList<Instruction>>();
-            foreach (var line in input.Split(Environment.NewLine))
+            var split = line.Split(' ');
+            var instruction = new Instruction();
+            instruction.Output = split.Last();
+            if (split[0] == "NOT")
             {
-                var split = line.Split(' ');
-                var instruction = new Instruction();
-                instruction.Output = split.Last();
-                if (split[0] == "NOT")
+                instruction.Gate = Gate.NOT;
+                instruction.Input1 = split[1];
+            }
+            else if (split.Length == 3)
+            {
+                instruction.Input1 = split[0];
+                if (instruction.Output == "b")
                 {
-                    instruction.Gate = Gate.NOT;
-                    instruction.Input1 = split[1];
-                }
-                else if (split.Length == 3)
-                {
-                    instruction.Input1 = split[0];
-                    if (instruction.Output == "b")
-                    {
-                        instruction.Input1 = "16076";
-                    }
-                }
-                else
-                {
-                    if (split[1] == "AND")
-                    {
-                        instruction.Gate = Gate.AND;
-                    }
-                    else if (split[1] == "OR")
-                    {
-                        instruction.Gate = Gate.OR;
-                    }
-                    else if (split[1] == "LSHIFT")
-                    {
-                        instruction.Gate = Gate.LSHIFT;
-                    }
-                    else if (split[1] == "RSHIFT")
-                    {
-                        instruction.Gate = Gate.RSHIFT;
-                    }
-
-                    instruction.Input1 = split[0];
-                    instruction.Input2 = split[2];
-                }
-
-                if (int.TryParse(instruction.Input1, out var input1))
-                {
-                    instruction.InputValue1 = input1;
-                    if (string.IsNullOrEmpty(instruction.Input2))
-                    {
-                        signals[instruction.Output] = input1;
-                        instruction.Complete = true;
-                    }
-                }
-                if (int.TryParse(instruction.Input2, out var input2))
-                {
-                    instruction.InputValue2 = input2;
-                }
-
-                if (!instructions.ContainsKey(instruction.Input1))
-                {
-                    instructions[instruction.Input1] = new List<Instruction>();
-                }
-                instructions[instruction.Input1].Add(instruction);
-                if (!string.IsNullOrWhiteSpace(instruction.Input2))
-                {
-                    if (!instructions.ContainsKey(instruction.Input2))
-                    {
-                        instructions[instruction.Input2] = new List<Instruction>();
-                    }
-                    instructions[instruction.Input2].Add(instruction);
+                    instruction.Input1 = "16076";
                 }
             }
-
-            var signalled = signals.Keys.ToList();
-            while (signalled.Any())
+            else
             {
-                var newSignalled = new List<string>();
-                foreach (var wire in signalled)
+                if (split[1] == "AND")
                 {
-                    if (instructions.ContainsKey(wire))
+                    instruction.Gate = Gate.AND;
+                }
+                else if (split[1] == "OR")
+                {
+                    instruction.Gate = Gate.OR;
+                }
+                else if (split[1] == "LSHIFT")
+                {
+                    instruction.Gate = Gate.LSHIFT;
+                }
+                else if (split[1] == "RSHIFT")
+                {
+                    instruction.Gate = Gate.RSHIFT;
+                }
+
+                instruction.Input1 = split[0];
+                instruction.Input2 = split[2];
+            }
+
+            if (int.TryParse(instruction.Input1, out var input1))
+            {
+                instruction.InputValue1 = input1;
+                if (string.IsNullOrEmpty(instruction.Input2))
+                {
+                    signals[instruction.Output] = input1;
+                    instruction.Complete = true;
+                }
+            }
+            if (int.TryParse(instruction.Input2, out var input2))
+            {
+                instruction.InputValue2 = input2;
+            }
+
+            if (!instructions.ContainsKey(instruction.Input1))
+            {
+                instructions[instruction.Input1] = new List<Instruction>();
+            }
+            instructions[instruction.Input1].Add(instruction);
+            if (!string.IsNullOrWhiteSpace(instruction.Input2))
+            {
+                if (!instructions.ContainsKey(instruction.Input2))
+                {
+                    instructions[instruction.Input2] = new List<Instruction>();
+                }
+                instructions[instruction.Input2].Add(instruction);
+            }
+        }
+
+        var signalled = signals.Keys.ToList();
+        while (signalled.Any())
+        {
+            var newSignalled = new List<string>();
+            foreach (var wire in signalled)
+            {
+                if (instructions.ContainsKey(wire))
+                {
+                    foreach (var instruction in instructions[wire])
                     {
-                        foreach (var instruction in instructions[wire])
+                        if (instruction.Input1 == wire)
                         {
-                            if (instruction.Input1 == wire)
-                            {
-                                instruction.PassInput1(signals[wire]);
-                            }
+                            instruction.PassInput1(signals[wire]);
+                        }
 
-                            if (instruction.Input2 == wire)
-                            {
-                                instruction.PassInput2(signals[wire]);
-                            }
+                        if (instruction.Input2 == wire)
+                        {
+                            instruction.PassInput2(signals[wire]);
+                        }
 
-                            if (instruction.Complete)
-                            {
-                                signals[instruction.Output] = instruction.Value;
-                                newSignalled.Add(instruction.Output);
-                            }
+                        if (instruction.Complete)
+                        {
+                            signals[instruction.Output] = instruction.Value;
+                            newSignalled.Add(instruction.Output);
                         }
                     }
                 }
-
-                signalled = newSignalled;
             }
 
-            Result = signals["a"].ToString();
-
-            return Task.CompletedTask;
+            signalled = newSignalled;
         }
 
-        private class Instruction
-        {
-            public Gate? Gate { get; set; }
-            public string Input1 { get; set; }
-            public string Input2 { get; set; }
-            public string Output { get; set; }
+        Result = signals["a"].ToString();
 
-            public int? InputValue1 { get; set; }
-            public int? InputValue2 { get; set; }
-            public bool Complete { get; set; }
-
-            public void PassInput1(int value)
-            {
-                InputValue1 = value;
-                if (string.IsNullOrEmpty(Input2) || InputValue2.HasValue)
-                {
-                    ComputeValue();
-                    Complete = true;
-                }
-            }
-
-            public void PassInput2(int value)
-            {
-                InputValue2 = value;
-                if (InputValue1.HasValue)
-                {
-                    ComputeValue();
-                    Complete = true;
-                }
-            }
-
-            void ComputeValue()
-            {
-                Value = Gate switch
-                {
-                    Dag07.Gate.AND => InputValue1!.Value & InputValue2!.Value,
-                    Dag07.Gate.OR => InputValue1!.Value | InputValue2!.Value,
-                    Dag07.Gate.NOT => 65535 - InputValue1!.Value,
-                    Dag07.Gate.LSHIFT => (InputValue1!.Value << InputValue2!.Value) % 65536,
-                    Dag07.Gate.RSHIFT => InputValue1!.Value >> InputValue2!.Value,
-                    null => InputValue1!.Value
-                };
-            }
-
-            public int Value { get; private set; }
-        }
-
-        private enum Gate
-        {
-            AND,
-            OR,
-            NOT,
-            RSHIFT,
-            LSHIFT
-        }
-
-        public override int Nummer => 201507;
+        return Task.CompletedTask;
     }
+
+    private class Instruction
+    {
+        public Gate? Gate { get; set; }
+        public string Input1 { get; set; }
+        public string Input2 { get; set; }
+        public string Output { get; set; }
+
+        public int? InputValue1 { get; set; }
+        public int? InputValue2 { get; set; }
+        public bool Complete { get; set; }
+
+        public void PassInput1(int value)
+        {
+            InputValue1 = value;
+            if (string.IsNullOrEmpty(Input2) || InputValue2.HasValue)
+            {
+                ComputeValue();
+                Complete = true;
+            }
+        }
+
+        public void PassInput2(int value)
+        {
+            InputValue2 = value;
+            if (InputValue1.HasValue)
+            {
+                ComputeValue();
+                Complete = true;
+            }
+        }
+
+        void ComputeValue()
+        {
+            Value = Gate switch
+            {
+                Dag07.Gate.AND => InputValue1!.Value & InputValue2!.Value,
+                Dag07.Gate.OR => InputValue1!.Value | InputValue2!.Value,
+                Dag07.Gate.NOT => 65535 - InputValue1!.Value,
+                Dag07.Gate.LSHIFT => (InputValue1!.Value << InputValue2!.Value) % 65536,
+                Dag07.Gate.RSHIFT => InputValue1!.Value >> InputValue2!.Value,
+                null => InputValue1!.Value
+            };
+        }
+
+        public int Value { get; private set; }
+    }
+
+    private enum Gate
+    {
+        AND,
+        OR,
+        NOT,
+        RSHIFT,
+        LSHIFT
+    }
+
+    public override int Nummer => 201507;
 }

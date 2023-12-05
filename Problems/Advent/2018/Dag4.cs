@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2018
+namespace Problems.Advent._2018;
+
+public class Dag4 : Problem
 {
-    public class Dag4 : Problem
-    {
-        private const string input = @"[1518-05-30 00:04] Guard #2417 begins shift
+    private const string input = @"[1518-05-30 00:04] Guard #2417 begins shift
 [1518-10-20 00:48] wakes up
 [1518-08-12 00:14] falls asleep
 [1518-05-09 23:54] Guard #2969 begins shift
@@ -1143,92 +1143,91 @@ namespace Problems.Advent._2018
 [1518-06-13 00:16] falls asleep
 [1518-09-19 00:30] wakes up
 [1518-11-23 00:22] wakes up";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<LogMelding> logMeldingen = new List<LogMelding>();
+        foreach (var melding in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
         {
-            IList<LogMelding> logMeldingen = new List<LogMelding>();
-            foreach (var melding in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+            var logMelding = new LogMelding();
+            logMelding.Tijdstip = DateTime.ParseExact(melding.Substring(1, 16), "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+            logMelding.Melding = melding.Substring(19);
+            logMeldingen.Add(logMelding);
+            logMeldingen = logMeldingen.OrderBy(l => l.Tijdstip).ToList();
+        }
+        IDictionary<int, IList<Tuple<int, int>>> guards = new Dictionary<int, IList<Tuple<int, int>>>();
+        int currentGuard = -1;
+        int lastTime = -1;
+        foreach (var logMelding in logMeldingen)
+        {
+            if (logMelding.Melding.Contains("shift"))
             {
-                var logMelding = new LogMelding();
-                logMelding.Tijdstip = DateTime.ParseExact(melding.Substring(1, 16), "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
-                logMelding.Melding = melding.Substring(19);
-                logMeldingen.Add(logMelding);
-                logMeldingen = logMeldingen.OrderBy(l => l.Tijdstip).ToList();
+                currentGuard = int.Parse(Regex.Match(logMelding.Melding, @"\d+").Value);
             }
-            IDictionary<int, IList<Tuple<int, int>>> guards = new Dictionary<int, IList<Tuple<int, int>>>();
-            int currentGuard = -1;
-            int lastTime = -1;
-            foreach (var logMelding in logMeldingen)
+            else if (logMelding.Melding.Contains("wakes"))
             {
-                if (logMelding.Melding.Contains("shift"))
+                Tuple<int, int> sleepTime = new Tuple<int, int>(lastTime, logMelding.Tijdstip.Minute);
+                if (guards.ContainsKey(currentGuard))
                 {
-                    currentGuard = int.Parse(Regex.Match(logMelding.Melding, @"\d+").Value);
+                    guards[currentGuard].Add(sleepTime);
                 }
-                else if (logMelding.Melding.Contains("wakes"))
+                else
                 {
-                    Tuple<int, int> sleepTime = new Tuple<int, int>(lastTime, logMelding.Tijdstip.Minute);
-                    if (guards.ContainsKey(currentGuard))
-                    {
-                        guards[currentGuard].Add(sleepTime);
-                    }
-                    else
-                    {
-                        guards[currentGuard] = new List<Tuple<int, int>> {sleepTime};
-                    }
-                }
-                else if (logMelding.Melding.Contains("falls asleep"))
-                {
-                    lastTime = logMelding.Tijdstip.Minute;
+                    guards[currentGuard] = new List<Tuple<int, int>> {sleepTime};
                 }
             }
-
-            var sleepiestGuard = guards.Aggregate((kv1, kv2) =>
-                kv1.Value.Sum(t => t.Item2 - t.Item1) > kv2.Value.Sum(t => t.Item2 - t.Item1) ? kv1 : kv2);
-            var laziestMinute = LaziestMinute(sleepiestGuard.Value).Item1;
-
-            var guardWithLaziestMinute = guards.Aggregate((kv1, kv2) =>
-                LaziestMinute(kv1.Value).Item2 > LaziestMinute(kv2.Value).Item2 ? kv1 : kv2);
-
-
-            Result = (sleepiestGuard.Key * laziestMinute)+" "+LaziestMinute(guardWithLaziestMinute.Value).Item1 * guardWithLaziestMinute.Key;
-            return Task.CompletedTask;
+            else if (logMelding.Melding.Contains("falls asleep"))
+            {
+                lastTime = logMelding.Tijdstip.Minute;
+            }
         }
 
-        private (int, int) LaziestMinute(IList<Tuple<int, int>> intervals)
+        var sleepiestGuard = guards.Aggregate((kv1, kv2) =>
+            kv1.Value.Sum(t => t.Item2 - t.Item1) > kv2.Value.Sum(t => t.Item2 - t.Item1) ? kv1 : kv2);
+        var laziestMinute = LaziestMinute(sleepiestGuard.Value).Item1;
+
+        var guardWithLaziestMinute = guards.Aggregate((kv1, kv2) =>
+            LaziestMinute(kv1.Value).Item2 > LaziestMinute(kv2.Value).Item2 ? kv1 : kv2);
+
+
+        Result = (sleepiestGuard.Key * laziestMinute)+" "+LaziestMinute(guardWithLaziestMinute.Value).Item1 * guardWithLaziestMinute.Key;
+        return Task.CompletedTask;
+    }
+
+    private (int, int) LaziestMinute(IList<Tuple<int, int>> intervals)
+    {
+        var minutes = new int[60];
+        foreach (var interval in intervals)
         {
-            var minutes = new int[60];
-            foreach (var interval in intervals)
+            for (int m = interval.Item1; m < interval.Item2; m++)
             {
-                for (int m = interval.Item1; m < interval.Item2; m++)
-                {
-                    minutes[m]++;
-                }
+                minutes[m]++;
             }
-
-            int max = 0;
-            int maxminute = -1;
-            for (int m = 0; m < 60; m++)
-            {
-                if (minutes[m] > max)
-                {
-                    max = minutes[m];
-                    maxminute = m;
-                }
-            }
-
-            return (maxminute, max);
         }
 
-        public override int Nummer => 201804;
-
-        private class LogMelding
+        int max = 0;
+        int maxminute = -1;
+        for (int m = 0; m < 60; m++)
         {
-            public DateTime Tijdstip { get; set; }
-            public string Melding { get; set; }
-
-            public override string ToString()
+            if (minutes[m] > max)
             {
-                return Tijdstip.ToString("yyyy-MM-dd HH:ss") + Melding;
+                max = minutes[m];
+                maxminute = m;
             }
+        }
+
+        return (maxminute, max);
+    }
+
+    public override int Nummer => 201804;
+
+    private class LogMelding
+    {
+        public DateTime Tijdstip { get; set; }
+        public string Melding { get; set; }
+
+        public override string ToString()
+        {
+            return Tijdstip.ToString("yyyy-MM-dd HH:ss") + Melding;
         }
     }
 }

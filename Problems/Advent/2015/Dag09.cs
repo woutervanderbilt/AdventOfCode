@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Extensions;
 
-namespace Problems.Advent._2015
+namespace Problems.Advent._2015;
+
+internal class Dag09 : Problem
 {
-    internal class Dag09 : Problem
-    {
-        private const string input = @"Tristram to AlphaCentauri = 34
+    private const string input = @"Tristram to AlphaCentauri = 34
 Tristram to Snowdin = 100
 Tristram to Tambi = 63
 Tristram to Faerun = 108
@@ -38,47 +38,46 @@ Norrath to Straylight = 115
 Norrath to Arbre = 135
 Straylight to Arbre = 127";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IDictionary<(string, string), int> distances = new Dictionary<(string, string), int>();
+        HashSet<string> cities = new HashSet<string>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IDictionary<(string, string), int> distances = new Dictionary<(string, string), int>();
-            HashSet<string> cities = new HashSet<string>();
-            foreach (var line in input.Split(Environment.NewLine))
-            {
-                var words = line.Split(' ');
-                distances[(words[0], words[2])] = int.Parse(words[4]);
-                cities.Add(words[0]);
-                cities.Add(words[2]);
-            }
-
-            int min = int.MaxValue;
-            int max = 0;
-            foreach (var trip in cities.Permutations())
-            {
-                string prev = "";
-                int length = 0;
-                foreach (var city in trip)
-                {
-                    if (prev != "")
-                    {
-                        length += Distance(prev, city);
-                    }
-
-                    prev = city;
-                }
-
-                min = Math.Min(min, length);
-                max = Math.Max(max, length);
-            }
-
-            Result = max.ToString();
-
-            int Distance(string start, string destination)
-            {
-                return distances.ContainsKey((start,destination)) ? distances[(start,destination)] : distances[(destination, start)];
-            }
-            return Task.CompletedTask;
+            var words = line.Split(' ');
+            distances[(words[0], words[2])] = int.Parse(words[4]);
+            cities.Add(words[0]);
+            cities.Add(words[2]);
         }
 
-        public override int Nummer => 201509;
+        int min = int.MaxValue;
+        int max = 0;
+        foreach (var trip in cities.Permutations())
+        {
+            string prev = "";
+            int length = 0;
+            foreach (var city in trip)
+            {
+                if (prev != "")
+                {
+                    length += Distance(prev, city);
+                }
+
+                prev = city;
+            }
+
+            min = Math.Min(min, length);
+            max = Math.Max(max, length);
+        }
+
+        Result = max.ToString();
+
+        int Distance(string start, string destination)
+        {
+            return distances.ContainsKey((start,destination)) ? distances[(start,destination)] : distances[(destination, start)];
+        }
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201509;
 }

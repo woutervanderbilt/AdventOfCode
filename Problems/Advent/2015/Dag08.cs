@@ -4,11 +4,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2015
+namespace Problems.Advent._2015;
+
+internal class Dag08 : Problem
 {
-    internal class Dag08 : Problem
-    {
-        private const string input = @"""azlgxdbljwygyttzkfwuxv""
+    private const string input = @"""azlgxdbljwygyttzkfwuxv""
 ""v\xfb\""lgs\""kvjfywmut\x9cr""
 ""merxdhj""
 ""dwz""
@@ -308,28 +308,27 @@ namespace Problems.Advent._2015
 ""hjg\\w\""\x78uoqbsdikbjxpip\""w\""jnhzec""
 ""gk""
 ""\\zrs\\syur""";
-        public override Task ExecuteAsync()
-        {
-            var test = @"""""
+    public override Task ExecuteAsync()
+    {
+        var test = @"""""
 ""abc""
 ""aaa\""aaa""
 ""\x27""";
-            long result = 0;
-            foreach (var line in input.Split(Environment.NewLine))
-            {
-                result -= line.Length;
-                //var replaced = line.Replace(@"\\", @"*").Replace(@"\""",@"#");
-                //var regex = new Regex(@"\\x[0-9a-f]{2}");
-                //var count = regex.Matches(replaced).Count;
-                var replaced = line.Replace(@"\", "**").Replace(@"""", "##");
-                result += replaced.Length + 2;
+        long result = 0;
+        foreach (var line in input.Split(Environment.NewLine))
+        {
+            result -= line.Length;
+            //var replaced = line.Replace(@"\\", @"*").Replace(@"\""",@"#");
+            //var regex = new Regex(@"\\x[0-9a-f]{2}");
+            //var count = regex.Matches(replaced).Count;
+            var replaced = line.Replace(@"\", "**").Replace(@"""", "##");
+            result += replaced.Length + 2;
 
-            }
-
-            Result = result.ToString();
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201508;
+        Result = result.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201508;
 }

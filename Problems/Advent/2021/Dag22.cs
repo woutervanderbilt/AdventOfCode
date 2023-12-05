@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag22 : Problem
 {
-    internal class Dag22 : Problem
-    {
-        private const string input = @"on x=-11..33,y=-6..40,z=-16..37
+    private const string input = @"on x=-11..33,y=-6..40,z=-16..37
 on x=-44..10,y=-24..30,z=-24..22
 on x=-34..15,y=-21..27,z=-33..11
 on x=-42..12,y=-43..9,z=1..48
@@ -429,7 +429,7 @@ on x=-33113..-17668,y=36644..50102,z=50787..74022
 off x=60521..75760,y=23551..43986,z=-20580..-6589
 on x=-14911..14191,y=57578..66612,z=-60746..-39130";
 
-        private const string testinput = @"on x=-5..47,y=-31..22,z=-19..33
+    private const string testinput = @"on x=-5..47,y=-31..22,z=-19..33
 on x=-44..5,y=-27..21,z=-14..35
 on x=-49..-1,y=-11..42,z=-10..38
 on x=-20..34,y=-40..6,z=-44..1
@@ -489,175 +489,174 @@ off x=-27365..46395,y=31009..98017,z=15428..76570
 off x=-70369..-16548,y=22648..78696,z=-1892..86821
 on x=-53470..21291,y=-120233..-33476,z=-44150..38147
 off x=-93533..-4276,y=-16170..68771,z=-104985..-24507";
-        private const string testinput2 = @"on x=101..110,y=101..110,z=101..110
+    private const string testinput2 = @"on x=101..110,y=101..110,z=101..110
 off x=105..106,y=105..106,z=105..120";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<Cube> cubes = new List<Cube>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IList<Cube> cubes = new List<Cube>();
-            foreach (var line in input.Split(Environment.NewLine))
+            var words = line.Split(' ');
+            var cube = new Cube();
+            cube.SwitchOn = words[0] == "on";
+            var coordinates = words[1].Split(',');
+            cube.X = ParseCoordinate(coordinates[0]);
+            cube.Y = ParseCoordinate(coordinates[1]);
+            cube.Z = ParseCoordinate(coordinates[2]);
+
+            cubes.Add(cube);
+
+            Range ParseCoordinate(string s)
             {
-                var words = line.Split(' ');
-                var cube = new Cube();
-                cube.SwitchOn = words[0] == "on";
-                var coordinates = words[1].Split(',');
-                cube.X = ParseCoordinate(coordinates[0]);
-                cube.Y = ParseCoordinate(coordinates[1]);
-                cube.Z = ParseCoordinate(coordinates[2]);
-
-                cubes.Add(cube);
-
-                Range ParseCoordinate(string s)
-                {
-                    var split = s.Substring(2).Split("..");
-                    return new Range(long.Parse(split[0]), long.Parse(split[1]));
-                }
+                var split = s.Substring(2).Split("..");
+                return new Range(long.Parse(split[0]), long.Parse(split[1]));
             }
-
-            IList<Cube> bigCubes = new List<Cube>();
-            HashSet<(long, long, long)> switchedOn = new HashSet<(long, long, long)>();
-            foreach (var cube in cubes)
-            {
-                bool added = false;
-                for (long x = Math.Max(-50, cube.X.Min); x <= Math.Min(50, cube.X.Max); x++)
-                {
-                    for (long y = Math.Max(-50, cube.Y.Min); y <= Math.Min(50, cube.Y.Max); y++)
-                    {
-                        for (long z = Math.Max(-50, cube.Z.Min); z <= Math.Min(50, cube.Z.Max); z++)
-                        {
-                            added = true;
-                            if (cube.SwitchOn)
-                            {
-                                switchedOn.Add((x, y, z));
-                            }
-                            else
-                            {
-                                switchedOn.Remove((x, y, z));
-                            }
-                        }
-                    }
-                }
-
-                if (!added)
-                {
-                    bigCubes.Add(cube);
-                }
-            }
-
-            long result = switchedOn.Count;
-            bigCubes = bigCubes.Reverse().ToList();
-            int count = 0;
-            while (bigCubes.Any())
-            {
-                var cube = bigCubes.First();
-                bigCubes.Remove(cube);
-                if (cube.SwitchOn)
-                {
-                    result += (cube.X.Max - cube.X.Min + 1) * (cube.Y.Max - cube.Y.Min + 1) * (cube.Z.Max - cube.Z.Min + 1);
-                }
-
-                IList<Cube> splitCubes = new List<Cube>();
-                foreach (var bigCube in bigCubes)
-                {
-                    int splitcount = -1;
-                    foreach (var splitCube in bigCube.CutOut(cube))
-                    {
-                        splitCubes.Add(splitCube);
-                        splitcount++;
-                    }
-                    count += splitcount;
-                }
-
-                bigCubes = splitCubes;
-            }
-
-
-            Result = $"{switchedOn.Count} {result} {count}";
-
-            return Task.CompletedTask;
         }
 
-        private class Cube
+        IList<Cube> bigCubes = new List<Cube>();
+        HashSet<(long, long, long)> switchedOn = new HashSet<(long, long, long)>();
+        foreach (var cube in cubes)
         {
-            public Range X { get; set; }
-            public Range Y { get; set; }
-            public Range Z { get; set; }
-            public bool SwitchOn { get; set; }
-
-            public IEnumerable<Cube> CutOut(Cube cube)
+            bool added = false;
+            for (long x = Math.Max(-50, cube.X.Min); x <= Math.Min(50, cube.X.Max); x++)
             {
-                if (cube.X.Max < X.Min || cube.X.Min > X.Max
-                                     || cube.Y.Max < Y.Min || cube.Y.Min > Y.Max
-                                     || cube.Z.Max < Z.Min || cube.Z.Min > Z.Max)
+                for (long y = Math.Max(-50, cube.Y.Min); y <= Math.Min(50, cube.Y.Max); y++)
                 {
-                    yield return this;
-                    yield break;
-                }
-                foreach (var xSplit in X.Split(cube.X))
-                {
-                    foreach (var ySplit in Y.Split(cube.Y))
+                    for (long z = Math.Max(-50, cube.Z.Min); z <= Math.Min(50, cube.Z.Max); z++)
                     {
-                        foreach (var zSplit in Z.Split(cube.Z))
+                        added = true;
+                        if (cube.SwitchOn)
                         {
-                            if (xSplit.Item2 || ySplit.Item2 || zSplit.Item2)
-                            {
-                                yield return new Cube
-                                {
-                                    X = xSplit.Item1,
-                                    Y = ySplit.Item1,
-                                    Z = zSplit.Item1,
-                                    SwitchOn = SwitchOn
-                                };
-                            }
+                            switchedOn.Add((x, y, z));
+                        }
+                        else
+                        {
+                            switchedOn.Remove((x, y, z));
                         }
                     }
                 }
             }
+
+            if (!added)
+            {
+                bigCubes.Add(cube);
+            }
         }
 
-        private struct Range
+        long result = switchedOn.Count;
+        bigCubes = bigCubes.Reverse().ToList();
+        int count = 0;
+        while (bigCubes.Any())
         {
-            public Range(long min, long max)
+            var cube = bigCubes.First();
+            bigCubes.Remove(cube);
+            if (cube.SwitchOn)
             {
-                Min = min;
-                Max = max;
+                result += (cube.X.Max - cube.X.Min + 1) * (cube.Y.Max - cube.Y.Min + 1) * (cube.Z.Max - cube.Z.Min + 1);
             }
 
-            public long Min { get; }
-            public long Max { get; }
-
-            public IEnumerable<(Range, bool)> Split(Range splitBy)
+            IList<Cube> splitCubes = new List<Cube>();
+            foreach (var bigCube in bigCubes)
             {
-                if (Min >= splitBy.Min)
+                int splitcount = -1;
+                foreach (var splitCube in bigCube.CutOut(cube))
                 {
-                    if (Max <= splitBy.Max)
+                    splitCubes.Add(splitCube);
+                    splitcount++;
+                }
+                count += splitcount;
+            }
+
+            bigCubes = splitCubes;
+        }
+
+
+        Result = $"{switchedOn.Count} {result} {count}";
+
+        return Task.CompletedTask;
+    }
+
+    private class Cube
+    {
+        public Range X { get; set; }
+        public Range Y { get; set; }
+        public Range Z { get; set; }
+        public bool SwitchOn { get; set; }
+
+        public IEnumerable<Cube> CutOut(Cube cube)
+        {
+            if (cube.X.Max < X.Min || cube.X.Min > X.Max
+                                   || cube.Y.Max < Y.Min || cube.Y.Min > Y.Max
+                                   || cube.Z.Max < Z.Min || cube.Z.Min > Z.Max)
+            {
+                yield return this;
+                yield break;
+            }
+            foreach (var xSplit in X.Split(cube.X))
+            {
+                foreach (var ySplit in Y.Split(cube.Y))
+                {
+                    foreach (var zSplit in Z.Split(cube.Z))
                     {
-                        yield return (new Range(Min, Max), false);
+                        if (xSplit.Item2 || ySplit.Item2 || zSplit.Item2)
+                        {
+                            yield return new Cube
+                            {
+                                X = xSplit.Item1,
+                                Y = ySplit.Item1,
+                                Z = zSplit.Item1,
+                                SwitchOn = SwitchOn
+                            };
+                        }
                     }
-                    else
-                    {
-                        yield return (new Range(Min, splitBy.Max), false);
-                        yield return (new Range(splitBy.Max + 1, Max), true);
-                    }
+                }
+            }
+        }
+    }
+
+    private struct Range
+    {
+        public Range(long min, long max)
+        {
+            Min = min;
+            Max = max;
+        }
+
+        public long Min { get; }
+        public long Max { get; }
+
+        public IEnumerable<(Range, bool)> Split(Range splitBy)
+        {
+            if (Min >= splitBy.Min)
+            {
+                if (Max <= splitBy.Max)
+                {
+                    yield return (new Range(Min, Max), false);
                 }
                 else
                 {
-                    if (Max <= splitBy.Max)
-                    {
-                        yield return (new Range(Min, splitBy.Min - 1), true);
-                        yield return (new Range(splitBy.Min, Max), false);
-                    }
-                    else
-                    {
-                        yield return (new Range(Min, splitBy.Min - 1), true);
-                        yield return (new Range(splitBy.Min, splitBy.Max), false);
-                        yield return (new Range(splitBy.Max + 1, Max), true);
-                    }
+                    yield return (new Range(Min, splitBy.Max), false);
+                    yield return (new Range(splitBy.Max + 1, Max), true);
+                }
+            }
+            else
+            {
+                if (Max <= splitBy.Max)
+                {
+                    yield return (new Range(Min, splitBy.Min - 1), true);
+                    yield return (new Range(splitBy.Min, Max), false);
+                }
+                else
+                {
+                    yield return (new Range(Min, splitBy.Min - 1), true);
+                    yield return (new Range(splitBy.Min, splitBy.Max), false);
+                    yield return (new Range(splitBy.Max + 1, Max), true);
                 }
             }
         }
+    }
 
        
 
-        public override int Nummer => 202122;
-    }
+    public override int Nummer => 202122;
 }

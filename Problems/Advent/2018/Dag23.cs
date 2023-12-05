@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2018
+namespace Problems.Advent._2018;
+
+public class Dag23 : Problem
 {
-    public class Dag23 : Problem
-    {
-        private const string input = @"pos=<39419640,40942741,44272301>, r=64160712
+    private const string input = @"pos=<39419640,40942741,44272301>, r=64160712
 pos=<46350924,71088002,26653324>, r=83618218
 pos=<-27731649,33604320,39715416>, r=65803666
 pos=<16558212,87220984,23275209>, r=66580421
@@ -1009,218 +1009,217 @@ pos=<52201330,34701944,3943953>, r=54652096
 pos=<9274577,129768969,119376381>, r=59555196
 pos=<25192214,106127555,9320079>, r=93692484";
 
-        private const string testinput = @"pos=<10,12,12>, r=2
+    private const string testinput = @"pos=<10,12,12>, r=2
 pos=<12,14,12>, r=2
 pos=<16,12,12>, r=4
 pos=<14,14,14>, r=6
 pos=<50,50,50>, r=200
 pos=<10,10,10>, r=5";
 
-        public static long checkCount = 0;
+    public static long checkCount = 0;
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var nanobots = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None)
+            .Select(s =>
+            {
+                return new Nanobot(s.Substring(5)
+                    .Replace(">", string.Empty)
+                    .Replace(" r=", string.Empty)
+                    .Split(',')
+                    .Select(int.Parse).ToList());
+            }).ToList();
+        var strongestNanobot = nanobots.OrderByDescending(n => n.R).First();
+        Result = nanobots.Count(n => n.WithInRangeOf(strongestNanobot)).ToString();
+
+        var box = new Box(-536870912, -536870912, -536870912, 2 * 536870912);
+        int max = 970;
+        int result = int.MaxValue;
+        box.SetNanobotsWithinRange(nanobots, max);
+        box.Solve(ref max, ref result);
+        Result += " " + result;
+        return Task.CompletedTask;
+    }
+
+    public override int Nummer => 201823;
+
+    private class Box
+    {
+        public Box(int minX, int minY, int minZ, int d)
         {
-            var nanobots = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None)
-                .Select(s =>
-                {
-                    return new Nanobot(s.Substring(5)
-                        .Replace(">", string.Empty)
-                        .Replace(" r=", string.Empty)
-                        .Split(',')
-                        .Select(int.Parse).ToList());
-                }).ToList();
-            var strongestNanobot = nanobots.OrderByDescending(n => n.R).First();
-            Result = nanobots.Count(n => n.WithInRangeOf(strongestNanobot)).ToString();
-
-            var box = new Box(-536870912, -536870912, -536870912, 2 * 536870912);
-            int max = 970;
-            int result = int.MaxValue;
-            box.SetNanobotsWithinRange(nanobots, max);
-            box.Solve(ref max, ref result);
-            Result += " " + result;
-            return Task.CompletedTask;
+            MinX = minX;
+            MinY = minY;
+            MinZ = minZ;
+            D = d;
         }
 
-        public override int Nummer => 201823;
-
-        private class Box
-        {
-            public Box(int minX, int minY, int minZ, int d)
-            {
-                MinX = minX;
-                MinY = minY;
-                MinZ = minZ;
-                D = d;
-            }
-
-            public int MinX { get; set; }
-            public int MinY { get; set; }
-            public int MinZ { get; set; }
-            public int D { get; set; }
-            public int Number { get; private set; }
+        public int MinX { get; set; }
+        public int MinY { get; set; }
+        public int MinZ { get; set; }
+        public int D { get; set; }
+        public int Number { get; private set; }
             
-            public IList<Nanobot> NanobotsWithinRange { get; private set; }
+        public IList<Nanobot> NanobotsWithinRange { get; private set; }
 
-            public bool SetNanobotsWithinRange(IList<Nanobot> nanobots, int max)
+        public bool SetNanobotsWithinRange(IList<Nanobot> nanobots, int max)
+        {
+            if (MinX <= 12613106 && MinX + D - 1 >= 12613106
+                                 && MinY <= 31777547 && MinY + D - 1 >= 31777547
+                                 && MinZ <= 16083427 && MinZ + D - 1 >= 16083427)
             {
-                if (MinX <= 12613106 && MinX + D - 1 >= 12613106
-                                     && MinY <= 31777547 && MinY + D - 1 >= 31777547
-                                     && MinZ <= 16083427 && MinZ + D - 1 >= 16083427)
-                {
 
-                }
-                int misCount = 0;
-                int target = nanobots.Count - max;
-                IList<Nanobot> result = new List<Nanobot>();
-                foreach (var nanobot in nanobots)
+            }
+            int misCount = 0;
+            int target = nanobots.Count - max;
+            IList<Nanobot> result = new List<Nanobot>();
+            foreach (var nanobot in nanobots)
+            {
+                if (!IsWithinRange(nanobot))
                 {
-                    if (!IsWithinRange(nanobot))
+                    misCount++;
+                    if (misCount > target)
                     {
-                        misCount++;
-                        if (misCount > target)
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        result.Add(nanobot);
+                        return false;
                     }
                 }
-
-                NanobotsWithinRange = result;
-                Number = result.Count;
-                return true;
-                bool IsWithinRange(Nanobot nanobot)
+                else
                 {
-                    int dx = Distance(nanobot.X, MinX);
-                    int dy = Distance(nanobot.Y, MinY);
-                    int dz = Distance(nanobot.Z, MinZ);
-                    return dx + dy + dz <= nanobot.R;
-
-                    int Distance(int nanobotCoordinate, int minCoordinate)
-                    {
-                        if (nanobotCoordinate < minCoordinate)
-                        {
-                            return minCoordinate - nanobotCoordinate;
-                        }
-
-                        if (nanobotCoordinate > minCoordinate + D - 1)
-                        {
-                            return nanobotCoordinate - minCoordinate - D + 1;
-                        }
-
-                        return 0;
-                    }
+                    result.Add(nanobot);
                 }
             }
 
-
-            public IEnumerable<Box> Divide(int max)
+            NanobotsWithinRange = result;
+            Number = result.Count;
+            return true;
+            bool IsWithinRange(Nanobot nanobot)
             {
-                var division1 = new Box(MinX, MinY, MinZ, D / 2);
-                var division2 = new Box(MinX, MinY, MinZ + D / 2 + 1, D / 2);
-                var division3 = new Box(MinX, MinY + D / 2 + 1, MinZ, D / 2);
-                var division4 = new Box(MinX, MinY + D / 2 + 1, MinZ + D / 2 + 1, D / 2);
-                var division5 = new Box(MinX + D / 2 + 1, MinY, MinZ, D / 2);
-                var division6 = new Box(MinX + D / 2 + 1, MinY, MinZ + D / 2 + 1, D / 2);
-                var division7 = new Box(MinX + D / 2 + 1, MinY + D / 2 + 1, MinZ, D / 2);
-                var division8 = new Box(MinX + D / 2 + 1, MinY + D / 2 + 1, MinZ + D / 2 + 1, D / 2);
-                if (division1.SetNanobotsWithinRange(NanobotsWithinRange, max))
-                {
-                    yield return division1;
-                }
-                if (division2.SetNanobotsWithinRange(NanobotsWithinRange, max))
-                {
-                    yield return division2;
-                }
-                if (division3.SetNanobotsWithinRange(NanobotsWithinRange, max))
-                {
-                    yield return division3;
-                }
-                if (division4.SetNanobotsWithinRange(NanobotsWithinRange, max))
-                {
-                    yield return division4;
-                }
-                if (division5.SetNanobotsWithinRange(NanobotsWithinRange, max))
-                {
-                    yield return division5;
-                }
-                if (division6.SetNanobotsWithinRange(NanobotsWithinRange, max))
-                {
-                    yield return division6;
-                }
-                if (division7.SetNanobotsWithinRange(NanobotsWithinRange, max))
-                {
-                    yield return division7;
-                }
-                if (division8.SetNanobotsWithinRange(NanobotsWithinRange, max))
-                {
-                    yield return division8;
-                }
+                int dx = Distance(nanobot.X, MinX);
+                int dy = Distance(nanobot.Y, MinY);
+                int dz = Distance(nanobot.Z, MinZ);
+                return dx + dy + dz <= nanobot.R;
 
-            }
-
-            public void Solve(ref int max, ref int result)
-            {
-                checkCount++;
-                if (Number < max)
+                int Distance(int nanobotCoordinate, int minCoordinate)
                 {
-                    return;
-                }
-
-                //if (Number == max && MinCoordinateDistance() >= result)
-                //{
-                //    return;
-                //}
-                if (D == 1)
-                {
-                    max = Number;
-                    result = Math.Abs(MinX) + Math.Abs(MinY) + Math.Abs(MinZ);
-                    Console.WriteLine($"{(MinX,MinY,MinZ)} : {Math.Abs(MinX) + Math.Abs(MinY) + Math.Abs(MinZ)} {Number} {checkCount}");
-                }
-                else 
-                {
-                    foreach (var division in Divide(max).OrderByDescending(b => b.Number))
+                    if (nanobotCoordinate < minCoordinate)
                     {
-                        division.Solve(ref max, ref result);
+                        return minCoordinate - nanobotCoordinate;
                     }
-                }
-            }
 
-            private int MinCoordinateDistance()
-            {
-                return Math.Min(Math.Abs(MinX), Math.Abs(MinX + D - 1))
-                       + Math.Min(Math.Abs(MinY), Math.Abs(MinY + D - 1))
-                       + Math.Min(Math.Abs(MinZ), Math.Abs(MinZ + D - 1));
+                    if (nanobotCoordinate > minCoordinate + D - 1)
+                    {
+                        return nanobotCoordinate - minCoordinate - D + 1;
+                    }
+
+                    return 0;
+                }
             }
         }
 
 
-
-
-        private struct Nanobot
+        public IEnumerable<Box> Divide(int max)
         {
-            public Nanobot(IList<int> parameters)
+            var division1 = new Box(MinX, MinY, MinZ, D / 2);
+            var division2 = new Box(MinX, MinY, MinZ + D / 2 + 1, D / 2);
+            var division3 = new Box(MinX, MinY + D / 2 + 1, MinZ, D / 2);
+            var division4 = new Box(MinX, MinY + D / 2 + 1, MinZ + D / 2 + 1, D / 2);
+            var division5 = new Box(MinX + D / 2 + 1, MinY, MinZ, D / 2);
+            var division6 = new Box(MinX + D / 2 + 1, MinY, MinZ + D / 2 + 1, D / 2);
+            var division7 = new Box(MinX + D / 2 + 1, MinY + D / 2 + 1, MinZ, D / 2);
+            var division8 = new Box(MinX + D / 2 + 1, MinY + D / 2 + 1, MinZ + D / 2 + 1, D / 2);
+            if (division1.SetNanobotsWithinRange(NanobotsWithinRange, max))
             {
-                X = parameters[0];
-                Y = parameters[1];
-                Z = parameters[2];
-                R = parameters[3];
+                yield return division1;
+            }
+            if (division2.SetNanobotsWithinRange(NanobotsWithinRange, max))
+            {
+                yield return division2;
+            }
+            if (division3.SetNanobotsWithinRange(NanobotsWithinRange, max))
+            {
+                yield return division3;
+            }
+            if (division4.SetNanobotsWithinRange(NanobotsWithinRange, max))
+            {
+                yield return division4;
+            }
+            if (division5.SetNanobotsWithinRange(NanobotsWithinRange, max))
+            {
+                yield return division5;
+            }
+            if (division6.SetNanobotsWithinRange(NanobotsWithinRange, max))
+            {
+                yield return division6;
+            }
+            if (division7.SetNanobotsWithinRange(NanobotsWithinRange, max))
+            {
+                yield return division7;
+            }
+            if (division8.SetNanobotsWithinRange(NanobotsWithinRange, max))
+            {
+                yield return division8;
             }
 
-            public int X { get; set; }
-            public int Y { get; set; }
-            public int Z { get; set; }
-            public int R { get; set; }
+        }
 
-            public bool WithInRangeOf(Nanobot strongestNanobot)
+        public void Solve(ref int max, ref int result)
+        {
+            checkCount++;
+            if (Number < max)
             {
-                return Math.Abs(X - strongestNanobot.X)
-                       + Math.Abs(Y - strongestNanobot.Y)
-                       + Math.Abs(Z - strongestNanobot.Z)
-                       <= strongestNanobot.R;
+                return;
             }
+
+            //if (Number == max && MinCoordinateDistance() >= result)
+            //{
+            //    return;
+            //}
+            if (D == 1)
+            {
+                max = Number;
+                result = Math.Abs(MinX) + Math.Abs(MinY) + Math.Abs(MinZ);
+                Console.WriteLine($"{(MinX,MinY,MinZ)} : {Math.Abs(MinX) + Math.Abs(MinY) + Math.Abs(MinZ)} {Number} {checkCount}");
+            }
+            else 
+            {
+                foreach (var division in Divide(max).OrderByDescending(b => b.Number))
+                {
+                    division.Solve(ref max, ref result);
+                }
+            }
+        }
+
+        private int MinCoordinateDistance()
+        {
+            return Math.Min(Math.Abs(MinX), Math.Abs(MinX + D - 1))
+                   + Math.Min(Math.Abs(MinY), Math.Abs(MinY + D - 1))
+                   + Math.Min(Math.Abs(MinZ), Math.Abs(MinZ + D - 1));
+        }
+    }
+
+
+
+
+    private struct Nanobot
+    {
+        public Nanobot(IList<int> parameters)
+        {
+            X = parameters[0];
+            Y = parameters[1];
+            Z = parameters[2];
+            R = parameters[3];
+        }
+
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Z { get; set; }
+        public int R { get; set; }
+
+        public bool WithInRangeOf(Nanobot strongestNanobot)
+        {
+            return Math.Abs(X - strongestNanobot.X)
+                   + Math.Abs(Y - strongestNanobot.Y)
+                   + Math.Abs(Z - strongestNanobot.Z)
+                   <= strongestNanobot.R;
         }
     }
 }

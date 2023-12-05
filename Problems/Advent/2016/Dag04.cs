@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Algorithms.Models;
 
-namespace Problems.Advent
+namespace Problems.Advent;
+
+public class Dag04 : Problem
 {
-    public class Dag04 : Problem
-    {
-        private const string input = @"fubrjhqlf-edvnhw-dftxlvlwlrq-803[wjvzd]
+    private const string input = @"fubrjhqlf-edvnhw-dftxlvlwlrq-803[wjvzd]
 kzgwomvqk-rmttgjmiv-lmxizbumvb-902[zmnji]
 dkqjcbctfqwu-dwppa-fgukip-596[syiua]
 xjinphzm-bmvyz-ytz-gjbdnodxn-135[nzbdj]
@@ -959,81 +959,80 @@ kpvgtpcvkqpcn-dwppa-rwtejcukpi-336[pcktv]
 hwbba-gii-eqpvckpogpv-492[pbgiv]
 zsxyfgqj-hqfxxnknji-idj-xytwflj-359[jxfin]";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var testroom = new Room("qzmt-zixmtkozy-ivhz-343[]");
+        Console.WriteLine(testroom.Decipher());
+        testroom.IsValid();
+
+        IList<Room> rooms = input.Split(Environment.NewLine).Select(s => new Room(s)).ToList();
+        Result = rooms.Where(r => r.IsValid()).Sum(r => r.Number).ToString();
+        foreach (var room in rooms)
         {
-            var testroom = new Room("qzmt-zixmtkozy-ivhz-343[]");
-            Console.WriteLine(testroom.Decipher());
-            testroom.IsValid();
-
-            IList<Room> rooms = input.Split(Environment.NewLine).Select(s => new Room(s)).ToList();
-            Result = rooms.Where(r => r.IsValid()).Sum(r => r.Number).ToString();
-            foreach (var room in rooms)
+            if (room.Decipher().Contains("north", StringComparison.InvariantCultureIgnoreCase))
             {
-                if (room.Decipher().Contains("north", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    Console.WriteLine($"{room.Decipher()}   {room.Number}");
-                }
+                Console.WriteLine($"{room.Decipher()}   {room.Number}");
             }
-
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201604;
+        return Task.CompletedTask;
+    }
 
-        private class Room
+    public override int Nummer => 201604;
+
+    private class Room
+    {
+        public Room(string encoding)
         {
-            public Room(string encoding)
+            var split = encoding.Split('-');
+            foreach (var s in split.Take(split.Length - 1))
             {
-                var split = encoding.Split('-');
-                foreach (var s in split.Take(split.Length - 1))
-                {
-                    Words.Add(s);
-                }
-
-                var last = split.Last().Split('[');
-                Number = int.Parse(last[0]);
-                Checksum = last[1].Substring(0, last[1].Length - 1);
+                Words.Add(s);
             }
 
-            public IList<string> Words { get; set; } = new List<string>();
-            public string Checksum { get; set; }
-            public int Number { get; set; }
+            var last = split.Last().Split('[');
+            Number = int.Parse(last[0]);
+            Checksum = last[1].Substring(0, last[1].Length - 1);
+        }
 
-            public bool IsValid()
+        public IList<string> Words { get; set; } = new List<string>();
+        public string Checksum { get; set; }
+        public int Number { get; set; }
+
+        public bool IsValid()
+        {
+            Counter<char> letters = new Counter<char>();
+            foreach (var word in Words)
             {
-                Counter<char> letters = new Counter<char>();
-                foreach (var word in Words)
+                foreach (var letter in word)
                 {
-                    foreach (var letter in word)
-                    {
-                        letters[letter]++;
-                    }
+                    letters[letter]++;
                 }
-
-                var check = letters.Keys.OrderByDescending(l => letters[l]).ThenBy(l => l).Take(5);
-                return check.SequenceEqual(Checksum);
             }
 
-            public string Decipher()
+            var check = letters.Keys.OrderByDescending(l => letters[l]).ThenBy(l => l).Take(5);
+            return check.SequenceEqual(Checksum);
+        }
+
+        public string Decipher()
+        {
+            return string.Join('-', Words.Select(Shift));
+
+            string Shift(string s)
             {
-                return string.Join('-', Words.Select(Shift));
-
-                string Shift(string s)
+                var sb = new StringBuilder();
+                foreach (var c in s)
                 {
-                    var sb = new StringBuilder();
-                    foreach (var c in s)
+                    var next = c + Number % 26;
+                    if (next > 'z')
                     {
-                        var next = c + Number % 26;
-                        if (next > 'z')
-                        {
-                            next -= 26;
-                        }
-
-                        sb.Append((char)next);
+                        next -= 26;
                     }
 
-                    return sb.ToString();
+                    sb.Append((char)next);
                 }
+
+                return sb.ToString();
             }
         }
     }

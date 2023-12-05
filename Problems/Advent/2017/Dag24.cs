@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag24 : Problem
 {
-    internal class Dag24 : Problem
-    {
-        private const string input = @"14/42
+    private const string input = @"14/42
 2/3
 6/44
 4/10
@@ -65,49 +65,48 @@ namespace Problems.Advent._2017
 28/28
 2/13
 48/14";
-        public override Task ExecuteAsync()
-        {
-            var components = input.Split(Environment.NewLine).Select(l => l.Split('/').Select(int.Parse).ToList()).ToList();
+    public override Task ExecuteAsync()
+    {
+        var components = input.Split(Environment.NewLine).Select(l => l.Split('/').Select(int.Parse).ToList()).ToList();
             
-            long length = 0;
-            long strength = 0;
-            Add(0, new HashSet<int>(), 0);
-            Result = strength.ToString();
+        long length = 0;
+        long strength = 0;
+        Add(0, new HashSet<int>(), 0);
+        Result = strength.ToString();
 
-            void Add(int port, HashSet<int> used, int currentValue)
+        void Add(int port, HashSet<int> used, int currentValue)
+        {
+            if (used.Count > length)
             {
-                if (used.Count > length)
+                length = used.Count;
+                strength = currentValue;
+            }
+            else if (used.Count == length)
+            {
+                strength = Math.Max(currentValue, strength);
+            }
+            for (int i = 0; i < components.Count; i++)
+            {
+                if (!used.Contains(i))
                 {
-                    length = used.Count;
-                    strength = currentValue;
-                }
-                else if (used.Count == length)
-                {
-                    strength = Math.Max(currentValue, strength);
-                }
-                for (int i = 0; i < components.Count; i++)
-                {
-                    if (!used.Contains(i))
+                    var component = components[i];
+                    if (component[0] == port)
                     {
-                        var component = components[i];
-                        if (component[0] == port)
-                        {
-                            var copy = new HashSet<int>(used);
-                            copy.Add(i);
-                            Add(component[1], copy, currentValue + component[0] + component[1]);
-                        }
-                        else if (component[1] == port)
-                        {
-                            var copy = new HashSet<int>(used);
-                            copy.Add(i);
-                            Add(component[0], copy, currentValue + component[0] + component[1]);
-                        }
+                        var copy = new HashSet<int>(used);
+                        copy.Add(i);
+                        Add(component[1], copy, currentValue + component[0] + component[1]);
+                    }
+                    else if (component[1] == port)
+                    {
+                        var copy = new HashSet<int>(used);
+                        copy.Add(i);
+                        Add(component[0], copy, currentValue + component[0] + component[1]);
                     }
                 }
             }
-            return Task.CompletedTask;
         }
-
-        public override int Nummer => 201724;
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201724;
 }

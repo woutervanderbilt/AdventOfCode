@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag19 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"18: 48 48
+public class Dag19 : Problem
+{
+    #region input
+
+    private const string input = @"18: 48 48
 25: 48 81 | 41 7
 48: ""b""
 4: 131 48 | 70 41
@@ -599,214 +599,213 @@ aabbbbabababbbbbbaabbaba
 bbbababbbaaabbaaabaabbba
 abbaabaaababbaaaaaabaabbbbaaaabaabbbaabaaabaabab
 bbabbbaabaaabbabaaabaabbbbabbbaabbbaababbaaaaabbaabbbbba";
-        #endregion
+    #endregion
 
-        private static int maxLength;
-        public override Task ExecuteAsync()
+    private static int maxLength;
+    public override Task ExecuteAsync()
+    {
+        IDictionary<int, Rule> rules = new Dictionary<int, Rule>();
+        IList<string> messages = new List<string>();
+        int ruleIndex = 0;
+        bool parseRules = true;
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IDictionary<int, Rule> rules = new Dictionary<int, Rule>();
-            IList<string> messages = new List<string>();
-            int ruleIndex = 0;
-            bool parseRules = true;
-            foreach (var line in input.Split(Environment.NewLine))
+            if (parseRules)
             {
-                if (parseRules)
+                if (string.IsNullOrEmpty(line))
                 {
-                    if (string.IsNullOrEmpty(line))
-                    {
-                        parseRules = false;
-                        continue;
-                    }
-                    var split = line.Split(":");
-                    int number = int.Parse(split[0]);
-                    var rule = new Rule{Number = number};
-                    rules[number] = rule;
-                    if (split[1].StartsWith(" \""))
-                    {
-                        rule.DirectMatch = split[1][2].ToString();
-                        continue;
-                    }
-
-                    var referrals = split[1].Split("|");
-                    foreach (var referral in referrals)
-                    {
-                        IList<int> r = new List<int>();
-                        foreach (var s in referral.Trim().Split(' '))
-                        {
-                            r.Add(int.Parse(s));
-                        }
-                        rule.ReferredRules.Add(r);
-                    }
+                    parseRules = false;
+                    continue;
                 }
-                else
+                var split = line.Split(":");
+                int number = int.Parse(split[0]);
+                var rule = new Rule{Number = number};
+                rules[number] = rule;
+                if (split[1].StartsWith(" \""))
                 {
-                    messages.Add(line);
+                    rule.DirectMatch = split[1][2].ToString();
+                    continue;
+                }
+
+                var referrals = split[1].Split("|");
+                foreach (var referral in referrals)
+                {
+                    IList<int> r = new List<int>();
+                    foreach (var s in referral.Trim().Split(' '))
+                    {
+                        r.Add(int.Parse(s));
+                    }
+                    rule.ReferredRules.Add(r);
                 }
             }
-
-            foreach (var rule in rules.Values)
+            else
             {
-                foreach (var referral in rule.ReferredRules)
-                {
-                    rules[referral[0]].ReferredByLeft.Add(rule.Number);
-                    if (referral.Count > 1)
-                    {
-                        rules[referral[1]].ReferredByRight.Add(rule.Number);
-                        if (referral.Count > 2)
-                        {
-                            rules[referral[2]].ReferredByFarRight.Add(rule.Number);
-                        }
-                    }
-                }
+                messages.Add(line);
             }
-
-            maxLength = messages.Max(m => m.Length);
-
-            Result = messages.Count(m => rules[0].Matching(rules, messages).Contains(m)).ToString();
-
-
-            return Task.CompletedTask;
         }
 
-        public class Rule
+        foreach (var rule in rules.Values)
         {
-            public int Number { get; set; }
-            public IList<IList<int>> ReferredRules { get; set; } = new List<IList<int>>();
-            public string DirectMatch { get; set; }
-            public HashSet<int> ReferredByLeft { get; } = new HashSet<int>();
-            public HashSet<int> ReferredByRight { get; } = new HashSet<int>();
-            public HashSet<int> ReferredByFarRight { get; } = new HashSet<int>();
-
-            private HashSet<string> cachedMatches { get; set; }
-
-            public HashSet<string> Matching(IDictionary<int, Rule> rules, IList<string> messages)
+            foreach (var referral in rule.ReferredRules)
             {
-                if (cachedMatches == null)
+                rules[referral[0]].ReferredByLeft.Add(rule.Number);
+                if (referral.Count > 1)
                 {
-                    InitCachedMatches(rules, messages);
+                    rules[referral[1]].ReferredByRight.Add(rule.Number);
+                    if (referral.Count > 2)
+                    {
+                        rules[referral[2]].ReferredByFarRight.Add(rule.Number);
+                    }
                 }
+            }
+        }
 
-                return cachedMatches;
+        maxLength = messages.Max(m => m.Length);
+
+        Result = messages.Count(m => rules[0].Matching(rules, messages).Contains(m)).ToString();
+
+
+        return Task.CompletedTask;
+    }
+
+    public class Rule
+    {
+        public int Number { get; set; }
+        public IList<IList<int>> ReferredRules { get; set; } = new List<IList<int>>();
+        public string DirectMatch { get; set; }
+        public HashSet<int> ReferredByLeft { get; } = new HashSet<int>();
+        public HashSet<int> ReferredByRight { get; } = new HashSet<int>();
+        public HashSet<int> ReferredByFarRight { get; } = new HashSet<int>();
+
+        private HashSet<string> cachedMatches { get; set; }
+
+        public HashSet<string> Matching(IDictionary<int, Rule> rules, IList<string> messages)
+        {
+            if (cachedMatches == null)
+            {
+                InitCachedMatches(rules, messages);
             }
 
-            private void InitCachedMatches(IDictionary<int, Rule> rules, IList<string> messages)
-            {
-                cachedMatches = new HashSet<string>();
-                if (!string.IsNullOrEmpty(DirectMatch))
-                {
-                    cachedMatches.Add(DirectMatch);
-                    return;
-                }
+            return cachedMatches;
+        }
 
-                if (Number != 8 && Number != 11)
+        private void InitCachedMatches(IDictionary<int, Rule> rules, IList<string> messages)
+        {
+            cachedMatches = new HashSet<string>();
+            if (!string.IsNullOrEmpty(DirectMatch))
+            {
+                cachedMatches.Add(DirectMatch);
+                return;
+            }
+
+            if (Number != 8 && Number != 11)
+            {
+                foreach (var referredRule in ReferredRules)
                 {
-                    foreach (var referredRule in ReferredRules)
+                    foreach (var left in rules[referredRule[0]].Matching(rules, messages))
                     {
-                        foreach (var left in rules[referredRule[0]].Matching(rules, messages))
+                        if (referredRule.Count > 1)
                         {
-                            if (referredRule.Count > 1)
+                            foreach (var right in rules[referredRule[1]].Matching(rules, messages))
                             {
-                                foreach (var right in rules[referredRule[1]].Matching(rules, messages))
-                                {
-                                    cachedMatches.Add(left + right);
-                                }
+                                cachedMatches.Add(left + right);
                             }
-                            else
-                            {
-                                cachedMatches.Add(left);
-                            }
+                        }
+                        else
+                        {
+                            cachedMatches.Add(left);
                         }
                     }
                 }
-                else if (Number == 8)
+            }
+            else if (Number == 8)
+            {
+                var matching = rules[42].Matching(rules, messages);
+                foreach (var match in matching)
                 {
-                    var matching = rules[42].Matching(rules, messages);
-                    foreach (var match in matching)
+                    cachedMatches.Add(match);
+                }
+
+                bool added = true;
+                IList<string> loop = cachedMatches.ToList();
+                while (added)
+                {
+                    added = false;
+                    HashSet<string> toAdd = new HashSet<string>();
+                    foreach (var cachedMatch in loop)
                     {
-                        cachedMatches.Add(match);
+                        foreach (var match in matching)
+                        {
+                            var addition = match + cachedMatch;
+                            if (addition.Length <= maxLength)
+                            {
+                                toAdd.Add(addition);
+                            }
+                        }
                     }
 
-                    bool added = true;
-                    IList<string> loop = cachedMatches.ToList();
-                    while (added)
+                    IList<string> newLoop = new List<string>();
+                    foreach (var addition in toAdd)
                     {
-                        added = false;
-                        HashSet<string> toAdd = new HashSet<string>();
-                        foreach (var cachedMatch in loop)
+                        if (!cachedMatches.Contains(addition) && messages.Any(m => m.Contains(addition)))
                         {
-                            foreach (var match in matching)
+                            added = true;
+                            cachedMatches.Add(addition);
+                            newLoop.Add(addition);
+                        }
+                    }
+
+                    loop = newLoop;
+                }
+            }
+            else if (Number == 11)
+            {
+                var matching42 = rules[42].Matching(rules, messages);
+                var matching31 = rules[31].Matching(rules, messages);
+                foreach (var match42 in matching42)
+                {
+                    foreach (var match31 in matching31)
+                    {
+                        var addition = match42 + match31;
+                        if (messages.Any(m => m.Contains(addition)))
+                        {
+                            cachedMatches.Add(match42 + match31);
+                        }
+                    }
+                }
+
+                IList<string> loop = cachedMatches.ToList();
+                bool added = true;
+                while (added)
+                {
+                    added = false;
+                       
+                    IList<string> newLoop = new List<string>();
+                    foreach (var cachedMatch in loop)
+                    {
+                        foreach (var match42 in matching42)
+                        {
+                            foreach (var match31 in matching31)
                             {
-                                var addition = match + cachedMatch;
+                                string addition = match42 + cachedMatch + match31;
                                 if (addition.Length <= maxLength)
                                 {
-                                    toAdd.Add(addition);
-                                }
-                            }
-                        }
-
-                        IList<string> newLoop = new List<string>();
-                        foreach (var addition in toAdd)
-                        {
-                            if (!cachedMatches.Contains(addition) && messages.Any(m => m.Contains(addition)))
-                            {
-                                added = true;
-                                cachedMatches.Add(addition);
-                                newLoop.Add(addition);
-                            }
-                        }
-
-                        loop = newLoop;
-                    }
-                }
-                else if (Number == 11)
-                {
-                    var matching42 = rules[42].Matching(rules, messages);
-                    var matching31 = rules[31].Matching(rules, messages);
-                    foreach (var match42 in matching42)
-                    {
-                        foreach (var match31 in matching31)
-                        {
-                            var addition = match42 + match31;
-                            if (messages.Any(m => m.Contains(addition)))
-                            {
-                                cachedMatches.Add(match42 + match31);
-                            }
-                        }
-                    }
-
-                    IList<string> loop = cachedMatches.ToList();
-                    bool added = true;
-                    while (added)
-                    {
-                        added = false;
-                       
-                        IList<string> newLoop = new List<string>();
-                        foreach (var cachedMatch in loop)
-                        {
-                            foreach (var match42 in matching42)
-                            {
-                                foreach (var match31 in matching31)
-                                {
-                                    string addition = match42 + cachedMatch + match31;
-                                    if (addition.Length <= maxLength)
+                                    if (!cachedMatches.Contains(addition) && messages.Any(m => m.Contains(addition)))
                                     {
-                                        if (!cachedMatches.Contains(addition) && messages.Any(m => m.Contains(addition)))
-                                        {
-                                            added = true;
-                                            cachedMatches.Add(addition);
-                                            newLoop.Add(addition);
-                                        }
+                                        added = true;
+                                        cachedMatches.Add(addition);
+                                        newLoop.Add(addition);
                                     }
                                 }
                             }
                         }
-
-                        loop = newLoop;
                     }
+
+                    loop = newLoop;
                 }
             }
         }
-
-        public override int Nummer => 202019;
     }
+
+    public override int Nummer => 202019;
 }

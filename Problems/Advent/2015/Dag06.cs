@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2015
+namespace Problems.Advent._2015;
+
+internal class Dag06 : Problem
 {
-    internal class Dag06 : Problem
-    {
-        private const string input = @"turn on 887,9 through 959,629
+    private const string input = @"turn on 887,9 through 959,629
 turn on 454,398 through 844,448
 turn off 539,243 through 559,965
 turn off 370,819 through 676,868
@@ -308,54 +308,53 @@ toggle 717,493 through 930,875
 toggle 534,948 through 599,968
 turn on 522,730 through 968,950
 turn off 102,229 through 674,529";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var grid = new int[1000, 1000];
+        foreach (var instruction in input.Split(Environment.NewLine))
         {
-            var grid = new int[1000, 1000];
-            foreach (var instruction in input.Split(Environment.NewLine))
+            var words = instruction.Split(' ');
+            (int, int) rangeStart;
+            (int, int) rangeEnd;
+            Func<int, int> function;
+            if (words[0] == "toggle")
             {
-                var words = instruction.Split(' ');
-                (int, int) rangeStart;
-                (int, int) rangeEnd;
-                Func<int, int> function;
-                if (words[0] == "toggle")
+                rangeStart = Parse(words[1]);
+                rangeEnd = Parse(words[3]);
+                function = b => b + 2;
+            }
+            else
+            {
+                rangeStart = Parse(words[2]);
+                rangeEnd = Parse(words[4]);
+                if (words[1] == "on")
                 {
-                    rangeStart = Parse(words[1]);
-                    rangeEnd = Parse(words[3]);
-                    function = b => b + 2;
+                    function = b => b + 1;
                 }
                 else
                 {
-                    rangeStart = Parse(words[2]);
-                    rangeEnd = Parse(words[4]);
-                    if (words[1] == "on")
-                    {
-                        function = b => b + 1;
-                    }
-                    else
-                    {
-                        function = b => Math.Max(0, b - 1);
-                    }
-                }
-
-                for (int i = rangeStart.Item1; i <= rangeEnd.Item1; i++)
-                {
-                    for (int j = rangeStart.Item2; j <= rangeEnd.Item2; j++)
-                    {
-                        grid[i, j] = function(grid[i, j]);
-                    }
+                    function = b => Math.Max(0, b - 1);
                 }
             }
 
-            Result = grid.Cast<int>().Sum().ToString();
-
-            (int, int) Parse(string s)
+            for (int i = rangeStart.Item1; i <= rangeEnd.Item1; i++)
             {
-                var split = s.Split(',');
-                return (int.Parse(split[0]), int.Parse(split[1]));
+                for (int j = rangeStart.Item2; j <= rangeEnd.Item2; j++)
+                {
+                    grid[i, j] = function(grid[i, j]);
+                }
             }
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201506;
+        Result = grid.Cast<int>().Sum().ToString();
+
+        (int, int) Parse(string s)
+        {
+            var split = s.Split(',');
+            return (int.Parse(split[0]), int.Parse(split[1]));
+        }
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201506;
 }

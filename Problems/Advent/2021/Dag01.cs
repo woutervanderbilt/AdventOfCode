@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag01 : Problem
 {
-    internal class Dag01 : Problem
-    {
-        private const string input = @"141
+    private const string input = @"141
 140
 160
 161
@@ -2007,27 +2007,26 @@ namespace Problems.Advent._2021
 9089
 9102
 9105";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var (a, b, c) = (int.MaxValue, int.MaxValue, int.MaxValue);
+        var prev = a;
+        int increaseCount = 0;
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            var (a, b, c) = (int.MaxValue, int.MaxValue, int.MaxValue);
-            var prev = a;
-            int increaseCount = 0;
-            foreach (var line in input.Split(Environment.NewLine))
+            var depth = int.Parse(line);
+            if (depth > prev)
             {
-                var depth = int.Parse(line);
-                if (depth > prev)
-                {
-                    increaseCount++;
-                }
-
-                (a, b, c) = (b, c, depth);
-                prev = a;
+                increaseCount++;
             }
 
-            Result = increaseCount.ToString();
-            return Task.CompletedTask;
+            (a, b, c) = (b, c, depth);
+            prev = a;
         }
 
-        public override int Nummer => 202101;
+        Result = increaseCount.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202101;
 }

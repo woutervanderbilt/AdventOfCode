@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Extensions;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag08 : Problem
 {
-    internal class Dag08 : Problem
-    {
-        private const string input = @"cg fadegbc ecfadb acdbeg abgfe dcegfb gcad bceag debca bgc | ceafbd gfedcb cabedf dbace
+    private const string input = @"cg fadegbc ecfadb acdbeg abgfe dcegfb gcad bceag debca bgc | ceafbd gfedcb cabedf dbace
 bgeacd ea dfcab fcdgbae ecbgf gbcadf defa cae dcaefb fabce | ea fdae daecgb cea
 fb gafbec dcabe ecfdag fagdcb afcdb cbf gdfb agfdc acfgdbe | acdgfb gdcfa bceda bf
 fd bcafe afed acbfde fcbde fcbgae fgabdc edbgfca cgebd dfb | dbf becgd bfd efcdb
@@ -210,53 +210,85 @@ gdba gedfb egfbad fegadc ecgfba dfbec gd cbedfga abefg fdg | fcadge gdbef fegbac
 fbdec fdbceag feacb fbcgd dcbfge dec efgadc dcbafg ed dbge | cabgdf ceafb afgdec de
 cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda";
         
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        long result = 0;
+        long sum = 0;
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            long result = 0;
-            long sum = 0;
-            foreach (var line in input.Split(Environment.NewLine))
+            sum += Solve(line);
+            bool pastPipe = false;
+            foreach (var digit in line.Split(' '))
             {
-                sum += Solve(line);
-                bool pastPipe = false;
-                foreach (var digit in line.Split(' '))
+                var count = digit.Length;
+                if (digit == "|")
                 {
-                    var count = digit.Length;
-                    if (digit == "|")
-                    {
-                        pastPipe = true;
-                    }
-                    if (pastPipe && (count == 2 || count == 3 || count == 4 || count == 7))
-                    {
-                        result++;
-                    }
+                    pastPipe = true;
+                }
+                if (pastPipe && (count == 2 || count == 3 || count == 4 || count == 7))
+                {
+                    result++;
+                }
+            }
+        }
+
+        Result = (result+" "+sum);
+        return Task.CompletedTask;
+    }
+
+    long Solve(string line)
+    {
+        var digits = line.Split(' ');
+
+        foreach (var permutation in "abcdefg".Permutations().Select(p => p.ToList()))
+        {
+            var dict = new Dictionary<char, char>();
+            dict[permutation[0]] = 'a';
+            dict[permutation[1]] = 'b';
+            dict[permutation[2]] = 'c';
+            dict[permutation[3]] = 'd';
+            dict[permutation[4]] = 'e';
+            dict[permutation[5]] = 'f';
+            dict[permutation[6]] = 'g';
+            bool correct = true;
+            foreach (var digit in digits)
+            {
+                if (digit == "|")
+                {
+                    break;
+                }
+                var mappedDigit = new List<char>();
+                foreach (var c in digit)
+                {
+                    mappedDigit.Add(dict[c]);
+                }
+
+                var sortedDigit = new string(mappedDigit.OrderBy(c => c).ToArray());
+
+                if (!DigitMappings.Contains(sortedDigit))
+                {
+                    correct = false;
+                    break;
                 }
             }
 
-            Result = (result+" "+sum);
-            return Task.CompletedTask;
-        }
-
-        long Solve(string line)
-        {
-            var digits = line.Split(' ');
-
-            foreach (var permutation in "abcdefg".Permutations().Select(p => p.ToList()))
+            if (correct)
             {
-                var dict = new Dictionary<char, char>();
-                dict[permutation[0]] = 'a';
-                dict[permutation[1]] = 'b';
-                dict[permutation[2]] = 'c';
-                dict[permutation[3]] = 'd';
-                dict[permutation[4]] = 'e';
-                dict[permutation[5]] = 'f';
-                dict[permutation[6]] = 'g';
-                bool correct = true;
+                long result = 0;
+                bool pastPipe = false;
+                long t = 1000;
                 foreach (var digit in digits)
                 {
                     if (digit == "|")
                     {
-                        break;
+                        pastPipe = true;
+                        continue;
                     }
+                    if (!pastPipe)
+                    {
+                        continue;
+                    }
+
                     var mappedDigit = new List<char>();
                     foreach (var c in digit)
                     {
@@ -265,62 +297,29 @@ cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda
 
                     var sortedDigit = new string(mappedDigit.OrderBy(c => c).ToArray());
 
-                    if (!DigitMappings.Contains(sortedDigit))
-                    {
-                        correct = false;
-                        break;
-                    }
+                    result += t * DigitMappings.IndexOf(sortedDigit);
+                    t /= 10;
                 }
-
-                if (correct)
-                {
-                    long result = 0;
-                    bool pastPipe = false;
-                    long t = 1000;
-                    foreach (var digit in digits)
-                    {
-                        if (digit == "|")
-                        {
-                            pastPipe = true;
-                            continue;
-                        }
-                        if (!pastPipe)
-                        {
-                            continue;
-                        }
-
-                        var mappedDigit = new List<char>();
-                        foreach (var c in digit)
-                        {
-                            mappedDigit.Add(dict[c]);
-                        }
-
-                        var sortedDigit = new string(mappedDigit.OrderBy(c => c).ToArray());
-
-                        result += t * DigitMappings.IndexOf(sortedDigit);
-                        t /= 10;
-                    }
-                    return result;
-                }
+                return result;
             }
-
-            throw new Exception("Geen oplossing :(");
         }
 
-        private static readonly IList<string> DigitMappings = new List<string>
-        {
-            "abcefg",
-            "cf",
-            "acdeg",
-            "acdfg",
-            "bcdf",
-            "abdfg",
-            "abdefg",
-            "acf",
-            "abcdefg",
-            "abcdfg"
-        };
-
-        public override int Nummer => 202108;
+        throw new Exception("Geen oplossing :(");
     }
+
+    private static readonly IList<string> DigitMappings = new List<string>
+    {
+        "abcefg",
+        "cf",
+        "acdeg",
+        "acdfg",
+        "bcdf",
+        "abdfg",
+        "abdefg",
+        "acf",
+        "abcdefg",
+        "abcdfg"
+    };
+
+    public override int Nummer => 202108;
 }

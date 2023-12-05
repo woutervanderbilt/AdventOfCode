@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag16 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"departure location: 49-848 or 871-949
+public class Dag16 : Problem
+{
+    #region input
+
+    private const string input = @"departure location: 49-848 or 871-949
 departure station: 33-670 or 687-969
 departure platform: 41-909 or 916-974
 departure track: 40-397 or 422-972
@@ -273,74 +273,96 @@ nearby tickets:
 86,181,393,182,613,879,350,531,78,424,201,935,274,656,153,925,66,724,995,948
 75,783,556,392,69,837,209,939,105,787,395,846,194,726,637,102,792,457,107,107
 815,293,723,785,814,946,702,846,175,190,371,368,543,944,886,341,259,758,177,275";
-        #endregion
-        public override Task ExecuteAsync()
+    #endregion
+    public override Task ExecuteAsync()
+    {
+        IDictionary<string, IList<(int min, int max)>> ranges = new Dictionary<string, IList<(int min, int max)>>();
+        IList<int> myTicket = new List<int>();
+        IList<IList<int>> nearbyTickets = new List<IList<int>>();
+        int blaat = 0;
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IDictionary<string, IList<(int min, int max)>> ranges = new Dictionary<string, IList<(int min, int max)>>();
-            IList<int> myTicket = new List<int>();
-            IList<IList<int>> nearbyTickets = new List<IList<int>>();
-            int blaat = 0;
-            foreach (var line in input.Split(Environment.NewLine))
+            if (blaat == 0)
             {
-                if (blaat == 0)
+                if (string.IsNullOrWhiteSpace(line))
                 {
-                    if (string.IsNullOrWhiteSpace(line))
-                    {
-                        blaat++;
-                        continue;
-                    }
-
-                    var split = line.Split(":");
-                    var r = split[1].Split(" or ");
-                    IList<(int min, int max)> rr = new List<(int min, int max)>();
-                    foreach (var s in r)
-                    {
-                        var a = s.Trim().Split("-");
-                        rr.Add((int.Parse(a[0]), int.Parse(a[1])));
-                    }
-
-                    ranges[split[0]] = rr;
+                    blaat++;
+                    continue;
                 }
-                else if (blaat == 1)
+
+                var split = line.Split(":");
+                var r = split[1].Split(" or ");
+                IList<(int min, int max)> rr = new List<(int min, int max)>();
+                foreach (var s in r)
                 {
-                    if (string.IsNullOrWhiteSpace(line))
-                    {
-                        blaat++;
-                        continue;
-                    }
-
-                    if (line == "your ticket:")
-                    {
-                        continue;
-                    }
-
-                    foreach (var s in line.Split(","))
-                    {
-                        myTicket.Add(int.Parse(s));
-                    }
+                    var a = s.Trim().Split("-");
+                    rr.Add((int.Parse(a[0]), int.Parse(a[1])));
                 }
-                else
+
+                ranges[split[0]] = rr;
+            }
+            else if (blaat == 1)
+            {
+                if (string.IsNullOrWhiteSpace(line))
                 {
-                    if (line == "nearby tickets:")
-                    {
-                        continue;
-                    }
-                    IList<int> ticket = new List<int>();
-                    foreach (var s in line.Split(","))
-                    {
-                        ticket.Add(int.Parse(s));
-                    }
-                    nearbyTickets.Add(ticket);
+                    blaat++;
+                    continue;
+                }
+
+                if (line == "your ticket:")
+                {
+                    continue;
+                }
+
+                foreach (var s in line.Split(","))
+                {
+                    myTicket.Add(int.Parse(s));
+                }
+            }
+            else
+            {
+                if (line == "nearby tickets:")
+                {
+                    continue;
+                }
+                IList<int> ticket = new List<int>();
+                foreach (var s in line.Split(","))
+                {
+                    ticket.Add(int.Parse(s));
+                }
+                nearbyTickets.Add(ticket);
+            }
+        }
+
+        IList<IList<int>> validTickets = new List<IList<int>>();
+        foreach (var nt in nearbyTickets)
+        {
+            bool valid = true;
+            foreach (var i in nt)
+            {
+                if (!ranges.Values.Any(r => r.Any(rr => rr.min <= i && rr.max >= i)))
+                {
+                    valid = false;
+                    break;
                 }
             }
 
-            IList<IList<int>> validTickets = new List<IList<int>>();
-            foreach (var nt in nearbyTickets)
+            if (valid)
+            {
+                validTickets.Add(nt);
+            }
+        }
+        IDictionary<string, IList<int>> possibleIndices = new Dictionary<string, IList<int>>();
+        foreach (var name in ranges)
+        {
+            IList<int> indices = new List<int>();
+            for (int i = 0; i < myTicket.Count; i++)
             {
                 bool valid = true;
-                foreach (var i in nt)
+                foreach (var validTicket in validTickets)
                 {
-                    if (!ranges.Values.Any(r => r.Any(rr => rr.min <= i && rr.max >= i)))
+                    int v = validTicket[i];
+                    if (!name.Value.Any(r => r.min <= v && r.max >= v))
                     {
                         valid = false;
                         break;
@@ -349,80 +371,57 @@ nearby tickets:
 
                 if (valid)
                 {
-                    validTickets.Add(nt);
+                    indices.Add(i);
                 }
             }
-            IDictionary<string, IList<int>> possibleIndices = new Dictionary<string, IList<int>>();
-            foreach (var name in ranges)
-            {
-                IList<int> indices = new List<int>();
-                for (int i = 0; i < myTicket.Count; i++)
-                {
-                    bool valid = true;
-                    foreach (var validTicket in validTickets)
-                    {
-                        int v = validTicket[i];
-                        if (!name.Value.Any(r => r.min <= v && r.max >= v))
-                        {
-                            valid = false;
-                            break;
-                        }
-                    }
 
-                    if (valid)
-                    {
-                        indices.Add(i);
-                    }
-                }
-
-                possibleIndices[name.Key] = indices;
-            }
-            IList<int> remainingValues = new List<int>();
-            for (int i = 0; i < myTicket.Count; i++)
-            {
-                remainingValues.Add(i);
-            }
-
-            IList<(IList<int> remaining, IDictionary<string, int> setValues)> options = new List<(IList<int> remaining, IDictionary<string, int> setValues)>();
-            options.Add((remainingValues, new Dictionary<string, int>()));
-            int count = 0;
-            foreach (var name in possibleIndices.OrderBy(p => p.Value.Count))
-            {
-
-                IList<(IList<int> remaining, IDictionary<string, int> setValues)> newOptions = new List<(IList<int> remaining, IDictionary<string, int> setValues)>();
-                foreach (var option in options)
-                {
-                    foreach (var i in name.Value)
-                    {
-                        count++;
-                        if (option.remaining.Contains(i))
-                        {
-                            var newRemaining = option.remaining.ToList();
-                            newRemaining.Remove(i);
-                            var newSetValues = new Dictionary<string, int>(option.setValues);
-                            newSetValues[name.Key] = i;
-                            newOptions.Add((newRemaining, newSetValues));
-                        }
-                    }
-                }
-
-                options = newOptions;
-            }
-
-            long result = 1;
-            var realOption = options[0];
-            foreach (var realOptionSetValue in realOption.setValues)
-            {
-                if (realOptionSetValue.Key.StartsWith("departure"))
-                {
-                    result *= myTicket[realOptionSetValue.Value];
-                }
-            }
-            Console.WriteLine(count);
-            Result = result.ToString();
-            return Task.CompletedTask;
+            possibleIndices[name.Key] = indices;
+        }
+        IList<int> remainingValues = new List<int>();
+        for (int i = 0; i < myTicket.Count; i++)
+        {
+            remainingValues.Add(i);
         }
 
-        public override int Nummer => 202016;
+        IList<(IList<int> remaining, IDictionary<string, int> setValues)> options = new List<(IList<int> remaining, IDictionary<string, int> setValues)>();
+        options.Add((remainingValues, new Dictionary<string, int>()));
+        int count = 0;
+        foreach (var name in possibleIndices.OrderBy(p => p.Value.Count))
+        {
+
+            IList<(IList<int> remaining, IDictionary<string, int> setValues)> newOptions = new List<(IList<int> remaining, IDictionary<string, int> setValues)>();
+            foreach (var option in options)
+            {
+                foreach (var i in name.Value)
+                {
+                    count++;
+                    if (option.remaining.Contains(i))
+                    {
+                        var newRemaining = option.remaining.ToList();
+                        newRemaining.Remove(i);
+                        var newSetValues = new Dictionary<string, int>(option.setValues);
+                        newSetValues[name.Key] = i;
+                        newOptions.Add((newRemaining, newSetValues));
+                    }
+                }
+            }
+
+            options = newOptions;
+        }
+
+        long result = 1;
+        var realOption = options[0];
+        foreach (var realOptionSetValue in realOption.setValues)
+        {
+            if (realOptionSetValue.Key.StartsWith("departure"))
+            {
+                result *= myTicket[realOptionSetValue.Value];
+            }
+        }
+        Console.WriteLine(count);
+        Result = result.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202016;
 }

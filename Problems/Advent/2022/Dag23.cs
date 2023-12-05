@@ -8,112 +8,112 @@ using Algorithms.Extensions;
 using Algorithms.Models;
 using Problems.Advent._2018;
 
-namespace Problems.Advent._2022
+namespace Problems.Advent._2022;
+
+internal class Dag23 : Problem
 {
-    internal class Dag23 : Problem
-    {
-        private const string testinput = @".....
+    private const string testinput = @".....
 ..##.
 ..#..
 .....
 ..##.
 .....";
-        public override async Task ExecuteAsync()
+    public override async Task ExecuteAsync()
+    {
+        var input = await GetInputAsync();
+        var grid = new Grid<bool>();
+        int y = 0;
+        foreach (var line in input.Split(Environment.NewLine).Reverse())
         {
-            var input = await GetInputAsync();
-            var grid = new Grid<bool>();
-            int y = 0;
-            foreach (var line in input.Split(Environment.NewLine).Reverse())
+            int x = 0;
+            foreach (var c in line)
             {
-                int x = 0;
-                foreach (var c in line)
-                {
-                    grid[x,y] = c == '#';
-                    x++;
-                }
-
-                y++;
+                grid[x,y] = c == '#';
+                x++;
             }
 
-            IDictionary<GridDirection, IList<GridDirection>> lookTo =
-                new Dictionary<GridDirection, IList<GridDirection>>();
-            lookTo[GridDirection.North] = new List<GridDirection>
-                { GridDirection.NorthWest, GridDirection.North, GridDirection.NorthEast };
-            lookTo[GridDirection.East] = new List<GridDirection>
-                { GridDirection.NorthEast, GridDirection.East, GridDirection.SouthEast };
-            lookTo[GridDirection.South] = new List<GridDirection>
-                { GridDirection.SouthEast, GridDirection.South, GridDirection.SouthWest };
-            lookTo[GridDirection.West] = new List<GridDirection>
-                { GridDirection.NorthWest, GridDirection.West, GridDirection.SouthWest };
-            IList<GridDirection> directions = new List<GridDirection>
-                { GridDirection.North, GridDirection.South, GridDirection.West, GridDirection.East };
+            y++;
+        }
+
+        IDictionary<GridDirection, IList<GridDirection>> lookTo =
+            new Dictionary<GridDirection, IList<GridDirection>>();
+        lookTo[GridDirection.North] = new List<GridDirection>
+            { GridDirection.NorthWest, GridDirection.North, GridDirection.NorthEast };
+        lookTo[GridDirection.East] = new List<GridDirection>
+            { GridDirection.NorthEast, GridDirection.East, GridDirection.SouthEast };
+        lookTo[GridDirection.South] = new List<GridDirection>
+            { GridDirection.SouthEast, GridDirection.South, GridDirection.SouthWest };
+        lookTo[GridDirection.West] = new List<GridDirection>
+            { GridDirection.NorthWest, GridDirection.West, GridDirection.SouthWest };
+        IList<GridDirection> directions = new List<GridDirection>
+            { GridDirection.North, GridDirection.South, GridDirection.West, GridDirection.East };
 
 
-            for (int s = 0; s < 100000000; s++)
+        for (int s = 0; s < 100000000; s++)
+        {
+            var nextGrid = Step(s);
+            if (nextGrid == null)
             {
-                var nextGrid = Step(s);
-                if (nextGrid == null)
+                break;
+            }
+
+            grid = nextGrid;
+        }
+        //grid.Print();
+        Result += " " + grid.AllGridMembers().Count(m => !m);
+
+        Grid<bool> Step(int step)
+        {
+            var newGrid = new Grid<bool>();
+            IDictionary<(int, int), IList<GridMember<bool>>> moves = new Dictionary<(int, int), IList<GridMember<bool>>>();
+            foreach (var elf in grid.AllGridMembers().Where(m => m))
+            {
+                bool moved = false;
+                if (grid.Neighbours(elf.Location, true).Any(m => m.Found && m.Value))
                 {
-                    break;
+                    for (int d = step; d < step + 4; d++)
+                    {
+                        var direction = directions[d % 4];
+                        if (CanMove(direction))
+                        {
+                            var move = TryMove(direction).Location;
+                            if (!moves.ContainsKey(move))
+                            {
+                                moves[move] = new List<GridMember<bool>>();
+                            }
+                            moves[move].Add(elf);
+                            moved = true;
+                            break;
+                        }
+                    }
                 }
 
-                grid = nextGrid;
-            }
-            //grid.Print();
-            Result += " " + grid.AllGridMembers().Count(m => !m);
-
-            Grid<bool> Step(int step)
-            {
-                var newGrid = new Grid<bool>();
-                IDictionary<(int, int), IList<GridMember<bool>>> moves = new Dictionary<(int, int), IList<GridMember<bool>>>();
-                foreach (var elf in grid.AllGridMembers().Where(m => m))
+                if (!moved)
                 {
-                    bool moved = false;
-                    if (grid.Neighbours(elf.Location, true).Any(m => m.Found && m.Value))
+                    if (!moves.ContainsKey(elf.Location))
                     {
-                        for (int d = step; d < step + 4; d++)
+                        moves[elf.Location] = new List<GridMember<bool>>();
+                    }
+                    moves[elf.Location].Add(elf);
+                }
+
+                bool CanMove(GridDirection direction)
+                {
+                    foreach (var gridDirection in lookTo[direction])
+                    {
+                        var occupied = TryMove(gridDirection);
+                        if (occupied)
                         {
-                            var direction = directions[d % 4];
-                            if (CanMove(direction))
-                            {
-                                var move = TryMove(direction).Location;
-                                if (!moves.ContainsKey(move))
-                                {
-                                    moves[move] = new List<GridMember<bool>>();
-                                }
-                                moves[move].Add(elf);
-                                moved = true;
-                                break;
-                            }
+                            return false;
                         }
                     }
 
-                    if (!moved)
-                    {
-                        if (!moves.ContainsKey(elf.Location))
-                        {
-                            moves[elf.Location] = new List<GridMember<bool>>();
-                        }
-                        moves[elf.Location].Add(elf);
-                    }
+                    return true;
+                }
 
-                    bool CanMove(GridDirection direction)
-                    {
-                        foreach (var gridDirection in lookTo[direction])
-                        {
-                            var occupied = TryMove(gridDirection);
-                            if (occupied)
-                            {
-                                return false;
-                            }
-                        }
-
-                        return true;
-                    }
-
-                    GridMember<bool> TryMove(GridDirection gridDirection)
-                    {
-                        return gridDirection switch
+                GridMember<bool> TryMove(GridDirection gridDirection)
+                {
+                    return gridDirection switch
                         {
                             GridDirection.North => grid.North(elf.Location),
                             GridDirection.NorthEast => grid.NorthEast(elf.Location),
@@ -125,40 +125,39 @@ namespace Problems.Advent._2022
                             GridDirection.NorthWest => grid.NorthWest(elf.Location),
                         }
                         ;
-                    }
                 }
-
-                bool someElfMoved = false;
-                foreach (var move in moves)
-                {
-                    if (move.Value.Count == 1)
-                    {
-                        newGrid[move.Key.Item1, move.Key.Item2] = true;
-                        if(move.Key != move.Value[0].Location)
-                        {
-                            someElfMoved = true;
-                        }
-                    }
-                    else
-                    {
-                        foreach (var elf in move.Value)
-                        {
-                            newGrid[elf.X, elf.Y] = true;
-                        }
-                    }
-                }
-
-                if (!someElfMoved)
-                {
-                    Result = (step + 1).ToString();
-                    return null;
-                }
-
-                newGrid.FillBlanks(false);
-                return newGrid;
             }
-        }
 
-        public override int Nummer => 202223;
+            bool someElfMoved = false;
+            foreach (var move in moves)
+            {
+                if (move.Value.Count == 1)
+                {
+                    newGrid[move.Key.Item1, move.Key.Item2] = true;
+                    if(move.Key != move.Value[0].Location)
+                    {
+                        someElfMoved = true;
+                    }
+                }
+                else
+                {
+                    foreach (var elf in move.Value)
+                    {
+                        newGrid[elf.X, elf.Y] = true;
+                    }
+                }
+            }
+
+            if (!someElfMoved)
+            {
+                Result = (step + 1).ToString();
+                return null;
+            }
+
+            newGrid.FillBlanks(false);
+            return newGrid;
+        }
     }
+
+    public override int Nummer => 202223;
 }

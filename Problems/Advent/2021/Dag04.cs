@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag04 : Problem
 {
-    internal class Dag04 : Problem
-    {
-        private const string input = @"93,49,16,88,4,92,23,38,44,98,97,8,5,69,41,70,19,11,29,40,90,43,79,96,68,10,31,35,34,32,0,67,83,33,2,76,24,87,99,77,82,66,12,15,28,59,64,95,91,71,62,22,53,46,39,81,75,86,74,56,50,18,17,73,13,54,60,48,21,51,52,55,85,80,30,36,47,3,26,57,84,25,63,27,37,94,7,45,58,9,78,65,72,6,14,61,20,1,42,89
+    private const string input = @"93,49,16,88,4,92,23,38,44,98,97,8,5,69,41,70,19,11,29,40,90,43,79,96,68,10,31,35,34,32,0,67,83,33,2,76,24,87,99,77,82,66,12,15,28,59,64,95,91,71,62,22,53,46,39,81,75,86,74,56,50,18,17,73,13,54,60,48,21,51,52,55,85,80,30,36,47,3,26,57,84,25,63,27,37,94,7,45,58,9,78,65,72,6,14,61,20,1,42,89
 
 83 11 47 61 45
 30 74 73 14 66
@@ -611,7 +611,7 @@ namespace Problems.Advent._2021
 24 23 93 56 11
 37 48 82 55 88";
 
-        private const string testinput = @"7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
+    private const string testinput = @"7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
 22 13 17 11  0
  8  2 23  4 24
@@ -630,136 +630,135 @@ namespace Problems.Advent._2021
 18  8 23 26 20
 22 11 13  6  5
  2  0 12  3  7";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<int> drawnNumbers = new List<int>();
+        IList<BingoCard> bingoCards = new List<BingoCard>();
+        bool first = true;
+        BingoCard currentBingoCard = null;
+        int index = 0;
+        foreach (var s in input.Split(Environment.NewLine))
         {
-            IList<int> drawnNumbers = new List<int>();
-            IList<BingoCard> bingoCards = new List<BingoCard>();
-            bool first = true;
-            BingoCard currentBingoCard = null;
-            int index = 0;
-            foreach (var s in input.Split(Environment.NewLine))
+            if (first)
             {
-                if (first)
+                first = false;
+                drawnNumbers = s.Split(',').Select(int.Parse).ToList();
+            }
+            else if (string.IsNullOrWhiteSpace(s))
+            {
+                currentBingoCard = new BingoCard();
+                bingoCards.Add(currentBingoCard);
+                index = 0;
+            }
+            else
+            {
+                int index2 = 0;
+                foreach (var v in s.Split(' ').Where(i => !string.IsNullOrWhiteSpace(i)).Select(int.Parse))
                 {
-                    first = false;
-                    drawnNumbers = s.Split(',').Select(int.Parse).ToList();
-                }
-                else if (string.IsNullOrWhiteSpace(s))
-                {
-                    currentBingoCard = new BingoCard();
-                    bingoCards.Add(currentBingoCard);
-                    index = 0;
-                }
-                else
-                {
-                    int index2 = 0;
-                    foreach (var v in s.Split(' ').Where(i => !string.IsNullOrWhiteSpace(i)).Select(int.Parse))
-                    {
-                        currentBingoCard!.Values[index, index2] = v;
-                        index2++;
-                    }
-
-                    index++;
+                    currentBingoCard!.Values[index, index2] = v;
+                    index2++;
                 }
 
+                index++;
             }
 
-            int count = 0;
-            foreach (var drawnNumber in drawnNumbers)
-            {
-                foreach (var board in bingoCards)
-                {
-                    if (board.TryDrawnNumber(drawnNumber))
-                    {
-                        count++;
-                        if (count == bingoCards.Count)
-                        {
-                            Result = (board.UnmarkedScore() * drawnNumber).ToString();
-                            return Task.CompletedTask;
-                        }
-                    }
-                }
-            }
-
-
-
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 202104;
-
-        private class BingoCard
+        int count = 0;
+        foreach (var drawnNumber in drawnNumbers)
         {
-            public int[,] Values { get; } = new int[5, 5];
-
-            private bool[,] Hit { get; } = new bool[5, 5];
-
-            private bool Complete { get; set; }
-
-            public bool TryDrawnNumber(int value)
+            foreach (var board in bingoCards)
             {
-                if (Complete)
+                if (board.TryDrawnNumber(drawnNumber))
                 {
-                    return false;
-                }
-                for (int i = 0; i < 5; i++)
-                {
-                    for (int j = 0; j < 5; j++)
+                    count++;
+                    if (count == bingoCards.Count)
                     {
-                        if (Values[i, j] == value)
-                        {
-                            Hit[i,j] = true;
-                            if (FullRow(i) || FullColumn(j))
-                            {
-                                Complete = true;
-                                return true;
-                            }
-                        }
+                        Result = (board.UnmarkedScore() * drawnNumber).ToString();
+                        return Task.CompletedTask;
                     }
                 }
+            }
+        }
 
+
+
+        return Task.CompletedTask;
+    }
+
+    public override int Nummer => 202104;
+
+    private class BingoCard
+    {
+        public int[,] Values { get; } = new int[5, 5];
+
+        private bool[,] Hit { get; } = new bool[5, 5];
+
+        private bool Complete { get; set; }
+
+        public bool TryDrawnNumber(int value)
+        {
+            if (Complete)
+            {
                 return false;
             }
-
-            public long UnmarkedScore()
+            for (int i = 0; i < 5; i++)
             {
-                long result = 0;
-                for (int i = 0; i < 5; i++)
+                for (int j = 0; j < 5; j++)
                 {
-                    for (int j = 0; j < 5; j++)
+                    if (Values[i, j] == value)
                     {
-                        if (!Hit[i, j])
+                        Hit[i,j] = true;
+                        if (FullRow(i) || FullColumn(j))
                         {
-                            result += Values[i, j];
+                            Complete = true;
+                            return true;
                         }
                     }
                 }
-                return result;
             }
 
-            private bool FullRow(int i)
+            return false;
+        }
+
+        public long UnmarkedScore()
+        {
+            long result = 0;
+            for (int i = 0; i < 5; i++)
             {
                 for (int j = 0; j < 5; j++)
                 {
                     if (!Hit[i, j])
                     {
-                        return false;
+                        result += Values[i, j];
                     }
                 }
-                return true;
             }
+            return result;
+        }
 
-            private bool FullColumn(int j)
+        private bool FullRow(int i)
+        {
+            for (int j = 0; j < 5; j++)
             {
-                for (int i = 0; i < 5; i++)
+                if (!Hit[i, j])
                 {
-                    if (!Hit[i, j])
-                    {
-                        return false;
-                    }
+                    return false;
                 }
-                return true;
             }
+            return true;
+        }
+
+        private bool FullColumn(int j)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                if (!Hit[i, j])
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

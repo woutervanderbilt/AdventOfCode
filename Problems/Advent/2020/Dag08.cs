@@ -4,13 +4,13 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag08 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"acc +42
+public class Dag08 : Problem
+{
+    #region input
+
+    private const string input = @"acc +42
 acc -12
 nop +112
 acc +47
@@ -693,43 +693,42 @@ acc +23
 acc +13
 acc +19
 jmp +1";
-        #endregion  
-        public override Task ExecuteAsync()
+    #endregion  
+    public override Task ExecuteAsync()
+    {
+        int index = -1;
+        while (true)
         {
-            int index = -1;
-            while (true)
+            index++;
+            var console = new GameConsole(input){IsRunning = true};
+            if (console.Instructions[index].Operation == GameConsole.InstructionType.Nop)
             {
-                index++;
-                var console = new GameConsole(input){IsRunning = true};
-                if (console.Instructions[index].Operation == GameConsole.InstructionType.Nop)
-                {
-                    console.Instructions[index].Operation = GameConsole.InstructionType.Jmp;
-                }
-                else if (console.Instructions[index].Operation == GameConsole.InstructionType.Jmp)
-                {
-                    console.Instructions[index].Operation = GameConsole.InstructionType.Nop;
-                }
-                else
-                {
-                    continue;
-                }
-                HashSet<int> pointers = new HashSet<int>();
-                while (!pointers.Contains(console.Pointer) && console.IsRunning)
-                {
-                    pointers.Add(console.Pointer);
-                    console.Step();
-                }
-
-                if (!console.IsRunning)
-                {
-                    Result = console.Accumulator.ToString();
-                    return Task.CompletedTask;
-                }
+                console.Instructions[index].Operation = GameConsole.InstructionType.Jmp;
+            }
+            else if (console.Instructions[index].Operation == GameConsole.InstructionType.Jmp)
+            {
+                console.Instructions[index].Operation = GameConsole.InstructionType.Nop;
+            }
+            else
+            {
+                continue;
+            }
+            HashSet<int> pointers = new HashSet<int>();
+            while (!pointers.Contains(console.Pointer) && console.IsRunning)
+            {
+                pointers.Add(console.Pointer);
+                console.Step();
             }
 
-            return Task.CompletedTask;
+            if (!console.IsRunning)
+            {
+                Result = console.Accumulator.ToString();
+                return Task.CompletedTask;
+            }
         }
 
-        public override int Nummer => 202008;
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202008;
 }

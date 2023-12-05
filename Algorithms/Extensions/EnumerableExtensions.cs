@@ -4,97 +4,96 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Algorithms.Extensions
+namespace Algorithms.Extensions;
+
+public static class EnumerableExtensions
 {
-    public static class EnumerableExtensions
+    public static IEnumerable<IEnumerable<T>> Permutations<T>(this IEnumerable<T> source)
     {
-        public static IEnumerable<IEnumerable<T>> Permutations<T>(this IEnumerable<T> source)
+        var list = source.ToList();
+        if (!list.Any())
         {
-            var list = source.ToList();
-            if (!list.Any())
-            {
-                yield return Enumerable.Empty<T>();
-            }
-            else
-            {
-                var startingElementIndex = 0;
+            yield return Enumerable.Empty<T>();
+        }
+        else
+        {
+            var startingElementIndex = 0;
 
-                foreach (var startingElement in list)
+            foreach (var startingElement in list)
+            {
+                var remainingItems = list.Where((e, i) => i != startingElementIndex);
+
+                foreach (var permutationOfRemainder in remainingItems.Permutations())
                 {
-                    var remainingItems = list.Where((e, i) => i != startingElementIndex);
+                    yield return Concat(permutationOfRemainder);
 
-                    foreach (var permutationOfRemainder in remainingItems.Permutations())
+                    IEnumerable<T> Concat(IEnumerable<T> secondSequence)
                     {
-                        yield return Concat(permutationOfRemainder);
-
-                        IEnumerable<T> Concat(IEnumerable<T> secondSequence)
+                        yield return startingElement;
+                        if (secondSequence == null)
                         {
-                            yield return startingElement;
-                            if (secondSequence == null)
-                            {
-                                yield break;
-                            }
+                            yield break;
+                        }
 
-                            foreach (var item in secondSequence)
-                            {
-                                yield return item;
-                            }
+                        foreach (var item in secondSequence)
+                        {
+                            yield return item;
                         }
                     }
-
-                    startingElementIndex++;
                 }
+
+                startingElementIndex++;
             }
         }
+    }
 
-        public static IEnumerable<IEnumerable<T>> Subsets<T>(this IEnumerable<T> source)
+    public static IEnumerable<IEnumerable<T>> Subsets<T>(this IEnumerable<T> source)
+    {
+        List<T> list = source.ToList();
+        int length = list.Count;
+        int max = (int)Math.Pow(2, list.Count);
+
+        for (int count = 0; count < max; count++)
         {
-            List<T> list = source.ToList();
-            int length = list.Count;
-            int max = (int)Math.Pow(2, list.Count);
-
-            for (int count = 0; count < max; count++)
+            List<T> subset = new List<T>();
+            uint rs = 0;
+            while (rs < length)
             {
-                List<T> subset = new List<T>();
-                uint rs = 0;
-                while (rs < length)
+                if ((count & (1u << (int)rs)) > 0)
                 {
-                    if ((count & (1u << (int)rs)) > 0)
-                    {
-                        subset.Add(list[(int)rs]);
-                    }
-                    rs++;
+                    subset.Add(list[(int)rs]);
                 }
-                yield return subset;
+                rs++;
             }
+            yield return subset;
         }
+    }
 
-        public static long Product(this IEnumerable<long> list)
-        {
-            return list.Aggregate(1l, (a, b) => a * b);
-        }
+    public static long Product(this IEnumerable<long> list)
+    {
+        return list.Aggregate(1l, (a, b) => a * b);
+    }
 
-        public static long Product(this IEnumerable<long> list, long modulus)
-        {
-            return list.Aggregate(1L, (a, b) => a * b % modulus);
-        }
+    public static long Product(this IEnumerable<long> list, long modulus)
+    {
+        return list.Aggregate(1L, (a, b) => a * b % modulus);
+    }
 
-        public static IEnumerable<TS> AggregateEnumerable<T, TS>(this IEnumerable<T> source, TS seed,
-            Func<TS, T, TS> func)
+    public static IEnumerable<TS> AggregateEnumerable<T, TS>(this IEnumerable<T> source, TS seed,
+        Func<TS, T, TS> func)
+    {
+        var current = seed;
+        yield return current;
+        foreach (var t in source)
         {
-            var current = seed;
+            current = func(current, t);
             yield return current;
-            foreach (var t in source)
-            {
-                current = func(current, t);
-                yield return current;
-            }
         }
+    }
 
-        public static IList<TS> AggregateList<T, TS>(this IEnumerable<T> source, TS seed,
-            Func<TS, T, TS> func)
-        {
-            return source.AggregateEnumerable(seed, func).ToList();
-        }
+    public static IList<TS> AggregateList<T, TS>(this IEnumerable<T> source, TS seed,
+        Func<TS, T, TS> func)
+    {
+        return source.AggregateEnumerable(seed, func).ToList();
     }
 }

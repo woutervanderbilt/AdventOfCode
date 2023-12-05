@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag03 : Problem
 {
-    internal class Dag03 : Problem
-    {
-        private const string input = @"111011110101
+    private const string input = @"111011110101
 011000111010
 100000010010
 000111100110
@@ -1010,71 +1010,70 @@ namespace Problems.Advent._2021
 100111100101
 001101100001";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        int length = 12;
+        int pow = (int)Math.Pow(2, length - 1);
+        IList<int> inputSplit = input.Split(Environment.NewLine).Select(l => Convert.ToInt32(l, 2)).ToList();
+        var counters = CreateCounters(inputSplit);
+        int p = 1;
+        int gamma = 0;
+        for (int i = length - 1; i >= 0; i--)
         {
-            int length = 12;
-            int pow = (int)Math.Pow(2, length - 1);
-            IList<int> inputSplit = input.Split(Environment.NewLine).Select(l => Convert.ToInt32(l, 2)).ToList();
-            var counters = CreateCounters(inputSplit);
-            int p = 1;
-            int gamma = 0;
-            for (int i = length - 1; i >= 0; i--)
+            if (counters[i] > inputSplit.Count/2)
             {
-                if (counters[i] > inputSplit.Count/2)
-                {
-                    gamma += p;
-                }
-                p *= 2;
+                gamma += p;
             }
-            var o2 = LastBinaryStanding(FilterO2);
-            var co2 = LastBinaryStanding(FilterCo2);
+            p *= 2;
+        }
+        var o2 = LastBinaryStanding(FilterO2);
+        var co2 = LastBinaryStanding(FilterCo2);
 
-            Result = (gamma * (p - 1 - gamma)).ToString();
-            Result += " - " + o2 * co2;
-            return Task.CompletedTask;
+        Result = (gamma * (p - 1 - gamma)).ToString();
+        Result += " - " + o2 * co2;
+        return Task.CompletedTask;
 
-            long LastBinaryStanding(Func<bool, int, int, bool> filter)
+        long LastBinaryStanding(Func<bool, int, int, bool> filter)
+        {
+            int index = 0;
+            var power = pow;
+            IList<int> candidates = inputSplit;
+            while (candidates.Count > 1)
             {
-                int index = 0;
-                var power = pow;
-                IList<int> candidates = inputSplit;
-                while (candidates.Count > 1)
-                {
-                    counters = CreateCounters(candidates);
-                    var count = counters[index];
-                    candidates = Filter(power, count, candidates, filter);
-                    power /= 2;
-                    index++;
-                }
-
-                return candidates[0];
+                counters = CreateCounters(candidates);
+                var count = counters[index];
+                candidates = Filter(power, count, candidates, filter);
+                power /= 2;
+                index++;
             }
 
-            bool FilterO2(bool bit, int count, int total) => bit && 2 * count >= total || !bit && 2 * count < total;
-            bool FilterCo2(bool bit, int count, int total) => bit && 2 * count < total || !bit && 2 * count >= total;
-            
-            IList<int> Filter(int index, int count, IList<int> candidates, Func<bool, int, int, bool> filter)
-            {
-                return candidates.Where(c => filter((c & index) != 0, count, candidates.Count)).ToList();
-            }
-
-            int[] CreateCounters(IList<int> binaryNumbers)
-            {
-                counters = new int[length];
-                foreach (var line in binaryNumbers)
-                {
-                    for (int i = 0, power = pow; i < length; i++, power /= 2)
-                    {
-                        if ((line & power) != 0)
-                        {
-                            counters[i]++;
-                        }
-                    }
-                }
-                return counters;
-            }
+            return candidates[0];
         }
 
-        public override int Nummer => 202103;
+        bool FilterO2(bool bit, int count, int total) => bit && 2 * count >= total || !bit && 2 * count < total;
+        bool FilterCo2(bool bit, int count, int total) => bit && 2 * count < total || !bit && 2 * count >= total;
+            
+        IList<int> Filter(int index, int count, IList<int> candidates, Func<bool, int, int, bool> filter)
+        {
+            return candidates.Where(c => filter((c & index) != 0, count, candidates.Count)).ToList();
+        }
+
+        int[] CreateCounters(IList<int> binaryNumbers)
+        {
+            counters = new int[length];
+            foreach (var line in binaryNumbers)
+            {
+                for (int i = 0, power = pow; i < length; i++, power /= 2)
+                {
+                    if ((line & power) != 0)
+                    {
+                        counters[i]++;
+                    }
+                }
+            }
+            return counters;
+        }
     }
+
+    public override int Nummer => 202103;
 }

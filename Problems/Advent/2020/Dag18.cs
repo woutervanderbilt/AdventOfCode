@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag18 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"2 * (8 + 3 * 3 + (4 + 5)) + 7 * 2
+public class Dag18 : Problem
+{
+    #region input
+
+    private const string input = @"2 * (8 + 3 * 3 + (4 + 5)) + 7 * 2
 2 * (5 * 7 + (2 * 2 + 7) + (5 + 2 * 8 + 4 * 4) + 9) * (9 * (7 * 2) * (7 + 3 * 3 * 2 + 4) * 9 + (2 * 4 * 9) + 8) + 6 * (8 + 2 * 8)
 5 * 3 * 7 * 2 * (5 * 9 + (3 * 5 * 2 + 6 + 7) + (6 + 2 + 9 * 7) + 4)
 (9 + (7 * 5 + 9 + 2) * 7 * 7 * (7 * 9)) * (7 + 4 + (2 + 9 + 7 + 5 * 9) * 7) + 5 + 6 + 6 + 5
@@ -382,133 +382,132 @@ namespace Problems.Advent._2020
 2 + 4 + (9 + 3 * 2 * (5 * 7) + (5 + 6 * 4))
 (3 + 9 * 8 * 7 * 9) + 4 + 4 * 4 * (9 * 6 + (2 * 7 + 3 + 6 * 5 * 5) + 8 + 7) * (2 * (2 * 6) + 9 + (8 * 6 + 6 + 8))
 (2 + 3 * (5 + 8 * 3) * (8 + 3) + 9 * 8) + 5";
-        #endregion
+    #endregion
 
-        private const string testinput = @"2 * 3 + (4 * 5)
+    private const string testinput = @"2 * 3 + (4 * 5)
 5 + (8 * 3 + 9 + 3 * 4 * 3)
 5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))
 ((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        long result = 0;
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            long result = 0;
-            foreach (var line in input.Split(Environment.NewLine))
-            {
-                result += Compute(line.Replace(" ",""));
-            }
-
-            Result = result.ToString();
-            return Task.CompletedTask;
+            result += Compute(line.Replace(" ",""));
         }
 
-        string TransformLine(string line)
-        {
-            int count = line.Count(c => c == '+');
-            for (int i = 1; i <= count; i++)
-            {
-                int j = i;
-                var index = line.TakeWhile(c => (j -= (c == '+' ? 1 : 0)) > 0).Count();
-                int pCount = 0;
-                for (int after = index + 1; after <= line.Length; after++)
-                {
-                    if (line[after] == '(')
-                    {
-                        pCount++;
-                    }
-                    else if (line[after] == ')')
-                    {
-                        pCount--;
-                    }
-
-                    if (pCount == 0)
-                    {
-                        line = line.Insert(after + 1, ")");
-                        break;
-                    }
-                }
-
-                pCount = 0;
-                for (int before = index - 1; before >= 0; before--)
-                {
-                    if (line[before] == ')')
-                    {
-                        pCount++;
-                    }
-                    else if (line[before] == '(')
-                    {
-                        pCount--;
-                    }
-
-                    if (pCount == 0)
-                    {
-                        line = line.Insert(before, "(");
-                        break;
-                    }
-                }
-            }
-
-            return line;
-        }
-
-        long Compute(string line)
-        {
-            Stack<(long,char)> stack = new Stack<(long, char)>();
-            long l = -1;
-            long current = 0;
-            char previous = ' ';
-            bool start = true;
-            line = TransformLine(line);
-            foreach (var c in line)
-            {
-                if(long.TryParse(c.ToString(), out l))
-                {
-                    if (start)
-                    {
-                        current = l;
-                        start = false;
-                    }
-                    else
-                    {
-                        if (previous == '*')
-                        {
-                            current *= l;
-                        }
-                        else
-                        {
-                            current += l;
-                        }
-                    }
-                }
-
-                else if (c == '(')
-                {
-                    stack.Push((current, previous));
-                    start = true;
-                    current = 0;
-                }
-                else if (c == ')')
-                {
-                    var pop = stack.Pop();
-                    if (pop.Item2 == '*')
-                    {
-                        current *= pop.Item1;
-                    }
-                    else if (pop.Item2 == '+')
-                    {
-                        current += pop.Item1;
-                    }
-                    else
-                    {
-                        current = current;
-                    }
-                }
-
-
-                previous = c;
-            }
-
-            return current;
-        }
-
-        public override int Nummer => 202018;
+        Result = result.ToString();
+        return Task.CompletedTask;
     }
+
+    string TransformLine(string line)
+    {
+        int count = line.Count(c => c == '+');
+        for (int i = 1; i <= count; i++)
+        {
+            int j = i;
+            var index = line.TakeWhile(c => (j -= (c == '+' ? 1 : 0)) > 0).Count();
+            int pCount = 0;
+            for (int after = index + 1; after <= line.Length; after++)
+            {
+                if (line[after] == '(')
+                {
+                    pCount++;
+                }
+                else if (line[after] == ')')
+                {
+                    pCount--;
+                }
+
+                if (pCount == 0)
+                {
+                    line = line.Insert(after + 1, ")");
+                    break;
+                }
+            }
+
+            pCount = 0;
+            for (int before = index - 1; before >= 0; before--)
+            {
+                if (line[before] == ')')
+                {
+                    pCount++;
+                }
+                else if (line[before] == '(')
+                {
+                    pCount--;
+                }
+
+                if (pCount == 0)
+                {
+                    line = line.Insert(before, "(");
+                    break;
+                }
+            }
+        }
+
+        return line;
+    }
+
+    long Compute(string line)
+    {
+        Stack<(long,char)> stack = new Stack<(long, char)>();
+        long l = -1;
+        long current = 0;
+        char previous = ' ';
+        bool start = true;
+        line = TransformLine(line);
+        foreach (var c in line)
+        {
+            if(long.TryParse(c.ToString(), out l))
+            {
+                if (start)
+                {
+                    current = l;
+                    start = false;
+                }
+                else
+                {
+                    if (previous == '*')
+                    {
+                        current *= l;
+                    }
+                    else
+                    {
+                        current += l;
+                    }
+                }
+            }
+
+            else if (c == '(')
+            {
+                stack.Push((current, previous));
+                start = true;
+                current = 0;
+            }
+            else if (c == ')')
+            {
+                var pop = stack.Pop();
+                if (pop.Item2 == '*')
+                {
+                    current *= pop.Item1;
+                }
+                else if (pop.Item2 == '+')
+                {
+                    current += pop.Item1;
+                }
+                else
+                {
+                    current = current;
+                }
+            }
+
+
+            previous = c;
+        }
+
+        return current;
+    }
+
+    public override int Nummer => 202018;
 }

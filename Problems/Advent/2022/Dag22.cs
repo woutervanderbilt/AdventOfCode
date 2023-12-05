@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Algorithms.Extensions;
 using Algorithms.Models;
 
-namespace Problems.Advent._2022
+namespace Problems.Advent._2022;
+
+internal class Dag22 : Problem
 {
-    internal class Dag22 : Problem
-    {
-        private const string testinput = @"        ...#
+    private const string testinput = @"        ...#
         .#..
         #...
         ....
@@ -25,308 +25,307 @@ namespace Problems.Advent._2022
 
 10R5L5R10L4R5L5";
 
-        public override async Task ExecuteAsync()
+    public override async Task ExecuteAsync()
+    {
+        var input = await GetInputAsync();
+        var grid = new Grid<char>();
+        IList<(int, char)> instructions = new List<(int, char)>();
         {
-            var input = await GetInputAsync();
-            var grid = new Grid<char>();
-            IList<(int, char)> instructions = new List<(int, char)>();
+            bool buildingGrid = true;
+            int y = 0;
+            foreach (var line in input.Split(Environment.NewLine))
             {
-                bool buildingGrid = true;
-                int y = 0;
-                foreach (var line in input.Split(Environment.NewLine))
+                if (string.IsNullOrWhiteSpace(line))
                 {
-                    if (string.IsNullOrWhiteSpace(line))
+                    buildingGrid = false;
+                    continue;
+                }
+
+                if (buildingGrid)
+                {
+                    int x = 0;
+                    foreach (var c in line)
                     {
-                        buildingGrid = false;
-                        continue;
+                        grid[x, y] = c;
+                        x++;
                     }
 
-                    if (buildingGrid)
+                    y--;
+                }
+                else
+                {
+                    string currentInstruction = string.Empty;
+                    foreach (var c in line)
                     {
-                        int x = 0;
-                        foreach (var c in line)
+                        if (char.IsDigit(c))
                         {
-                            grid[x, y] = c;
-                            x++;
+                            currentInstruction += c;
                         }
-
-                        y--;
+                        else
+                        {
+                            instructions.Add((int.Parse(currentInstruction), c));
+                            currentInstruction = string.Empty;
+                        }
                     }
-                    else
-                    {
-                        string currentInstruction = string.Empty;
-                        foreach (var c in line)
-                        {
-                            if (char.IsDigit(c))
-                            {
-                                currentInstruction += c;
-                            }
-                            else
-                            {
-                                instructions.Add((int.Parse(currentInstruction), c));
-                                currentInstruction = string.Empty;
-                            }
-                        }
 
-                        if (!string.IsNullOrWhiteSpace(currentInstruction))
-                        {
-                            instructions.Add((int.Parse(currentInstruction), ' '));
-                        }
+                    if (!string.IsNullOrWhiteSpace(currentInstruction))
+                    {
+                        instructions.Add((int.Parse(currentInstruction), ' '));
                     }
                 }
             }
-            //grid.Print();
-            grid.FillBlanks(' ');
-            int minX = grid.MinX;
-            int maxX = grid.MaxX;
-            int minY = grid.MinY;
-            int maxY = grid.MaxY;
+        }
+        //grid.Print();
+        grid.FillBlanks(' ');
+        int minX = grid.MinX;
+        int maxX = grid.MaxX;
+        int minY = grid.MinY;
+        int maxY = grid.MaxY;
 
-            IDictionary<int, (int, int)> xBoundaries = new Dictionary<int, (int, int)>();
-            IDictionary<int, (int, int)> yBoundaries = new Dictionary<int, (int, int)>();
+        IDictionary<int, (int, int)> xBoundaries = new Dictionary<int, (int, int)>();
+        IDictionary<int, (int, int)> yBoundaries = new Dictionary<int, (int, int)>();
             
-            for (int x = minX; x <= maxX; x++)
+        for (int x = minX; x <= maxX; x++)
+        {
+            if (x == 66)
             {
-                if (x == 66)
-                {
 
-                }
-                int? first = null;
-                for (int y = minY; y <= maxY; y++)
-                {
-                    if (!first.HasValue && grid[x, y] != ' ')
-                    {
-                        first = y;
-                    }
-                    else if(first.HasValue && grid[x,y] == ' ')
-                    {
-                        xBoundaries[x] = (first.Value, y - 1);
-                        break;
-                    }
-                    else if (y == maxY)
-                    {
-                        xBoundaries[x] = (first.Value, y);
-                    }
-                }
             }
+            int? first = null;
             for (int y = minY; y <= maxY; y++)
             {
-                int? first = null;
-                for (int x = minX; x <= maxX; x++)
+                if (!first.HasValue && grid[x, y] != ' ')
                 {
-                    if (!first.HasValue && grid[x, y] != ' ')
-                    {
-                        first = x;
-                    }
-                    else if (first.HasValue && grid[x, y] == ' ')
-                    {
-                        yBoundaries[y] = (first.Value, x - 1);
-                        break;
-                    }
-                    else if (x == maxX)
-                    {
-                        yBoundaries[y] = (first.Value, x);
-                    }
+                    first = y;
+                }
+                else if(first.HasValue && grid[x,y] == ' ')
+                {
+                    xBoundaries[x] = (first.Value, y - 1);
+                    break;
+                }
+                else if (y == maxY)
+                {
+                    xBoundaries[x] = (first.Value, y);
                 }
             }
-
-
-
-            (int x, int y) currentPosition = (yBoundaries[0].Item1, 0);
-            GridDirection currentDirection = GridDirection.East;
-            foreach (var instruction in instructions)
+        }
+        for (int y = minY; y <= maxY; y++)
+        {
+            int? first = null;
+            for (int x = minX; x <= maxX; x++)
             {
-                if (currentPosition == (73, 0))
+                if (!first.HasValue && grid[x, y] != ' ')
                 {
-
+                    first = x;
                 }
-                //Console.WriteLine((instruction, (currentPosition.Item1 + 1, -currentPosition.Item2 + 3), currentDirection));
-                for (int i = 1; i <= instruction.Item1; i++)
+                else if (first.HasValue && grid[x, y] == ' ')
                 {
-                    GridMember<char> next;
-                    if (currentDirection == GridDirection.East)
-                    {
-                        next = grid.East(currentPosition);
-                        if (!next.Found || next.Value == ' ')
-                        {
-                            //next = grid[yBoundaries[currentPosition.y].Item1, currentPosition.y];
-                            var fold = DetermineFold(currentPosition, currentDirection);
-                            next = fold.member;
-                            if (next.Value != '#')
-                            {
-                                currentDirection = fold.direction;
-                            }
-                        }
-                    }
-                    else if (currentDirection == GridDirection.South)
-                    {
-                        next = grid.South(currentPosition);
-                        if (!next.Found || next.Value == ' ')
-                        {
-                            //next = grid[currentPosition.x, xBoundaries[currentPosition.x].Item2];
-                            var fold = DetermineFold(currentPosition, currentDirection);
-                            next = fold.member;
-                            if (next.Value != '#')
-                            {
-                                currentDirection = fold.direction;
-                            }
-                        }
-                    }
-                    else if (currentDirection == GridDirection.West)
-                    {
-                        next = grid.West(currentPosition);
-                        if (!next.Found || next.Value == ' ')
-                        {
-                            //next = grid[yBoundaries[currentPosition.y].Item2, currentPosition.y];
-                            var fold = DetermineFold(currentPosition, currentDirection);
-                            next = fold.member;
-                            if (next.Value != '#')
-                            {
-                                currentDirection = fold.direction;
-                            }
-                        }
-                    }
-                    else if (currentDirection == GridDirection.North)
-                    {
-                        next = grid.North(currentPosition);
-                        if (!next.Found || next.Value == ' ')
-                        {
-                            //next = grid[currentPosition.x, xBoundaries[currentPosition.x].Item1];
-                            var fold = DetermineFold(currentPosition, currentDirection);
-                            next = fold.member;
-                            if (next.Value != '#')
-                            {
-                                currentDirection = fold.direction;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception();
-                    }
-
-                    if (next.Value == '.')
-                    {
-                        currentPosition = next.Location;
-                        //Console.WriteLine(((currentPosition.Item1 + 1, -currentPosition.Item2 + 3), currentDirection));
-                    }
-                    else
-                    {
-                        break;
-                    }
-
-                    //Console.WriteLine((currentPosition, currentDirection));
+                    yBoundaries[y] = (first.Value, x - 1);
+                    break;
                 }
-                currentDirection = (currentDirection, instruction.Item2) switch
+                else if (x == maxX)
                 {
-                    (GridDirection.North, 'L') => GridDirection.West,
-                    (GridDirection.North, 'R') => GridDirection.East,
-                    (GridDirection.East, 'L') => GridDirection.North,
-                    (GridDirection.East, 'R') => GridDirection.South,
-                    (GridDirection.South, 'L') => GridDirection.East,
-                    (GridDirection.South, 'R') => GridDirection.West,
-                    (GridDirection.West, 'L') => GridDirection.South,
-                    (GridDirection.West, 'R') => GridDirection.North,
-                    _ => currentDirection
-                };
+                    yBoundaries[y] = (first.Value, x);
+                }
             }
+        }
 
-            Result = (1000 * (-currentPosition.y + 1)
-                      + 4 * (currentPosition.x + 1)
-                      + DirectionValue(currentDirection)).ToString();
+
+
+        (int x, int y) currentPosition = (yBoundaries[0].Item1, 0);
+        GridDirection currentDirection = GridDirection.East;
+        foreach (var instruction in instructions)
+        {
+            if (currentPosition == (73, 0))
+            {
+
+            }
+            //Console.WriteLine((instruction, (currentPosition.Item1 + 1, -currentPosition.Item2 + 3), currentDirection));
+            for (int i = 1; i <= instruction.Item1; i++)
+            {
+                GridMember<char> next;
+                if (currentDirection == GridDirection.East)
+                {
+                    next = grid.East(currentPosition);
+                    if (!next.Found || next.Value == ' ')
+                    {
+                        //next = grid[yBoundaries[currentPosition.y].Item1, currentPosition.y];
+                        var fold = DetermineFold(currentPosition, currentDirection);
+                        next = fold.member;
+                        if (next.Value != '#')
+                        {
+                            currentDirection = fold.direction;
+                        }
+                    }
+                }
+                else if (currentDirection == GridDirection.South)
+                {
+                    next = grid.South(currentPosition);
+                    if (!next.Found || next.Value == ' ')
+                    {
+                        //next = grid[currentPosition.x, xBoundaries[currentPosition.x].Item2];
+                        var fold = DetermineFold(currentPosition, currentDirection);
+                        next = fold.member;
+                        if (next.Value != '#')
+                        {
+                            currentDirection = fold.direction;
+                        }
+                    }
+                }
+                else if (currentDirection == GridDirection.West)
+                {
+                    next = grid.West(currentPosition);
+                    if (!next.Found || next.Value == ' ')
+                    {
+                        //next = grid[yBoundaries[currentPosition.y].Item2, currentPosition.y];
+                        var fold = DetermineFold(currentPosition, currentDirection);
+                        next = fold.member;
+                        if (next.Value != '#')
+                        {
+                            currentDirection = fold.direction;
+                        }
+                    }
+                }
+                else if (currentDirection == GridDirection.North)
+                {
+                    next = grid.North(currentPosition);
+                    if (!next.Found || next.Value == ' ')
+                    {
+                        //next = grid[currentPosition.x, xBoundaries[currentPosition.x].Item1];
+                        var fold = DetermineFold(currentPosition, currentDirection);
+                        next = fold.member;
+                        if (next.Value != '#')
+                        {
+                            currentDirection = fold.direction;
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception();
+                }
+
+                if (next.Value == '.')
+                {
+                    currentPosition = next.Location;
+                    //Console.WriteLine(((currentPosition.Item1 + 1, -currentPosition.Item2 + 3), currentDirection));
+                }
+                else
+                {
+                    break;
+                }
+
+                //Console.WriteLine((currentPosition, currentDirection));
+            }
+            currentDirection = (currentDirection, instruction.Item2) switch
+            {
+                (GridDirection.North, 'L') => GridDirection.West,
+                (GridDirection.North, 'R') => GridDirection.East,
+                (GridDirection.East, 'L') => GridDirection.North,
+                (GridDirection.East, 'R') => GridDirection.South,
+                (GridDirection.South, 'L') => GridDirection.East,
+                (GridDirection.South, 'R') => GridDirection.West,
+                (GridDirection.West, 'L') => GridDirection.South,
+                (GridDirection.West, 'R') => GridDirection.North,
+                _ => currentDirection
+            };
+        }
+
+        Result = (1000 * (-currentPosition.y + 1)
+                  + 4 * (currentPosition.x + 1)
+                  + DirectionValue(currentDirection)).ToString();
             
 
-            (GridMember<char> member, GridDirection direction) DetermineFold((int, int) from, GridDirection direction)
+        (GridMember<char> member, GridDirection direction) DetermineFold((int, int) from, GridDirection direction)
+        {
+            var fold = DetermineFoldInternal();
+            //Console.WriteLine($"{from} {direction}  ->  {fold.member.Location} {fold.direction}");
+            return fold;
+
+            (GridMember<char> member, GridDirection direction) DetermineFoldInternal()
             {
-                var fold = DetermineFoldInternal();
-                //Console.WriteLine($"{from} {direction}  ->  {fold.member.Location} {fold.direction}");
-                return fold;
-
-                (GridMember<char> member, GridDirection direction) DetermineFoldInternal()
+                if (direction == GridDirection.North)
                 {
-                    if (direction == GridDirection.North)
+                    if (from.Item1 < 50)
                     {
-                        if (from.Item1 < 50)
-                        {
-                            return (grid[50, -from.Item1 - 50], GridDirection.East);
-                        }
-
-                        if (from.Item1 < 100)
-                        {
-                            return (grid[0, -from.Item1 - 100], GridDirection.East);
-                        }
-
-                        return (grid[from.Item1 - 100, -199], GridDirection.North);
+                        return (grid[50, -from.Item1 - 50], GridDirection.East);
                     }
 
-                    if (direction == GridDirection.East)
+                    if (from.Item1 < 100)
                     {
-                        if (from.Item2 > -50)
-                        {
-                            return (grid[99, -149 - from.Item2], GridDirection.West);
-                        }
-
-                        if (from.Item2 > -100)
-                        {
-                            return (grid[50 - from.Item2, -49], GridDirection.North);
-                        }
-
-                        if (from.Item2 > -150)
-                        {
-                            return (grid[149, -149 - from.Item2], GridDirection.West);
-                        }
-
-                        return (grid[-100 - from.Item2, -149], GridDirection.North);
+                        return (grid[0, -from.Item1 - 100], GridDirection.East);
                     }
 
-                    if (direction == GridDirection.South)
-                    {
-                        if (from.Item1 < 50)
-                        {
-                            return (grid[from.Item1 + 100, 0], GridDirection.South);
-                        }
+                    return (grid[from.Item1 - 100, -199], GridDirection.North);
+                }
 
-                        if (from.Item1 < 100)
-                        {
-                            return (grid[49, -100 - from.Item1], GridDirection.West);
-                        }
-
-                        return (grid[99, 50 - from.Item1], GridDirection.West);
-                    }
-
+                if (direction == GridDirection.East)
+                {
                     if (from.Item2 > -50)
                     {
-                        return (grid[0, -149 - from.Item2], GridDirection.East);
+                        return (grid[99, -149 - from.Item2], GridDirection.West);
                     }
 
                     if (from.Item2 > -100)
                     {
-                        return (grid[-50 - from.Item2, -100], GridDirection.South);
+                        return (grid[50 - from.Item2, -49], GridDirection.North);
                     }
 
                     if (from.Item2 > -150)
                     {
-                        return (grid[50, -149 - from.Item2], GridDirection.East);
+                        return (grid[149, -149 - from.Item2], GridDirection.West);
                     }
 
-                    return (grid[-100 - from.Item2, 0], GridDirection.South);
+                    return (grid[-100 - from.Item2, -149], GridDirection.North);
                 }
-            }
 
-
-            int DirectionValue(GridDirection direction)
-            {
-                return direction switch
+                if (direction == GridDirection.South)
                 {
-                    GridDirection.East => 0,
-                    GridDirection.South => 1,
-                    GridDirection.West => 2,
-                    GridDirection.North => 3,
-                    _ => throw new Exception()
-                };
+                    if (from.Item1 < 50)
+                    {
+                        return (grid[from.Item1 + 100, 0], GridDirection.South);
+                    }
+
+                    if (from.Item1 < 100)
+                    {
+                        return (grid[49, -100 - from.Item1], GridDirection.West);
+                    }
+
+                    return (grid[99, 50 - from.Item1], GridDirection.West);
+                }
+
+                if (from.Item2 > -50)
+                {
+                    return (grid[0, -149 - from.Item2], GridDirection.East);
+                }
+
+                if (from.Item2 > -100)
+                {
+                    return (grid[-50 - from.Item2, -100], GridDirection.South);
+                }
+
+                if (from.Item2 > -150)
+                {
+                    return (grid[50, -149 - from.Item2], GridDirection.East);
+                }
+
+                return (grid[-100 - from.Item2, 0], GridDirection.South);
             }
         }
 
-        public override int Nummer => 202222;
+
+        int DirectionValue(GridDirection direction)
+        {
+            return direction switch
+            {
+                GridDirection.East => 0,
+                GridDirection.South => 1,
+                GridDirection.West => 2,
+                GridDirection.North => 3,
+                _ => throw new Exception()
+            };
+        }
     }
+
+    public override int Nummer => 202222;
 }

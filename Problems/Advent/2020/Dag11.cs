@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag11 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"LLLLLLLLLLLLLLL.L..LLLLLL.LLLLLLLLL.LLLLLL.LLLLLLL.LLLLLLL.LLLLLL.LLLLLLLLL.LLLL...LLLLLLLLLLL
+public class Dag11 : Problem
+{
+    #region input
+
+    private const string input = @"LLLLLLLLLLLLLLL.L..LLLLLL.LLLLLLLLL.LLLLLL.LLLLLLL.LLLLLLL.LLLLLL.LLLLLLLLL.LLLL...LLLLLLLLLLL
 LLLLLL.LLL.LLLLLLL.LLLLLL.LLLLLLLLL.LLLLLLLL.LLLLL.LL.LLLLLL..LLLLLLL.LLLLL.LLLL.LLLLLLLLLLLLL
 LLLLL.LL.LLLLLLLLL.LLLLLLLLL.LLLLLL.LLLLLLLL.LLLLL.LLLLLLLLL.LLLLLLLL.LLLLLLLLLL.LLLLLLLLLLLLL
 LLLLLLLL.LLLLLLLLLLL.LLLL.LLLLLLLLL.LLLLL.L.LLLLLL.LLLLLLLLL.LLLLLLLL.LLLLL.LLLL.LLLLLLLLLLLLL
@@ -105,9 +105,9 @@ LLLLLLLL.LLLLLLLLL.LLLLLLLLLLLLLLLL.LLLLLLLL.LLLLL.LLLLLLLLLLLLLLLLLL.LLL.L.LLLL
 .LLLLL.L.LLLLLLLLLLL.LLLLLLLLLLLLLLLLLLLLLLL.LLLLL.L.LLLLLLLL.LLLLLLL.L.LLL.LLLLLLLLLLL.LLLLLL
 LLLLLLLL.LLLLLLLLL.LLLLLLLLLLLLLLLL.LLLLLLLL.LLLLLLL.LLLLLLL.LLLLLLLLLLLLLL.LLLL.LLLL.LLLLLLLL
 LLLLLLLL..LLLLLLLL.LLLLL..LL.LLLLLL.LLLLL.LLLL.LLLLLLLLLLLLLLLLLLLLLL.LLLLL..LLL.LLLLLLLLLLLLL";
-        #endregion
+    #endregion
 
-        private const string testinput = @"L.LL.LL.LL
+    private const string testinput = @"L.LL.LL.LL
 LLLLLLL.LL
 L.L.L..L..
 LLLL.LL.LL
@@ -117,103 +117,102 @@ L.LLLLL.LL
 LLLLLLLLLL
 L.LLLLLL.L
 L.LLLLL.LL";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<string> seatmap = input.Split(Environment.NewLine);
+        int height = seatmap.Count;
+        int width = seatmap[0].Length;
+        var step = Step(seatmap);
+        while (step.Item2)
         {
-            IList<string> seatmap = input.Split(Environment.NewLine);
-            int height = seatmap.Count;
-            int width = seatmap[0].Length;
-            var step = Step(seatmap);
-            while (step.Item2)
+            Thread.Sleep(100);
+            Console.SetCursorPosition(0, 0);
+            foreach (var line in step.Item1)
             {
-                Thread.Sleep(100);
-                Console.SetCursorPosition(0, 0);
-                foreach (var line in step.Item1)
-                {
-                    Console.WriteLine(line);
-                }
-                step = Step(step.Item1);
+                Console.WriteLine(line);
             }
+            step = Step(step.Item1);
+        }
 
-            Result = step.Item1.Sum(s => s.Count(c => c == '#')).ToString();
-            return Task.CompletedTask;
+        Result = step.Item1.Sum(s => s.Count(c => c == '#')).ToString();
+        return Task.CompletedTask;
 
-            (IList<string>, bool) Step(IList<string> seatmap)
+        (IList<string>, bool) Step(IList<string> seatmap)
+        {
+            bool changed = false;
+            IList<string> newSeatmap = new List<string>();
+            int currentLineIndex = 0;
+            foreach (var line in seatmap)
             {
-                bool changed = false;
-                IList<string> newSeatmap = new List<string>();
-                int currentLineIndex = 0;
-                foreach (var line in seatmap)
+                var sb = new StringBuilder();
+                for (int i = 0; i < width; i++)
                 {
-                    var sb = new StringBuilder();
-                    for (int i = 0; i < width; i++)
+                    var currentSeat = line[i];
+                    if (currentSeat == '.')
                     {
-                        var currentSeat = line[i];
-                        if (currentSeat == '.')
-                        {
-                            sb.Append('.');
-                        }
-                        else
-                        {
-                            sb.Append(GenerateSeat());
+                        sb.Append('.');
+                    }
+                    else
+                    {
+                        sb.Append(GenerateSeat());
 
-                            char GenerateSeat()
+                        char GenerateSeat()
+                        {
+                            int count = 0;
+                            for (int x = -1; x <= 1; x++)
                             {
-                                int count = 0;
-                                for (int x = -1; x <= 1; x++)
+                                for (int y = -1; y <= 1; y++)
                                 {
-                                    for (int y = -1; y <= 1; y++)
+                                    if (x != 0 || y != 0)
                                     {
-                                        if (x != 0 || y != 0)
+                                        var cx = x + i;
+                                        var cy = y + currentLineIndex;
+                                        while (cx >= 0 && cx < width && cy >= 0 && cy < height)
                                         {
-                                            var cx = x + i;
-                                            var cy = y + currentLineIndex;
-                                            while (cx >= 0 && cx < width && cy >= 0 && cy < height)
+                                            var s = seatmap[cy][cx];
+                                            if (s == '#')
                                             {
-                                                var s = seatmap[cy][cx];
-                                                if (s == '#')
-                                                {
-                                                    count++;
-                                                    break;
-                                                }
-                                                else if (s == 'L')
-                                                {
-                                                    break;
-                                                }
-                                                cx += x;
-                                                cy += y;
+                                                count++;
+                                                break;
                                             }
+                                            else if (s == 'L')
+                                            {
+                                                break;
+                                            }
+                                            cx += x;
+                                            cy += y;
                                         }
                                     }
                                 }
+                            }
 
-                                if (currentSeat == '#' && count >= 5)
-                                {
-                                    changed = true;
-                                    return 'L';
-                                }
-                                else if (currentSeat == 'L' && count == 0)
-                                {
-                                    changed = true;
-                                    return '#';
-                                }
-                                else
-                                {
-                                    return currentSeat;
-                                }
+                            if (currentSeat == '#' && count >= 5)
+                            {
+                                changed = true;
+                                return 'L';
+                            }
+                            else if (currentSeat == 'L' && count == 0)
+                            {
+                                changed = true;
+                                return '#';
+                            }
+                            else
+                            {
+                                return currentSeat;
                             }
                         }
                     }
-
-                    newSeatmap.Add(sb.ToString());
-                    currentLineIndex++;
                 }
 
-                return (newSeatmap, changed);
+                newSeatmap.Add(sb.ToString());
+                currentLineIndex++;
             }
+
+            return (newSeatmap, changed);
         }
+    }
 
         
 
-        public override int Nummer => 202011;
-    }
+    public override int Nummer => 202011;
 }

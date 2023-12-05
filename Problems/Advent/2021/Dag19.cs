@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag19 : Problem
 {
-    internal class Dag19 : Problem
-    {
-        private const string input = @"--- scanner 0 ---
+    private const string input = @"--- scanner 0 ---
 -640,638,699
 526,552,850
 515,819,-585
@@ -1041,7 +1041,7 @@ namespace Problems.Advent._2021
 609,579,-726
 -809,-714,758";
 
-        private const string testinput = @"--- scanner 0 ---
+    private const string testinput = @"--- scanner 0 ---
 404,-588,-901
 528,-643,409
 -838,591,734
@@ -1177,208 +1177,207 @@ namespace Problems.Advent._2021
 891,-625,532
 -652,-548,-490
 30,-46,-14";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<Scanner> ParseInput()
         {
-            IList<Scanner> ParseInput()
+            IList<Scanner> list = new List<Scanner>();
+            Scanner scanner = null;
+            foreach (var line in input.Split(Environment.NewLine))
             {
-                IList<Scanner> list = new List<Scanner>();
-                Scanner scanner = null;
-                foreach (var line in input.Split(Environment.NewLine))
+                if (string.IsNullOrWhiteSpace(line))
                 {
-                    if (string.IsNullOrWhiteSpace(line))
-                    {
-                        continue;
-                    }
-
-                    if (line.StartsWith("---"))
-                    {
-                        scanner = new Scanner
-                        {
-                            Number = int.Parse(line.Split(' ')[2])
-                        };
-                        list.Add(scanner);
-                    }
-                    else
-                    {
-                        var coordinates = line.Split(',');
-                        scanner.Beacons.Add((int.Parse(coordinates[0]), int.Parse(coordinates[1]),
-                            int.Parse(coordinates[2])));
-                    }
+                    continue;
                 }
 
-                return list;
-            }
-
-            var scanners = ParseInput();
-
-            scanners[0].Orientation = 0;
-            IList<Scanner> orientatedScanners = new List<Scanner>();
-            orientatedScanners.Add(scanners[0]);
-            while (orientatedScanners.Any())
-            {
-                var copy = orientatedScanners.ToList();
-                orientatedScanners = new List<Scanner>();
-                foreach (var scanner in copy)
+                if (line.StartsWith("---"))
                 {
-                    foreach (var unorientedScanner in scanners.Where(s => !s.Orientation.HasValue))
+                    scanner = new Scanner
                     {
-                        if (TryGetOrientation(scanner, unorientedScanner, out var orientation, out var x, out var y, out var z))
-                        {
-                            unorientedScanner.Orientation = orientation;
-                            unorientedScanner.X = x;
-                            unorientedScanner.Y = y;
-                            unorientedScanner.Z = z;
-                            orientatedScanners.Add(unorientedScanner);
-                        }
-                    }
+                        Number = int.Parse(line.Split(' ')[2])
+                    };
+                    list.Add(scanner);
+                }
+                else
+                {
+                    var coordinates = line.Split(',');
+                    scanner.Beacons.Add((int.Parse(coordinates[0]), int.Parse(coordinates[1]),
+                        int.Parse(coordinates[2])));
                 }
             }
 
-            var beacons = new HashSet<(int, int, int)>();
-            foreach (var scanner in scanners)
-            {
-                foreach (var beacon in scanner.BeaconsAccordingToOrientation())
-                {
-                    beacons.Add(beacon);
-                }
-            }
-
-            long max = 0;
-            foreach (var scanner1 in scanners)
-            {
-                foreach (var scanner2 in scanners)
-                {
-                    max = Math.Max(max,
-                        Math.Abs(scanner1.X - scanner2.X) + Math.Abs(scanner1.Y - scanner2.Y) +
-                        Math.Abs(scanner1.Z - scanner2.Z));
-                }
-            }
-
-            Result = $"{beacons.Count}  {max}";
-
-            return Task.CompletedTask;
+            return list;
         }
 
-        bool TryGetOrientation(Scanner orientedScanner, Scanner unorientedScanner, out int orientation, out int x, out int y, out int z)
+        var scanners = ParseInput();
+
+        scanners[0].Orientation = 0;
+        IList<Scanner> orientatedScanners = new List<Scanner>();
+        orientatedScanners.Add(scanners[0]);
+        while (orientatedScanners.Any())
         {
-            var beacons = orientedScanner.BeaconsAccordingToOrientation().ToList();
-            IList<IList<(int x, int y, int z)>> deltas = new List<IList<(int x, int y, int z)>>();
-            for (int i = 0; i < beacons.Count; i++)
+            var copy = orientatedScanners.ToList();
+            orientatedScanners = new List<Scanner>();
+            foreach (var scanner in copy)
             {
-                var baseBeacon = beacons[i];
-                IList<(int x, int y, int z)> deltasForBeacon = new List<(int x, int y, int z)>();
-                deltas.Add(deltasForBeacon);
-                for (int j = 0; j < beacons.Count; j++)
+                foreach (var unorientedScanner in scanners.Where(s => !s.Orientation.HasValue))
                 {
-                    var relativeBeacon = beacons[j];
+                    if (TryGetOrientation(scanner, unorientedScanner, out var orientation, out var x, out var y, out var z))
+                    {
+                        unorientedScanner.Orientation = orientation;
+                        unorientedScanner.X = x;
+                        unorientedScanner.Y = y;
+                        unorientedScanner.Z = z;
+                        orientatedScanners.Add(unorientedScanner);
+                    }
+                }
+            }
+        }
+
+        var beacons = new HashSet<(int, int, int)>();
+        foreach (var scanner in scanners)
+        {
+            foreach (var beacon in scanner.BeaconsAccordingToOrientation())
+            {
+                beacons.Add(beacon);
+            }
+        }
+
+        long max = 0;
+        foreach (var scanner1 in scanners)
+        {
+            foreach (var scanner2 in scanners)
+            {
+                max = Math.Max(max,
+                    Math.Abs(scanner1.X - scanner2.X) + Math.Abs(scanner1.Y - scanner2.Y) +
+                    Math.Abs(scanner1.Z - scanner2.Z));
+            }
+        }
+
+        Result = $"{beacons.Count}  {max}";
+
+        return Task.CompletedTask;
+    }
+
+    bool TryGetOrientation(Scanner orientedScanner, Scanner unorientedScanner, out int orientation, out int x, out int y, out int z)
+    {
+        var beacons = orientedScanner.BeaconsAccordingToOrientation().ToList();
+        IList<IList<(int x, int y, int z)>> deltas = new List<IList<(int x, int y, int z)>>();
+        for (int i = 0; i < beacons.Count; i++)
+        {
+            var baseBeacon = beacons[i];
+            IList<(int x, int y, int z)> deltasForBeacon = new List<(int x, int y, int z)>();
+            deltas.Add(deltasForBeacon);
+            for (int j = 0; j < beacons.Count; j++)
+            {
+                var relativeBeacon = beacons[j];
+                deltasForBeacon.Add((baseBeacon.x - relativeBeacon.x, baseBeacon.y - relativeBeacon.y,
+                    baseBeacon.z - relativeBeacon.z));
+            }
+        }
+        for (int o = 0; o < 24; o++)
+        {
+            var unorientendBeacons = unorientedScanner.BeaconsAccordingToOrientation(o).ToList();
+            var unorientedDeltas = new List<IList<(int x, int y, int z)>>();
+            for (int i = 0; i < unorientendBeacons.Count; i++)
+            {
+                var baseBeacon = unorientendBeacons[i];
+                IList<(int x, int y, int z)> deltasForBeacon = new List<(int x, int y, int z)>();
+                unorientedDeltas.Add(deltasForBeacon);
+                for (int j = 0; j < unorientendBeacons.Count; j++)
+                {
+                    var relativeBeacon = unorientendBeacons[j];
                     deltasForBeacon.Add((baseBeacon.x - relativeBeacon.x, baseBeacon.y - relativeBeacon.y,
                         baseBeacon.z - relativeBeacon.z));
+                    if (i == 0 && j == 1 || i == 1 && j == 0)
+                    {
+
+                    }
                 }
             }
-            for (int o = 0; o < 24; o++)
+
+            for (int i = 0; i < unorientedDeltas.Count; i++)
             {
-                var unorientendBeacons = unorientedScanner.BeaconsAccordingToOrientation(o).ToList();
-                var unorientedDeltas = new List<IList<(int x, int y, int z)>>();
-                for (int i = 0; i < unorientendBeacons.Count; i++)
+                var deltasForUnorientedBeacon = unorientedDeltas[i];
+                for (int j = 0; j < deltas.Count; j++)
                 {
-                    var baseBeacon = unorientendBeacons[i];
-                    IList<(int x, int y, int z)> deltasForBeacon = new List<(int x, int y, int z)>();
-                    unorientedDeltas.Add(deltasForBeacon);
-                    for (int j = 0; j < unorientendBeacons.Count; j++)
+                    var deltasForOrientedBeacon = deltas[j];
+                    var intersection = deltasForOrientedBeacon.Intersect(deltasForUnorientedBeacon).ToList();
+                    if (intersection.Count >= 12)
                     {
-                        var relativeBeacon = unorientendBeacons[j];
-                        deltasForBeacon.Add((baseBeacon.x - relativeBeacon.x, baseBeacon.y - relativeBeacon.y,
-                            baseBeacon.z - relativeBeacon.z));
-                        if (i == 0 && j == 1 || i == 1 && j == 0)
-                        {
-
-                        }
-                    }
-                }
-
-                for (int i = 0; i < unorientedDeltas.Count; i++)
-                {
-                    var deltasForUnorientedBeacon = unorientedDeltas[i];
-                    for (int j = 0; j < deltas.Count; j++)
-                    {
-                        var deltasForOrientedBeacon = deltas[j];
-                        var intersection = deltasForOrientedBeacon.Intersect(deltasForUnorientedBeacon).ToList();
-                        if (intersection.Count >= 12)
-                        {
-                            orientation = o;
-                            var orientedBeacon = beacons[j];
-                            var unorientedBeacon = unorientendBeacons[i];
-                            x = orientedBeacon.x - unorientedBeacon.x;
-                            y = orientedBeacon.y - unorientedBeacon.y;
-                            z = orientedBeacon.z - unorientedBeacon.z;
-                            return true;
-                        }
+                        orientation = o;
+                        var orientedBeacon = beacons[j];
+                        var unorientedBeacon = unorientendBeacons[i];
+                        x = orientedBeacon.x - unorientedBeacon.x;
+                        y = orientedBeacon.y - unorientedBeacon.y;
+                        z = orientedBeacon.z - unorientedBeacon.z;
+                        return true;
                     }
                 }
             }
-
-            orientation = 0;
-            x = 0;
-            y = 0;
-            z = 0;
-            return false;
         }
 
-        public override int Nummer => 202119;
+        orientation = 0;
+        x = 0;
+        y = 0;
+        z = 0;
+        return false;
+    }
 
-        private class Scanner
+    public override int Nummer => 202119;
+
+    private class Scanner
+    {
+        public int Number { get; set; }
+        public IList<(int x, int y, int z)> Beacons { get; set; } = new List<(int x, int y, int z)>();
+        public int? Orientation { get; set; }
+
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Z { get; set; }
+
+        public IEnumerable<(int x, int y, int z)> BeaconsAccordingToOrientation()
         {
-            public int Number { get; set; }
-            public IList<(int x, int y, int z)> Beacons { get; set; } = new List<(int x, int y, int z)>();
-            public int? Orientation { get; set; }
+            return BeaconsAccordingToOrientation(Orientation!.Value);
+        }
 
-            public int X { get; set; }
-            public int Y { get; set; }
-            public int Z { get; set; }
-
-            public IEnumerable<(int x, int y, int z)> BeaconsAccordingToOrientation()
+        public IEnumerable<(int x, int y, int z)> BeaconsAccordingToOrientation(int orientation)
+        {
+            foreach (var beacon in Beacons)
             {
-                return BeaconsAccordingToOrientation(Orientation!.Value);
-            }
+                yield return TransformBeaconLocation();
 
-            public IEnumerable<(int x, int y, int z)> BeaconsAccordingToOrientation(int orientation)
-            {
-                foreach (var beacon in Beacons)
+                (int, int, int) TransformBeaconLocation()
                 {
-                    yield return TransformBeaconLocation();
-
-                    (int, int, int) TransformBeaconLocation()
+                    (int x, int y, int z) transformed = orientation switch
                     {
-                        (int x, int y, int z) transformed = orientation switch
-                        {
-                            0 => (beacon.x, beacon.y, beacon.z),
-                            1 => (beacon.x, beacon.z, -beacon.y),
-                            2 => (beacon.x, -beacon.y, -beacon.z),
-                            3 => (beacon.x, -beacon.z, beacon.y),
-                            4 => (-beacon.x, beacon.z, beacon.y),
-                            5 => (-beacon.x, beacon.y, -beacon.z),
-                            6 => (-beacon.x, -beacon.z, -beacon.y),
-                            7 => (-beacon.x, -beacon.y, beacon.z),
-                            8 => (-beacon.y, beacon.x, beacon.z),
-                            9 => (beacon.z, beacon.x,beacon.y),
-                            10 => (beacon.y, beacon.x, -beacon.z),
-                            11 => (-beacon.z, beacon.x, -beacon.y),
-                            12 => (-beacon.z ,-beacon.x, beacon.y),
-                            13 => (beacon.y, -beacon.x, beacon.z),
-                            14 => (beacon.z, -beacon.x, -beacon.y),
-                            15 => (-beacon.y, -beacon.x, -beacon.z),
-                            16 => (-beacon.z, beacon.y, beacon.x),
-                            17 => (beacon.y, beacon.z, beacon.x),
-                            18 => (beacon.z, -beacon.y, beacon.x),
-                            19 => (-beacon.y, -beacon.z, beacon.x),
-                            20 => (-beacon.y, beacon.z, -beacon.x),
-                            21 => (beacon.z, beacon.y, -beacon.x),
-                            22 => (beacon.y, -beacon.z, -beacon.x),
-                            23 => (-beacon.z, -beacon.y, -beacon.x)
-                        };
+                        0 => (beacon.x, beacon.y, beacon.z),
+                        1 => (beacon.x, beacon.z, -beacon.y),
+                        2 => (beacon.x, -beacon.y, -beacon.z),
+                        3 => (beacon.x, -beacon.z, beacon.y),
+                        4 => (-beacon.x, beacon.z, beacon.y),
+                        5 => (-beacon.x, beacon.y, -beacon.z),
+                        6 => (-beacon.x, -beacon.z, -beacon.y),
+                        7 => (-beacon.x, -beacon.y, beacon.z),
+                        8 => (-beacon.y, beacon.x, beacon.z),
+                        9 => (beacon.z, beacon.x,beacon.y),
+                        10 => (beacon.y, beacon.x, -beacon.z),
+                        11 => (-beacon.z, beacon.x, -beacon.y),
+                        12 => (-beacon.z ,-beacon.x, beacon.y),
+                        13 => (beacon.y, -beacon.x, beacon.z),
+                        14 => (beacon.z, -beacon.x, -beacon.y),
+                        15 => (-beacon.y, -beacon.x, -beacon.z),
+                        16 => (-beacon.z, beacon.y, beacon.x),
+                        17 => (beacon.y, beacon.z, beacon.x),
+                        18 => (beacon.z, -beacon.y, beacon.x),
+                        19 => (-beacon.y, -beacon.z, beacon.x),
+                        20 => (-beacon.y, beacon.z, -beacon.x),
+                        21 => (beacon.z, beacon.y, -beacon.x),
+                        22 => (beacon.y, -beacon.z, -beacon.x),
+                        23 => (-beacon.z, -beacon.y, -beacon.x)
+                    };
 
-                        return (X + transformed.x, Y + transformed.y, Z + transformed.z);
-                    }
+                    return (X + transformed.x, Y + transformed.y, Z + transformed.z);
                 }
             }
         }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2018
+namespace Problems.Advent._2018;
+
+public class Dag3 : Problem
 {
-    public class Dag3 : Problem
-    {
-        private const string input = @"#1 @ 596,731: 11x27
+    private const string input = @"#1 @ 596,731: 11x27
 #2 @ 20,473: 23x22
 #3 @ 730,802: 23x23
 #4 @ 212,725: 28x25
@@ -1275,90 +1275,89 @@ namespace Problems.Advent._2018
 #1266 @ 850,773: 23x22
 #1267 @ 95,29: 17x28";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<Rectangle> rectangles = new List<Rectangle>();
+        foreach (var r in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
         {
-            IList<Rectangle> rectangles = new List<Rectangle>();
-            foreach (var r in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+            var rectangle = new Rectangle();
+            var rs0 = r.Split('@');
+            var rs1 = rs0[1].Split(',');
+            var rs2 = rs1[1].Split(':');
+            var rs3 = rs2[1].Split('x');
+            rectangle.Id = rs0[0];
+            rectangle.X = int.Parse(rs1[0]);
+            rectangle.Y = int.Parse(rs2[0]);
+            rectangle.Width = int.Parse(rs3[0]);
+            rectangle.Length = int.Parse(rs3[1]);
+            rectangles.Add(rectangle);
+        }
+        Console.WriteLine(rectangles.Max(r => r.X+r.Width)+" "+ rectangles.Max(r => r.Y + r.Length));
+        int[,] s = new int[1000,1000];
+        foreach (var rectangle in rectangles)
+        {
+            for (int x = 0; x < rectangle.Width; x++)
             {
-                var rectangle = new Rectangle();
-                var rs0 = r.Split('@');
-                var rs1 = rs0[1].Split(',');
-                var rs2 = rs1[1].Split(':');
-                var rs3 = rs2[1].Split('x');
-                rectangle.Id = rs0[0];
-                rectangle.X = int.Parse(rs1[0]);
-                rectangle.Y = int.Parse(rs2[0]);
-                rectangle.Width = int.Parse(rs3[0]);
-                rectangle.Length = int.Parse(rs3[1]);
-                rectangles.Add(rectangle);
-            }
-            Console.WriteLine(rectangles.Max(r => r.X+r.Width)+" "+ rectangles.Max(r => r.Y + r.Length));
-            int[,] s = new int[1000,1000];
-            foreach (var rectangle in rectangles)
-            {
-                for (int x = 0; x < rectangle.Width; x++)
+                for (int y = 0; y < rectangle.Length; y++)
                 {
-                    for (int y = 0; y < rectangle.Length; y++)
+                    s[rectangle.X + x, rectangle.Y + y]++;
+                }
+            }
+        }
+
+        int c = 0;
+        for (int i = 0; i < 1000; i++)
+        {
+            for (int j = 0; j < 1000; j++)
+            {
+                if (s[i, j] > 1)
+                {
+                    c++;
+                }
+            }
+        }
+
+        string id = "";
+        foreach (var rectangle in rectangles)
+        {
+            bool overlap = false;
+            foreach (var rectangle1 in rectangles)
+            {
+                if (rectangle1 != rectangle)
+                {
+                    if (Overlap(rectangle, rectangle1))
                     {
-                        s[rectangle.X + x, rectangle.Y + y]++;
+                        overlap = true;
+                        break;
                     }
                 }
             }
 
-            int c = 0;
-            for (int i = 0; i < 1000; i++)
+            if (!overlap)
             {
-                for (int j = 0; j < 1000; j++)
-                {
-                    if (s[i, j] > 1)
-                    {
-                        c++;
-                    }
-                }
+                id = rectangle.Id;
+                break;
             }
-
-            string id = "";
-            foreach (var rectangle in rectangles)
-            {
-                bool overlap = false;
-                foreach (var rectangle1 in rectangles)
-                {
-                    if (rectangle1 != rectangle)
-                    {
-                        if (Overlap(rectangle, rectangle1))
-                        {
-                            overlap = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!overlap)
-                {
-                    id = rectangle.Id;
-                    break;
-                }
-            }
-
-            Result = c.ToString() + " "+ id;
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201803;
+        Result = c.ToString() + " "+ id;
+        return Task.CompletedTask;
+    }
 
-        private bool Overlap(Rectangle r, Rectangle s)
-        {
-            return ((r.X <= s.X && r.X + r.Width >= s.X) || (s.X <= r.X && s.X + s.Width >= r.X))
-                   && ((r.Y <= s.Y && r.Y + r.Length >= s.Y) || (s.Y <= r.Y && s.Y + s.Length >= r.Y));
-        }
+    public override int Nummer => 201803;
 
-        private class Rectangle
-        {
-            public string Id { get; set; }
-            public int X { get; set; }
-            public int Y { get; set; }
-            public int Length { get; set; }
-            public int Width { get; set; }
-        }
+    private bool Overlap(Rectangle r, Rectangle s)
+    {
+        return ((r.X <= s.X && r.X + r.Width >= s.X) || (s.X <= r.X && s.X + s.Width >= r.X))
+               && ((r.Y <= s.Y && r.Y + r.Length >= s.Y) || (s.Y <= r.Y && s.Y + s.Length >= r.Y));
+    }
+
+    private class Rectangle
+    {
+        public string Id { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Length { get; set; }
+        public int Width { get; set; }
     }
 }

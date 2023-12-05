@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag12 : Problem
 {
-    internal class Dag12 : Problem
-    {
-        private const string input = @"0 <-> 199, 1774
+    private const string input = @"0 <-> 199, 1774
 1 <-> 350, 1328, 1920
 2 <-> 477, 984, 1419
 3 <-> 1465, 1568
@@ -2008,82 +2008,81 @@ namespace Problems.Advent._2017
 1997 <-> 395, 1436
 1998 <-> 1300
 1999 <-> 175, 1161";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IDictionary<int, HashSet<int>> connections = new Dictionary<int, HashSet<int>>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IDictionary<int, HashSet<int>> connections = new Dictionary<int, HashSet<int>>();
-            foreach (var line in input.Split(Environment.NewLine))
+            var words = line.Replace(",", "").Split(' ');
+            int left = int.Parse(words[0]);
+            if (!connections.ContainsKey(left))
             {
-                var words = line.Replace(",", "").Split(' ');
-                int left = int.Parse(words[0]);
-                if (!connections.ContainsKey(left))
-                {
-                    connections[left] = new HashSet<int>();
-                }
-
-                for (int i = 2; i < words.Length; i++)
-                {
-                    var right = int.Parse(words[i]);
-                    if (!connections.ContainsKey(right))
-                    {
-                        connections[right] = new HashSet<int>();
-                    }
-
-                    connections[left].Add(right);
-                    connections[right].Add(left);
-                }
+                connections[left] = new HashSet<int>();
             }
 
-            int groupCount = 0;
-            bool newGroup = true;
-            HashSet<int> grouped = new HashSet<int>();
-            while (newGroup)
+            for (int i = 2; i < words.Length; i++)
             {
-                newGroup = false;
-                int seed = -1;
-                foreach (var v in connections.Keys)
+                var right = int.Parse(words[i]);
+                if (!connections.ContainsKey(right))
                 {
-                    if (!grouped.Contains(v))
-                    {
-                        seed = v;
-                        break;
-                    }
+                    connections[right] = new HashSet<int>();
                 }
 
-                if (seed == -1)
-                {
-                    continue;
-                }
-
-                newGroup = true;
-                groupCount++;
-                HashSet<int> group = new HashSet<int> { seed };
-                IList<int> added = new List<int> { seed };
-                grouped.Add(seed);
-                while (added.Any())
-                {
-                    IList<int> newAdded = new List<int>();
-                    foreach (var i in added)
-                    {
-                        foreach (var c in connections[i])
-                        {
-                            if (!group.Contains(c))
-                            {
-                                newAdded.Add(c);
-                                group.Add(c);
-                                grouped.Add(c);
-                            }
-                        }
-                    }
-
-                    added = newAdded;
-                }
+                connections[left].Add(right);
+                connections[right].Add(left);
             }
-
-
-            Result = $"{groupCount}";
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201712;
+        int groupCount = 0;
+        bool newGroup = true;
+        HashSet<int> grouped = new HashSet<int>();
+        while (newGroup)
+        {
+            newGroup = false;
+            int seed = -1;
+            foreach (var v in connections.Keys)
+            {
+                if (!grouped.Contains(v))
+                {
+                    seed = v;
+                    break;
+                }
+            }
+
+            if (seed == -1)
+            {
+                continue;
+            }
+
+            newGroup = true;
+            groupCount++;
+            HashSet<int> group = new HashSet<int> { seed };
+            IList<int> added = new List<int> { seed };
+            grouped.Add(seed);
+            while (added.Any())
+            {
+                IList<int> newAdded = new List<int>();
+                foreach (var i in added)
+                {
+                    foreach (var c in connections[i])
+                    {
+                        if (!group.Contains(c))
+                        {
+                            newAdded.Add(c);
+                            group.Add(c);
+                            grouped.Add(c);
+                        }
+                    }
+                }
+
+                added = newAdded;
+            }
+        }
+
+
+        Result = $"{groupCount}";
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201712;
 }

@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Algorithms;
 using Algorithms.Models;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag23 : Problem
 {
-    internal class Dag23 : Problem
-    {
-        private const string input = @"set b 1000
+    private const string input = @"set b 1000
 set c b
 jnz a 2
 jnz 1 5
@@ -41,85 +41,84 @@ jnz g 2
 jnz 1 3
 sub b -17
 jnz 1 -23";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        // Hij geeft het aantal samengestelde getallen x tussen b = 79 * 100 + 100000 en c = b + 17000 met x % 17 == b % 17
+        var primes = new Primes(125000);
+        int ct = 0;
+        for (int b = 107900; b <= 124900; b += 17)
         {
-            // Hij geeft het aantal samengestelde getallen x tussen b = 79 * 100 + 100000 en c = b + 17000 met x % 17 == b % 17
-            var primes = new Primes(125000);
-            int ct = 0;
-            for (int b = 107900; b <= 124900; b += 17)
+            if (!primes.IsPrime(b))
             {
-                if (!primes.IsPrime(b))
-                {
-                    ct++;
-                }
+                ct++;
             }
-
-            Result = ct.ToString();
-            return Task.CompletedTask;
-
-
-            var register = new CounterLong<string>();
-            register["a"] = 0;
-            IList<string> instructions = input.Split(Environment.NewLine);
-            int pointer = 0;
-            bool terminated = false;
-            int mulCount = 0;
-            while (!terminated)
-            {
-                Step();
-            }
-
-            Result = register["h"].ToString();
-
-            void Step()
-            {
-                if (pointer < 0 || pointer >= instructions.Count)
-                {
-                    terminated = true;
-                    return;
-                }
-                var instruction = instructions[pointer];
-                pointer++;
-                var words = instruction.Split(' ');
-                switch (words[0])
-                {
-                    case "set":
-                        register[words[1]] = Value(words[2]);
-                        break;
-                    case "sub":
-                        if (words[1] == "h")
-                        {
-
-                        }
-                        register[words[1]] -= Value(words[2]);
-                        break;
-                    case "mul":
-                        register[words[1]] *= Value(words[2]);
-                        mulCount++;
-                        break;
-                    case "jnz":
-                        if (Value(words[1]) != 0)
-                        {
-                            pointer--;
-                            pointer += (int)Value(words[2]);
-                        }
-                        break;
-                }
-
-                long Value(string r)
-                {
-                    if (long.TryParse(r, out var v))
-                    {
-                        return v;
-                    }
-
-                    return register[r];
-                }
-            }
-
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201723;
+        Result = ct.ToString();
+        return Task.CompletedTask;
+
+
+        var register = new CounterLong<string>();
+        register["a"] = 0;
+        IList<string> instructions = input.Split(Environment.NewLine);
+        int pointer = 0;
+        bool terminated = false;
+        int mulCount = 0;
+        while (!terminated)
+        {
+            Step();
+        }
+
+        Result = register["h"].ToString();
+
+        void Step()
+        {
+            if (pointer < 0 || pointer >= instructions.Count)
+            {
+                terminated = true;
+                return;
+            }
+            var instruction = instructions[pointer];
+            pointer++;
+            var words = instruction.Split(' ');
+            switch (words[0])
+            {
+                case "set":
+                    register[words[1]] = Value(words[2]);
+                    break;
+                case "sub":
+                    if (words[1] == "h")
+                    {
+
+                    }
+                    register[words[1]] -= Value(words[2]);
+                    break;
+                case "mul":
+                    register[words[1]] *= Value(words[2]);
+                    mulCount++;
+                    break;
+                case "jnz":
+                    if (Value(words[1]) != 0)
+                    {
+                        pointer--;
+                        pointer += (int)Value(words[2]);
+                    }
+                    break;
+            }
+
+            long Value(string r)
+            {
+                if (long.TryParse(r, out var v))
+                {
+                    return v;
+                }
+
+                return register[r];
+            }
+        }
+
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201723;
 }

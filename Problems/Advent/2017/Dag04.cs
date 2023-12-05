@@ -5,11 +5,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag04 : Problem
 {
-    internal class Dag04 : Problem
-    {
-        private const string input = @"bdwdjjo avricm cjbmj ran lmfsom ivsof
+    private const string input = @"bdwdjjo avricm cjbmj ran lmfsom ivsof
 mxonybc fndyzzi gmdp gdfyoi inrvhr kpuueel wdpga vkq
 bneh ylltsc vhryov lsd hmruxy ebnh pdln vdprrky
 fumay zbccai qymavw zwoove hqpd rcxyvy
@@ -522,21 +522,20 @@ gyw xzgbi efus uuy
 hwcy ujdun bjjuvd jbdvju onnk xeyy mmp onkn qyzl
 jwfm ptjwrbl hhuv uolz adyweh qpj wxyogp igvnojq jmfw pqs fsnirby";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var regex = new Regex(@"^.*(\b[a-z]+\b).*\1.*$");
+        Result = input.Split(Environment.NewLine).ToList().Count(p => !ContainsAnagram(p)).ToString();
+        return Task.CompletedTask;
+
+
+        bool ContainsAnagram(string line)
         {
-            var regex = new Regex(@"^.*(\b[a-z]+\b).*\1.*$");
-            Result = input.Split(Environment.NewLine).ToList().Count(p => !ContainsAnagram(p)).ToString();
-            return Task.CompletedTask;
-
-
-            bool ContainsAnagram(string line)
-            {
-                var words = line.Split(' ');
-                var hashSet = new HashSet<string>(words.Select(w => new string(w.OrderBy(c => c).ToArray())));
-                return hashSet.Count < words.Length;
-            }
+            var words = line.Split(' ');
+            var hashSet = new HashSet<string>(words.Select(w => new string(w.OrderBy(c => c).ToArray())));
+            return hashSet.Count < words.Length;
         }
-
-        public override int Nummer => 201704;
     }
+
+    public override int Nummer => 201704;
 }

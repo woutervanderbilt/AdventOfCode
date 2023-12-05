@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2017
+namespace Problems.Advent._2017;
+
+internal class Dag20 : Problem
 {
-    internal class Dag20 : Problem
-    {
-        private const string input = @"p=<-317,1413,1507>, v=<19,-102,-108>, a=<1,-3,-3>
+    private const string input = @"p=<-317,1413,1507>, v=<19,-102,-108>, a=<1,-3,-3>
 p=<1639,477,-2519>, v=<-79,-102,130>, a=<-9,9,12>
 p=<613,-993,-305>, v=<-39,27,-48>, a=<-2,8,11>
 p=<1343,190,-1565>, v=<-82,31,31>, a=<1,-4,5>
@@ -1010,55 +1010,54 @@ p=<-654,-2387,-1867>, v=<-91,-341,-267>, a=<1,22,17>
 p=<1619,-1540,-1714>, v=<226,-222,-247>, a=<-20,13,17>
 p=<-2781,1254,-451>, v=<-399,186,-64>, a=<26,-13,0>";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<(long index, long x, long y, long z, long vx, long vy, long vz, long ax, long ay, long az)> particles =
+            new List<(long index, long x, long y, long z, long vx, long vy, long vz, long ax, long ay, long az)>();
+        long i = 0;
+        foreach (var particle in input.Split(Environment.NewLine))
         {
-            IList<(long index, long x, long y, long z, long vx, long vy, long vz, long ax, long ay, long az)> particles =
-                new List<(long index, long x, long y, long z, long vx, long vy, long vz, long ax, long ay, long az)>();
-            long i = 0;
-            foreach (var particle in input.Split(Environment.NewLine))
-            {
-                var words = particle.Replace(">","").Split(' ');
-                var l = words[0].Substring(3).Split(',');
-                var v= words[1].Substring(3).Split(',');
-                var a = words[2].Substring(3).Split(',');
-                particles.Add((i, int.Parse(l[0]), int.Parse(l[1]), int.Parse(l[2]), int.Parse(v[0]), int.Parse(v[1]),
-                    int.Parse(v[2]), int.Parse(a[0]), int.Parse(a[1]), int.Parse(a[2])));
-                i++;
-            }
-
-            while (true)
-            {
-                var newParticleList = new List<(long index, long x, long y, long z, long vx, long vy, long vz, long ax, long ay, long az)>();
-                var shortestDistance = particles.Min(p => Math.Abs(p.x) + Math.Abs(p.y) + Math.Abs(p.z));
-                var closestParticle =
-                    particles.First(p => Math.Abs(p.x) + Math.Abs(p.y) + Math.Abs(p.z) == shortestDistance);
-                Console.WriteLine($"{closestParticle.index}, {particles.Count}");
-                HashSet<(long x, long y, long z)> collisions = new HashSet<(long x, long y, long z)>();
-                HashSet<(long x, long y, long z)> occupiedSpaces = new HashSet<(long x, long y, long z)>();
-                foreach (var particle in particles)
-                {
-                    var vx = particle.vx + particle.ax;
-                    var vy = particle.vy + particle.ay;
-                    var vz = particle.vz + particle.az;
-                    var x = particle.x + vx;
-                    var y = particle.y + vy;
-                    var z = particle.z + vz;
-                    if (occupiedSpaces.Add((x, y, z)))
-                    {
-                        newParticleList.Add((particle.index, x, y, z, vx, vy, vz, particle.ax, particle.ay, particle.az));
-                    }
-                    else
-                    {
-                        collisions.Add((x,y,z));
-                    }
-                }
-
-                particles = newParticleList.Where(p => !collisions.Contains((p.x,p.y,p.z))).ToList();
-            }
-
-            return Task.CompletedTask;
+            var words = particle.Replace(">","").Split(' ');
+            var l = words[0].Substring(3).Split(',');
+            var v= words[1].Substring(3).Split(',');
+            var a = words[2].Substring(3).Split(',');
+            particles.Add((i, int.Parse(l[0]), int.Parse(l[1]), int.Parse(l[2]), int.Parse(v[0]), int.Parse(v[1]),
+                int.Parse(v[2]), int.Parse(a[0]), int.Parse(a[1]), int.Parse(a[2])));
+            i++;
         }
 
-        public override int Nummer => 201720;
+        while (true)
+        {
+            var newParticleList = new List<(long index, long x, long y, long z, long vx, long vy, long vz, long ax, long ay, long az)>();
+            var shortestDistance = particles.Min(p => Math.Abs(p.x) + Math.Abs(p.y) + Math.Abs(p.z));
+            var closestParticle =
+                particles.First(p => Math.Abs(p.x) + Math.Abs(p.y) + Math.Abs(p.z) == shortestDistance);
+            Console.WriteLine($"{closestParticle.index}, {particles.Count}");
+            HashSet<(long x, long y, long z)> collisions = new HashSet<(long x, long y, long z)>();
+            HashSet<(long x, long y, long z)> occupiedSpaces = new HashSet<(long x, long y, long z)>();
+            foreach (var particle in particles)
+            {
+                var vx = particle.vx + particle.ax;
+                var vy = particle.vy + particle.ay;
+                var vz = particle.vz + particle.az;
+                var x = particle.x + vx;
+                var y = particle.y + vy;
+                var z = particle.z + vz;
+                if (occupiedSpaces.Add((x, y, z)))
+                {
+                    newParticleList.Add((particle.index, x, y, z, vx, vy, vz, particle.ax, particle.ay, particle.az));
+                }
+                else
+                {
+                    collisions.Add((x,y,z));
+                }
+            }
+
+            particles = newParticleList.Where(p => !collisions.Contains((p.x,p.y,p.z))).ToList();
+        }
+
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201720;
 }

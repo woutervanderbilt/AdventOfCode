@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent
+namespace Problems.Advent;
+
+public class Dag12 : Problem
 {
-    public class Dag12 : Problem
-    {
-        private const string input = @"cpy 1 a
+    private const string input = @"cpy 1 a
 cpy 1 b
 cpy 26 d
 jnz c 2
@@ -32,15 +32,14 @@ jnz d -2
 dec c
 jnz c -5";
 
-        public override Task ExecuteAsync()
-        {
-            var assembunny = new Assembunny(input) {C = 1};
-            assembunny.Run();
+    public override Task ExecuteAsync()
+    {
+        var assembunny = new Assembunny(input) {C = 1};
+        assembunny.Run();
 
-            Result = assembunny.A.ToString();
-            return Task.CompletedTask;
-        }
-
-        public override int Nummer => 201612;
+        Result = assembunny.A.ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201612;
 }

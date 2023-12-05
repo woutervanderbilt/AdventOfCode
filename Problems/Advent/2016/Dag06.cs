@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent
+namespace Problems.Advent;
+
+public class Dag06 : Problem
 {
-    public class Dag06 : Problem
-    {
-        private const string input = @"eqvmfqnf
+    private const string input = @"eqvmfqnf
 jvkezmqt
 zcssqwlw
 cuacncgg
@@ -609,25 +609,24 @@ albkdbsh
 obxcrucu
 dnyytrcx";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<string> codes = input.Split(Environment.NewLine).ToList();
+        Result = string.Empty;
+        for (int i = 0; i <= 7; i++)
         {
-            IList<string> codes = input.Split(Environment.NewLine).ToList();
-            Result = string.Empty;
-            for (int i = 0; i <= 7; i++)
+            var counter = new Counter<char>();
+            foreach (var code in codes)
             {
-                var counter = new Counter<char>();
-                foreach (var code in codes)
-                {
-                    counter[code[i]]++;
-                }
-
-                var max = counter.Values.Min();
-                Result += counter.Keys.Single(k => counter[k] == max);
+                counter[code[i]]++;
             }
-            return Task.CompletedTask;
+
+            var max = counter.Values.Min();
+            Result += counter.Keys.Single(k => counter[k] == max);
         }
-
-        public override int Nummer => 201606;
-
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201606;
+
 }

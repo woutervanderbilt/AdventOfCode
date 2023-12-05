@@ -7,12 +7,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
+namespace Problems.Advent._2020;
+
+public class Dag07 : Problem
 {
-    public class Dag07 : Problem
-    {
-        #region input
-        const string input = @"light gold bags contain 2 light lime bags, 1 faded green bag, 3 clear olive bags, 2 dim bronze bags.
+    #region input
+    const string input = @"light gold bags contain 2 light lime bags, 1 faded green bag, 3 clear olive bags, 2 dim bronze bags.
 muted beige bags contain 3 clear lime bags, 5 dark salmon bags, 1 pale olive bag.
 vibrant violet bags contain 3 dark tomato bags, 3 muted indigo bags, 3 plaid turquoise bags, 3 light silver bags.
 dull purple bags contain 2 wavy turquoise bags.
@@ -606,116 +606,115 @@ pale teal bags contain 5 striped maroon bags, 3 pale gray bags.
 bright green bags contain 4 drab green bags, 3 drab indigo bags, 5 dull blue bags.
 posh violet bags contain 5 wavy white bags.
 clear brown bags contain no other bags.";
-        #endregion
-        public override Task ExecuteAsync()
+    #endregion
+    public override Task ExecuteAsync()
+    {
+        IDictionary<string, Bag> bags = new Dictionary<string, Bag>();
+        foreach (var rule in input.Split(Environment.NewLine))
         {
-            IDictionary<string, Bag> bags = new Dictionary<string, Bag>();
-            foreach (var rule in input.Split(Environment.NewLine))
+            var containingBagColour = rule.Substring(rule.IndexOf(" bags contain"));
+            Bag bag = GetBag(containingBagColour);
+            foreach (var containedBagColour in rule.Substring(rule.IndexOf(" bags contain") + 14).Split(',').Select(s => s.TrimStart()))
             {
-                var containingBagColour = rule.Substring(rule.IndexOf(" bags contain"));
-                Bag bag = GetBag(containingBagColour);
-                foreach (var containedBagColour in rule.Substring(rule.IndexOf(" bags contain") + 14).Split(',').Select(s => s.TrimStart()))
+                if (!containedBagColour.Contains("no other bag"))
                 {
-                    if (!containedBagColour.Contains("no other bag"))
+                    var number = int.Parse(new Regex(@"\d+(?= )").Match(containedBagColour).Value);
+                    var colour = new Regex(@"(?<=\d ).*(?= bags?\.?$)").Match(containedBagColour).Value;
+                    var containedBag = GetBag(colour);
+                    bag.MustContain.Add((containedBag, number));
+                    if (!containedBag.CanBeContainedIn.Contains(bag))
                     {
-                        var number = int.Parse(new Regex(@"\d+(?= )").Match(containedBagColour).Value);
-                        var colour = new Regex(@"(?<=\d ).*(?= bags?\.?$)").Match(containedBagColour).Value;
-                        var containedBag = GetBag(colour);
-                        bag.MustContain.Add((containedBag, number));
-                        if (!containedBag.CanBeContainedIn.Contains(bag))
-                        {
-                            containedBag.CanBeContainedIn.Add(bag);
-                        }
+                        containedBag.CanBeContainedIn.Add(bag);
                     }
                 }
-            }
-
-            var leaves = bags.Values.Where(b => !b.MustContain.Any()).ToList();
-            IList<Bag> faded = new List<Bag>();
-            while (leaves.Any())
-            {
-                var newLeaves = new List<Bag>();
-                foreach (var leaf in leaves)
-                {
-                    faded.Add(leaf);
-                    foreach (var bag in leaf.CanBeContainedIn)
-                    {
-                        bag.ContentSize += bag.MustContain.Single(c => c.Item1 == leaf).Item2 * (leaf.ContentSize + 1);
-                        if (bag.MustContain.All(m => faded.Contains(m.Item1)))
-                        {
-                            newLeaves.Add(bag);
-                        }
-                    }
-
-                    leaves = newLeaves;
-                }
-            }
-
-            Result = GetBag("shiny gold").ContentSize.ToString();
-            return Task.CompletedTask;
-
-
-            var currentBags = new List<Bag> {GetBag("shiny gold")};
-
-
-
-
-
-
-
-
-
-
-
-            IList<Bag> endBags = currentBags.ToList();
-            long result = 0;
-            while (currentBags.Any())
-            {
-                var newBags = new List<Bag>();
-                foreach (var currentBag in currentBags)
-                {
-                    foreach (var bag in currentBag.CanBeContainedIn)
-                    {
-                        if (!endBags.Contains(bag))
-                        {
-                            endBags.Add(bag);
-                            newBags.Add(bag);
-                        }
-                    }
-                }
-
-                currentBags = newBags;
-                result += currentBags.Count;
-            }
-
-            Result = result.ToString();
-            return Task.CompletedTask;
-
-            Bag GetBag(string colour)
-            {
-                Bag bag;
-                if (bags.ContainsKey(colour))
-                {
-                    bag = bags[colour];
-                }
-                else
-                {
-                    bag = new Bag {Colour = colour};
-                    bags[colour] = bag;
-                }
-
-                return bag;
             }
         }
 
-        private class Bag
+        var leaves = bags.Values.Where(b => !b.MustContain.Any()).ToList();
+        IList<Bag> faded = new List<Bag>();
+        while (leaves.Any())
         {
-            public string Colour { get; set; }
-            public IList<(Bag, int)> MustContain { get; set; } = new List<(Bag, int)>();
-            public IList<Bag> CanBeContainedIn { get; set; } = new List<Bag>();
-            public long ContentSize { get; set; }
+            var newLeaves = new List<Bag>();
+            foreach (var leaf in leaves)
+            {
+                faded.Add(leaf);
+                foreach (var bag in leaf.CanBeContainedIn)
+                {
+                    bag.ContentSize += bag.MustContain.Single(c => c.Item1 == leaf).Item2 * (leaf.ContentSize + 1);
+                    if (bag.MustContain.All(m => faded.Contains(m.Item1)))
+                    {
+                        newLeaves.Add(bag);
+                    }
+                }
+
+                leaves = newLeaves;
+            }
         }
 
-        public override int Nummer => 202007;
+        Result = GetBag("shiny gold").ContentSize.ToString();
+        return Task.CompletedTask;
+
+
+        var currentBags = new List<Bag> {GetBag("shiny gold")};
+
+
+
+
+
+
+
+
+
+
+
+        IList<Bag> endBags = currentBags.ToList();
+        long result = 0;
+        while (currentBags.Any())
+        {
+            var newBags = new List<Bag>();
+            foreach (var currentBag in currentBags)
+            {
+                foreach (var bag in currentBag.CanBeContainedIn)
+                {
+                    if (!endBags.Contains(bag))
+                    {
+                        endBags.Add(bag);
+                        newBags.Add(bag);
+                    }
+                }
+            }
+
+            currentBags = newBags;
+            result += currentBags.Count;
+        }
+
+        Result = result.ToString();
+        return Task.CompletedTask;
+
+        Bag GetBag(string colour)
+        {
+            Bag bag;
+            if (bags.ContainsKey(colour))
+            {
+                bag = bags[colour];
+            }
+            else
+            {
+                bag = new Bag {Colour = colour};
+                bags[colour] = bag;
+            }
+
+            return bag;
+        }
     }
+
+    private class Bag
+    {
+        public string Colour { get; set; }
+        public IList<(Bag, int)> MustContain { get; set; } = new List<(Bag, int)>();
+        public IList<Bag> CanBeContainedIn { get; set; } = new List<Bag>();
+        public long ContentSize { get; set; }
+    }
+
+    public override int Nummer => 202007;
 }

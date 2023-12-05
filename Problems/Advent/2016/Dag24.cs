@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Extensions;
 
-namespace Problems.Advent
+namespace Problems.Advent;
+
+public class Dag24 : Problem
 {
-    public class Dag24 : Problem
-    {
-        const string input = @"#####################################################################################################################################################################################
+    const string input = @"#####################################################################################################################################################################################
 #.....#.#.....#.#.#...#.....#.#.#.#.....#3......#...........#.#.....#.....#.............#.#...#...#.....#...#.........#.#...............#.....#.....#.........................#.....#
 #.#.#.#.#.#.#.#.#.#.#.#.###.#.#.#.#.#.#####.#.#.#.#####.#.###.#.#.###.#.#####.###.#.#.#.#.#####.#.#.#.#####.#.#.#####.#.#.#####.###.#.#.###.###.###.#.###.#.###.###.#.#######.#######
 #.....#...#.#.....#...#.........#...........#.......#...#.#.....#.....#.#.#.......#...#.#...#...#...#.#...#...#.#...#.#.#.#.......#...#...#.....#.....#.....#...#...#.......#.#...#.#
@@ -49,99 +49,98 @@ namespace Problems.Advent
 #.#...#.#...#.#.....#.#.......#...#.....#...#...#...#...#.#.....#...#.#...#...#...#.#.............#.............#.#...#.............#.#.....#.....#.......#.#.#.#.........#...#...#.#
 #####################################################################################################################################################################################";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IDictionary<(int, int), int> distances = new Dictionary<(int, int), int>();
+        IList<string> maze = input.Split(Environment.NewLine);
+        int length = maze[0].Length;
+        for (int i = 0; i <= 7; i++)
         {
-            IDictionary<(int, int), int> distances = new Dictionary<(int, int), int>();
-            IList<string> maze = input.Split(Environment.NewLine);
-            int length = maze[0].Length;
-            for (int i = 0; i <= 7; i++)
+            HashSet<(int, int)> visited = new HashSet<(int, int)>();
+            IList<(int, int)> current = new List<(int, int)>();
+            for (int j = 0; j < maze.Count; j++)
             {
-                HashSet<(int, int)> visited = new HashSet<(int, int)>();
-                IList<(int, int)> current = new List<(int, int)>();
-                for (int j = 0; j < maze.Count; j++)
+                var line = maze[j];
+                var k = line.IndexOf(i.ToString());
+                if (k >= 0)
                 {
-                    var line = maze[j];
-                    var k = line.IndexOf(i.ToString());
-                    if (k >= 0)
-                    {
-                        visited.Add((j, k));
-                        current.Add((j,k));
-                        break;
-                    }
+                    visited.Add((j, k));
+                    current.Add((j,k));
+                    break;
                 }
+            }
 
-                int found = 0;
-                int step = 1;
-                while (found < 7)
+            int found = 0;
+            int step = 1;
+            while (found < 7)
+            {
+                IList<(int, int)> next = new List<(int, int)>();
+                foreach (var location in current)
                 {
-                    IList<(int, int)> next = new List<(int, int)>();
-                    foreach (var location in current)
+                    if (location.Item1 > 0)
                     {
-                        if (location.Item1 > 0)
-                        {
-                            TestNeighbour(location.Item1 - 1, location.Item2);
-                        }
-                        if (location.Item1 < maze.Count - 1)
-                        {
-                            TestNeighbour(location.Item1 + 1, location.Item2);
-                        }
-                        if (location.Item2 > 0)
-                        {
-                            TestNeighbour(location.Item1, location.Item2 - 1);
-                        }
-                        if (location.Item1 < length - 1)
-                        {
-                            TestNeighbour(location.Item1, location.Item2 + 1);
-                        }
+                        TestNeighbour(location.Item1 - 1, location.Item2);
+                    }
+                    if (location.Item1 < maze.Count - 1)
+                    {
+                        TestNeighbour(location.Item1 + 1, location.Item2);
+                    }
+                    if (location.Item2 > 0)
+                    {
+                        TestNeighbour(location.Item1, location.Item2 - 1);
+                    }
+                    if (location.Item1 < length - 1)
+                    {
+                        TestNeighbour(location.Item1, location.Item2 + 1);
+                    }
 
-                        void TestNeighbour(int a, int b)
+                    void TestNeighbour(int a, int b)
+                    {
+                        var neighbour = (a, b);
+                        var value = maze[neighbour.Item1][neighbour.Item2];
+                        if (value != '#')
                         {
-                            var neighbour = (a, b);
-                            var value = maze[neighbour.Item1][neighbour.Item2];
-                            if (value != '#')
+                            if (visited.Contains(neighbour))
                             {
-                                if (visited.Contains(neighbour))
-                                {
-                                    return;
-                                }
-                                visited.Add(neighbour);
-                                next.Add(neighbour);
-                                if (int.TryParse($"{value}", out var num))
-                                {
-                                    distances[(i, num)] = step;
-                                    found++;
-                                }
+                                return;
+                            }
+                            visited.Add(neighbour);
+                            next.Add(neighbour);
+                            if (int.TryParse($"{value}", out var num))
+                            {
+                                distances[(i, num)] = step;
+                                found++;
                             }
                         }
                     }
-
-                    current = next;
-                    step++;
                 }
+
+                current = next;
+                step++;
             }
-
-            int min = int.MaxValue;
-            foreach (var permutation in new List<int>{1,2,3,4,5,6,7}.Permutations())
-            {
-                int start = 0;
-                int total = 0;
-                foreach (var i in permutation.Union(new List<int>{0}))
-                {
-                    total += distances[(start, i)];
-                    start = i;
-                }
-
-                if (total < min)
-                {
-                    min = total;
-                }
-            }
-
-            Result = min.ToString();
-
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201624;
+        int min = int.MaxValue;
+        foreach (var permutation in new List<int>{1,2,3,4,5,6,7}.Permutations())
+        {
+            int start = 0;
+            int total = 0;
+            foreach (var i in permutation.Union(new List<int>{0}))
+            {
+                total += distances[(start, i)];
+                start = i;
+            }
+
+            if (total < min)
+            {
+                min = total;
+            }
+        }
+
+        Result = min.ToString();
+
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201624;
 }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag02 : Problem
 {
-    internal class Dag02 : Problem
-    {
-        private const string input = @"forward 9
+    private const string input = @"forward 9
 down 9
 down 6
 up 2
@@ -1007,32 +1007,31 @@ down 2
 down 5
 down 1
 forward 5";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var (h, d, a) = (0, 0, 0);
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            var (h, d, a) = (0, 0, 0);
-            foreach (var line in input.Split(Environment.NewLine))
+            var words = line.Split(' ');
+            var distance = int.Parse(words[1]);
+            if (words[0] == "forward")
             {
-                var words = line.Split(' ');
-                var distance = int.Parse(words[1]);
-                if (words[0] == "forward")
-                {
-                    h += distance;
-                    d += a * distance;
-                }
-                else if (words[0] == "down")
-                {
-                    a += distance;
-                }
-                else if (words[0] == "up")
-                {
-                    a -= distance;
-                }
+                h += distance;
+                d += a * distance;
             }
-
-            Result = (h * d).ToString();
-            return Task.CompletedTask;
+            else if (words[0] == "down")
+            {
+                a += distance;
+            }
+            else if (words[0] == "up")
+            {
+                a -= distance;
+            }
         }
 
-        public override int Nummer => 202102;
+        Result = (h * d).ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202102;
 }

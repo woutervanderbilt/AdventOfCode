@@ -6,55 +6,54 @@ using System.Threading.Tasks;
 using Algorithms.Extensions;
 using Algorithms.Models;
 
-namespace Problems.Advent._2022
+namespace Problems.Advent._2022;
+
+internal class Dag10 : Problem
 {
-    internal class Dag10 : Problem
+    public override async Task ExecuteAsync()
     {
-        public override async Task ExecuteAsync()
+        var input = await GetInputAsync();
+        int register = 1;
+        int cycle = 0;
+        long strenth = 0;
+        var grid = new Grid<bool>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            var input = await GetInputAsync();
-            int register = 1;
-            int cycle = 0;
-            long strenth = 0;
-            var grid = new Grid<bool>();
-            foreach (var line in input.Split(Environment.NewLine))
+            if (line == "noop")
             {
-                if (line == "noop")
-                {
-                    cycle++;
-                    AddSignalStrength();
-                }
-                else
-                {
-                    var split = line.Split();
-                    var value = int.Parse(split[1]);
-                    cycle ++;
-                    AddSignalStrength();
-                    cycle++;
-                    AddSignalStrength();
-                    register += value;
-                }
+                cycle++;
+                AddSignalStrength();
+            }
+            else
+            {
+                var split = line.Split();
+                var value = int.Parse(split[1]);
+                cycle ++;
+                AddSignalStrength();
+                cycle++;
+                AddSignalStrength();
+                register += value;
+            }
 
                 
-            }
-            grid.Print();
-            void AddSignalStrength()
+        }
+        grid.Print();
+        void AddSignalStrength()
+        {
+            if (cycle % 40 == 20 && cycle < 260)
             {
-                if (cycle % 40 == 20 && cycle < 260)
-                {
-                    strenth += cycle * register;
-                }
-
-                if (cycle <= 240)
-                {
-                    grid[(cycle - 1) % 40, 6 - (cycle - 1) / 40] = Math.Abs(register - (cycle - 1) % 40) <= 1;
-                    //grid.Print(true);
-                }
+                strenth += cycle * register;
             }
 
-            Result = strenth.ToString();
+            if (cycle <= 240)
+            {
+                grid[(cycle - 1) % 40, 6 - (cycle - 1) / 40] = Math.Abs(register - (cycle - 1) % 40) <= 1;
+                //grid.Print(true);
+            }
         }
 
-        public override int Nummer => 202210;
+        Result = strenth.ToString();
     }
+
+    public override int Nummer => 202210;
 }

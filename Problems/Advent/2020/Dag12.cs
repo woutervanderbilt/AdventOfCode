@@ -4,13 +4,13 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag12 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"N2
+public class Dag12 : Problem
+{
+    #region input
+
+    private const string input = @"N2
 R90
 S2
 F40
@@ -796,59 +796,58 @@ S5
 E4
 S3
 F84";
-        #endregion
+    #endregion
 
-        private const string testinput = @"F10
+    private const string testinput = @"F10
 N3
 F7
 R90
 F11";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        long x = 0;
+        long y = 0;
+        long wx = 10;
+        long wy = 1;
+        foreach (var instruction in input.Split(Environment.NewLine))
         {
-            long x = 0;
-            long y = 0;
-            long wx = 10;
-            long wy = 1;
-            foreach (var instruction in input.Split(Environment.NewLine))
+            int distance = int.Parse(instruction.Substring(1));
+            switch (instruction[0])
             {
-                int distance = int.Parse(instruction.Substring(1));
-                switch (instruction[0])
-                {
-                    case 'N':
-                        wy += distance;
-                        break;
-                    case 'S':
-                        wy -= distance;
-                        break;
-                    case 'E':
-                        wx += distance;
-                        break;
-                    case 'W':
-                        wx -= distance;
-                        break;
-                    case 'L':
-                        for (int i = 0; i < (distance / 90) % 4; i++)
-                        {
-                            (wx, wy) = (-wy, wx);
-                        }
-                        break;
-                    case 'R':
-                        for (int i = 0; i < (distance / 90) % 4; i++)
-                        {
-                            (wx, wy) = (wy, -wx);
-                        }
-                        break;
-                    case 'F':
-                        x += distance * wx;
-                        y += distance * wy;
-                        break;
-                }
+                case 'N':
+                    wy += distance;
+                    break;
+                case 'S':
+                    wy -= distance;
+                    break;
+                case 'E':
+                    wx += distance;
+                    break;
+                case 'W':
+                    wx -= distance;
+                    break;
+                case 'L':
+                    for (int i = 0; i < (distance / 90) % 4; i++)
+                    {
+                        (wx, wy) = (-wy, wx);
+                    }
+                    break;
+                case 'R':
+                    for (int i = 0; i < (distance / 90) % 4; i++)
+                    {
+                        (wx, wy) = (wy, -wx);
+                    }
+                    break;
+                case 'F':
+                    x += distance * wx;
+                    y += distance * wy;
+                    break;
             }
-
-            Result = (Math.Abs(x) + Math.Abs(y)).ToString();
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 202012;
+        Result = (Math.Abs(x) + Math.Abs(y)).ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202012;
 }

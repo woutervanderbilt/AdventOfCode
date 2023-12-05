@@ -6,11 +6,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2019
+namespace Problems.Advent._2019;
+
+public class Dag14 : Problem
 {
-    public class Dag14 : Problem
-    {
-        private const string input = @"5 LKQCJ, 1 GDSDP, 2 HPXCL => 9 LVRSZ
+    private const string input = @"5 LKQCJ, 1 GDSDP, 2 HPXCL => 9 LVRSZ
 5 HPXCL, 5 PVJGF => 3 KZRTJ
 7 LVRSZ, 2 GFSZ => 5 FRWGJ
 9 ZPTXL, 5 HGXJH, 9 LQMT => 7 LVCXN
@@ -71,7 +71,7 @@ namespace Problems.Advent._2019
 5 CKRP, 14 CXQB => 5 VRMXL
 1 SMFQ, 1 DWBW => 2 LHZMD";
 
-        private const string testinput = @"171 ORE => 8 CNZTR
+    private const string testinput = @"171 ORE => 8 CNZTR
 7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL
 114 ORE => 4 BHXH
 14 VRPVC => 6 BMBT
@@ -88,124 +88,123 @@ namespace Problems.Advent._2019
 121 ORE => 7 VRPVC
 7 XCVML => 6 RJRHP
 5 BHXH, 4 VRPVC => 5 LTCX";
-        public override Task ExecuteAsync()
-        {
-            IDictionary<string, Resource> costs = new Dictionary<string, Resource>();
+    public override Task ExecuteAsync()
+    {
+        IDictionary<string, Resource> costs = new Dictionary<string, Resource>();
 
-            foreach (var line in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+        foreach (var line in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+        {
+            var split = line.Split(new[] {"=>"}, StringSplitOptions.None);
+            var needed = split[0];
+            var target = split[1];
+            string targetName = new Regex("[A-Z]+").Match(target).Value;
+            long targetNumber = long.Parse(new Regex("[0-9]+").Match(target).Value);
+            var resource = new Resource
             {
-                var split = line.Split(new[] {"=>"}, StringSplitOptions.None);
-                var needed = split[0];
-                var target = split[1];
-                string targetName = new Regex("[A-Z]+").Match(target).Value;
-                long targetNumber = long.Parse(new Regex("[0-9]+").Match(target).Value);
-                var resource = new Resource
+                Name = targetName,
+                Number = targetNumber
+            };
+            foreach (var n in needed.Split(','))
+            {
+                string neededName = new Regex("[A-Z]+").Match(n).Value;
+                long neededNumber = long.Parse(new Regex("[0-9]+").Match(n).Value);
+                resource.Needed[neededName] = neededNumber;
+            }
+            costs[targetName] = resource;
+        }
+
+        long targetOres = 1000000000000;
+        long oresFor1 = OresNeeded(1);
+
+        var maxFuel = Binary(targetOres / oresFor1 - 100, targetOres / oresFor1 * 10);
+
+
+        Result = $"{oresFor1} {maxFuel}";
+        long Binary(long min, long max)
+        {
+            if (max - min < 2)
+            {
+                if (min == max)
                 {
-                    Name = targetName,
-                    Number = targetNumber
-                };
-                foreach (var n in needed.Split(','))
-                {
-                    string neededName = new Regex("[A-Z]+").Match(n).Value;
-                    long neededNumber = long.Parse(new Regex("[0-9]+").Match(n).Value);
-                    resource.Needed[neededName] = neededNumber;
+                    return min;
                 }
-                costs[targetName] = resource;
+
+                return OresNeeded(max) < targetOres ? max : min;
             }
 
-            long targetOres = 1000000000000;
-            long oresFor1 = OresNeeded(1);
-
-            var maxFuel = Binary(targetOres / oresFor1 - 100, targetOres / oresFor1 * 10);
-
-
-            Result = $"{oresFor1} {maxFuel}";
-            long Binary(long min, long max)
+            var mid = (max + min) / 2;
+            var ores = OresNeeded(mid);
+            if (ores > targetOres)
             {
-                if (max - min < 2)
+                return Binary(min, mid);
+            }
+
+            return Binary(mid, max);
+
+        }
+
+
+
+        return Task.CompletedTask;
+
+        long OresNeeded(long fuelNeeded)
+        {
+            var neededResources = new Dictionary<string, long>();
+            neededResources.Add("FUEL", fuelNeeded);
+            while (neededResources.Keys.Any(k => k != "ORE"))
+            {
+                Resource currentResource = null;
+                foreach (var neededResource in neededResources.Keys.Where(k => k != "ORE"))
                 {
-                    if (min == max)
+                    if (!neededResources.Any(r => r.Key != "ORE" && WillNeed(costs[r.Key], neededResource)))
                     {
-                        return min;
+                        currentResource = costs[neededResource];
+                        break;
                     }
 
-                    return OresNeeded(max) < targetOres ? max : min;
-                }
-
-                var mid = (max + min) / 2;
-                var ores = OresNeeded(mid);
-                if (ores > targetOres)
-                {
-                    return Binary(min, mid);
-                }
-
-                return Binary(mid, max);
-
-            }
-
-
-
-            return Task.CompletedTask;
-
-            long OresNeeded(long fuelNeeded)
-            {
-                var neededResources = new Dictionary<string, long>();
-                neededResources.Add("FUEL", fuelNeeded);
-                while (neededResources.Keys.Any(k => k != "ORE"))
-                {
-                    Resource currentResource = null;
-                    foreach (var neededResource in neededResources.Keys.Where(k => k != "ORE"))
+                    bool WillNeed(Resource resource, string nr)
                     {
-                        if (!neededResources.Any(r => r.Key != "ORE" && WillNeed(costs[r.Key], neededResource)))
+                        foreach (var r in resource.Needed.Keys)
                         {
-                            currentResource = costs[neededResource];
-                            break;
-                        }
-
-                        bool WillNeed(Resource resource, string nr)
-                        {
-                            foreach (var r in resource.Needed.Keys)
+                            if (r != "ORE" && (r == nr || WillNeed(costs[r], nr)))
                             {
-                                if (r != "ORE" && (r == nr || WillNeed(costs[r], nr)))
-                                {
-                                    return true;
-                                }
+                                return true;
                             }
-
-                            return false;
                         }
+
+                        return false;
                     }
-
-                    long numberNeeded = (neededResources[currentResource.Name] + currentResource.Number - 1) /
-                                        currentResource.Number;
-                    foreach (var n in currentResource.Needed)
-                    {
-                        if (neededResources.ContainsKey(n.Key))
-                        {
-                            neededResources[n.Key] += numberNeeded * n.Value;
-                        }
-                        else
-                        {
-                            neededResources[n.Key] = numberNeeded * n.Value;
-                        }
-                    }
-
-                    neededResources.Remove(currentResource.Name);
                 }
 
-                long neededOre = neededResources["ORE"];
-                return neededOre;
+                long numberNeeded = (neededResources[currentResource.Name] + currentResource.Number - 1) /
+                                    currentResource.Number;
+                foreach (var n in currentResource.Needed)
+                {
+                    if (neededResources.ContainsKey(n.Key))
+                    {
+                        neededResources[n.Key] += numberNeeded * n.Value;
+                    }
+                    else
+                    {
+                        neededResources[n.Key] = numberNeeded * n.Value;
+                    }
+                }
+
+                neededResources.Remove(currentResource.Name);
             }
+
+            long neededOre = neededResources["ORE"];
+            return neededOre;
         }
-
-
-        private class Resource
-        {
-            public string Name { get; set; }
-            public IDictionary<string, long> Needed { get; } = new Dictionary<string, long>();
-            public long Number { get; set; }
-        }
-
-        public override int Nummer => 201914;
     }
+
+
+    private class Resource
+    {
+        public string Name { get; set; }
+        public IDictionary<string, long> Needed { get; } = new Dictionary<string, long>();
+        public long Number { get; set; }
+    }
+
+    public override int Nummer => 201914;
 }

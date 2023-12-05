@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag25 : Problem
 {
-    internal class Dag25 : Problem
-    {
-        private const string input =
-            @"..v>.>.v..>v>.vvvvvv.>v.....>...>>..>.v>.....>..v.>..>v>..>.v.......v.vv>...v>..>..>..v.v.v..>>>v........v.v.>vv>>>...>.>>v...v>>.>.>...>..
+    private const string input =
+        @"..v>.>.v..>v>.vvvvvv.>v.....>...>>..>.v>.....>..v.>..>v>..>.v.......v.vv>...v>..>..>..v.v.v..>>>v........v.v.>vv>>>...>.>>v...v>>.>.>...>..
 >.>.>.v..>......v.>>vv.v>..>v>....>....vv.v....v>.vv.v.v>v>v....>v.>>v>>.>>>..v>...v.>.>vv..>>v...vvvv.......v.vvv>.v>>v...v>..>>.v>vv.>v..
 >.v..>>.v>..vv...>.>..>v..v...vv>....v>v.>v..>....>v>.....>v>.v>>.v>...vv..>v>.v>>v.vv......>...v.>..>.>>vv..>...v.v.>.v...v..vv..>....>.>v
 ....>vv.v>v.>..>.v..v>>>v...v.v..>>...v.>......v.v.v..v>..v.>>v.>v>v.v....v>.>.>...>...vv.v.v..>>........>..>....v.>..v>...v..>...v.>>...>.
@@ -148,7 +148,7 @@ vv>>.v>..>vv..>.v.>.>.vv.v..vv.>>..>.....vv.>.v..vv>v>vv...vvv>....v>.v>v...>vv.
 .>.v..v..>>.....v>..>.>>.vv..v>>..vv>..>v.vv>>>v.>.vv....v...v.>.vv...v>...>v>..vvvv>v...>>v>>>.>v>v..>vv....v.>>v.>>.>...>v>>>>v....>.>.v.
 >...vv..v.>>.>.vv>...vv..>>vv..>..>>>.....vv>..v.>>.>..>.>....>v.>..>...vv....v.vvv.>.>vv..v....>v>>.v.v>..>>...>>....>..v.>..v>>>.vv>>..v>";
 
-        private const string testinput = @"v...>>.vv>
+    private const string testinput = @"v...>>.vv>
 .vv>>.vv..
 >>.>v>...v
 >>v>>.>.v.
@@ -157,102 +157,101 @@ v>v.vv.v..
 .vv..>.>v.
 v.v..>>v.v
 ....v..v.>";
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        var split = input.Split(Environment.NewLine);
+        int maxX = split[0].Length;
+        int maxY = split.Length;
+        char[,] grid = new char[maxX, maxY];
+        int y = 0;
+        foreach (var line in split)
         {
-            var split = input.Split(Environment.NewLine);
-            int maxX = split[0].Length;
-            int maxY = split.Length;
-            char[,] grid = new char[maxX, maxY];
-            int y = 0;
-            foreach (var line in split)
+            int x = 0;
+            foreach (var c in line)
             {
-                int x = 0;
-                foreach (var c in line)
-                {
-                    grid[x, y] = c;
-                    x++;
-                }
-
-                y++;
+                grid[x, y] = c;
+                x++;
             }
 
-            int count = 1;
-            while (Step())
-            {
-                count++;
-            }
+            y++;
+        }
 
-            Result = count.ToString();
+        int count = 1;
+        while (Step())
+        {
+            count++;
+        }
 
-            void Print(char[,] currentGrid)
+        Result = count.ToString();
+
+        void Print(char[,] currentGrid)
+        {
+            return;
+            for (int y = 0; y < maxY; y++)
             {
-                return;
-                for (int y = 0; y < maxY; y++)
+                for (int x = 0; x < maxX; x++)
                 {
-                    for (int x = 0; x < maxX; x++)
-                    {
-                        Console.Write(currentGrid[x,y]);
-                    }
-                    Console.WriteLine();
+                    Console.Write(currentGrid[x,y]);
                 }
-
                 Console.WriteLine();
             }
 
-            bool Step()
-            {
-                var newGrid = new char[maxX, maxY];
-                bool moved = false;
-                for (int y = 0; y < maxY; y++)
-                {
-                    for (int x = 0; x < maxX; x++)
-                    {
-                        var east = (x + 1) % maxX;
-                        var val = grid[x, y];
-                        if (val == '>' && grid[east, y] == '.')
-                        {
-                            newGrid[x, y] = '.';
-                            newGrid[east, y] = '>';
-                            x++;
-                            moved = true;
-                        }
-                        else
-                        {
-                            newGrid[x, y] = val;
-                        }
-                    }
-                }
-                Print(newGrid);
-
-                for (int x = 0; x < maxX; x++)
-                {
-                    for (int y = 0; y < maxY; y++)
-                    {
-                        var south = (y + 1) % maxY;
-                        var val = newGrid[x, y];
-                        if (val == 'v' && newGrid[x, south] == '.')
-                        {
-                            grid[x, y] = '.';
-                            grid[x, south] = 'v';
-                            moved = true;
-                            y++;
-                        }
-                        else
-                        {
-                            grid[x, y] = val;
-                        }
-                    }
-                }
-
-                Print(grid);
-
-                return moved;
-            }
-
-
-            return Task.CompletedTask;
+            Console.WriteLine();
         }
 
-        public override int Nummer => 202125;
+        bool Step()
+        {
+            var newGrid = new char[maxX, maxY];
+            bool moved = false;
+            for (int y = 0; y < maxY; y++)
+            {
+                for (int x = 0; x < maxX; x++)
+                {
+                    var east = (x + 1) % maxX;
+                    var val = grid[x, y];
+                    if (val == '>' && grid[east, y] == '.')
+                    {
+                        newGrid[x, y] = '.';
+                        newGrid[east, y] = '>';
+                        x++;
+                        moved = true;
+                    }
+                    else
+                    {
+                        newGrid[x, y] = val;
+                    }
+                }
+            }
+            Print(newGrid);
+
+            for (int x = 0; x < maxX; x++)
+            {
+                for (int y = 0; y < maxY; y++)
+                {
+                    var south = (y + 1) % maxY;
+                    var val = newGrid[x, y];
+                    if (val == 'v' && newGrid[x, south] == '.')
+                    {
+                        grid[x, y] = '.';
+                        grid[x, south] = 'v';
+                        moved = true;
+                        y++;
+                    }
+                    else
+                    {
+                        grid[x, y] = val;
+                    }
+                }
+            }
+
+            Print(grid);
+
+            return moved;
+        }
+
+
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202125;
 }

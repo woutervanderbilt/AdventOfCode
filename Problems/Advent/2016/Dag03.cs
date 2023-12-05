@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Problems.Advent
+namespace Problems.Advent;
+
+public class Dag03 : Problem
 {
-    public class Dag03 : Problem
-    {
-        private const string input = @"  330  143  338
+    private const string input = @"  330  143  338
   769  547   83
   930  625  317
   669  866  147
@@ -1742,36 +1742,35 @@ namespace Problems.Advent
    48  263  586
   356  902  922";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        Result = input.Split(Environment.NewLine).Count(s =>
         {
-            Result = input.Split(Environment.NewLine).Count(s =>
+            var lengths = s.Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).OrderBy(l =>l).ToList();
+            return lengths[0] + lengths[1] > lengths[2];
+        }).ToString();
+        var lines = input.Split(Environment.NewLine);
+        long res = 0;
+        for (int i = 1; 3 * i <= lines.Length; i++)
+        {
+            var line1 = lines[3 * i - 3].Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).ToList();
+            var line2 = lines[3 * i - 2].Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).ToList();
+            var line3 = lines[3 * i - 1].Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).ToList();
+            for (int j = 0; j < 3; j++)
             {
-                var lengths = s.Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).OrderBy(l =>l).ToList();
-                return lengths[0] + lengths[1] > lengths[2];
-            }).ToString();
-            var lines = input.Split(Environment.NewLine);
-            long res = 0;
-            for (int i = 1; 3 * i <= lines.Length; i++)
-            {
-                var line1 = lines[3 * i - 3].Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).ToList();
-                var line2 = lines[3 * i - 2].Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).ToList();
-                var line3 = lines[3 * i - 1].Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).ToList();
-                for (int j = 0; j < 3; j++)
+                var triangle = new List<int> {line1[j], line2[j], line3[j]}.OrderBy(l => l).ToList();
+                if (triangle[0] + triangle[1] > triangle[2])
                 {
-                    var triangle = new List<int> {line1[j], line2[j], line3[j]}.OrderBy(l => l).ToList();
-                    if (triangle[0] + triangle[1] > triangle[2])
-                    {
-                        res++;
-                    }
+                    res++;
                 }
-
             }
 
-            Result += " " + res;
-
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 201603;
+        Result += " " + res;
+
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 201603;
 }

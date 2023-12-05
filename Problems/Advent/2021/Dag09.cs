@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Extensions;
 
-namespace Problems.Advent._2021
+namespace Problems.Advent._2021;
+
+internal class Dag09 : Problem
 {
-    internal class Dag09 : Problem
-    {
-        private const string input =
-            @"7678999878989655432345789645679998765678998765434567897854323489543467898999785456789123989109765458
+    private const string input =
+        @"7678999878989655432345789645679998765678998765434567897854323489543467898999785456789123989109765458
 6567898767878943101234678923678987654599987533323468976543212379954578967898654398993299879998754387
 5428988654567893212645699213567898543689876321013456897654323567895699656799543237894988659876543235
 6219876532178954324596988901289999698799965434565567998865439878976789545678932146999876545995432124
@@ -111,119 +111,118 @@ namespace Problems.Advent._2021
 3446889398919865324987656796530987649754349890134589989765778976579998756799897789545989349898742455
 4587993209101965435698787895421298432101245932375678999876899987678999867899998996432191298765431234";
 
-        private const string testinput = @"2199943210
+    private const string testinput = @"2199943210
 3987894921
 9856789892
 8767896789
 9899965678";
 
-        public override Task ExecuteAsync()
+    public override Task ExecuteAsync()
+    {
+        IList<IList<int>> heightMap = new List<IList<int>>();
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IList<IList<int>> heightMap = new List<IList<int>>();
-            foreach (var line in input.Split(Environment.NewLine))
-            {
-                heightMap.Add(line.Select(c => int.Parse(c.ToString())).ToList());
-            }
+            heightMap.Add(line.Select(c => int.Parse(c.ToString())).ToList());
+        }
 
-            long result = 0;
-            IList<long> basins = new List<long>();
-            for (int i = 0; i < heightMap.Count; i++)
+        long result = 0;
+        IList<long> basins = new List<long>();
+        for (int i = 0; i < heightMap.Count; i++)
+        {
+            var line = heightMap[i];
+            for (int j = 0; j < line.Count; j++)
             {
-                var line = heightMap[i];
-                for (int j = 0; j < line.Count; j++)
+                int value = line[j];
+                if (IsLowPoint())
                 {
-                    int value = line[j];
-                    if (IsLowPoint())
+                    result += value + 1;
+                    HashSet<(int, int)> basin = new HashSet<(int, int)> { (i, j) };
+                    IList<(int, int)> lastAdded = new List<(int, int)> { (i, j) };
+                    while (lastAdded.Any())
                     {
-                        result += value + 1;
-                        HashSet<(int, int)> basin = new HashSet<(int, int)> { (i, j) };
-                        IList<(int, int)> lastAdded = new List<(int, int)> { (i, j) };
-                        while (lastAdded.Any())
+                        IList<(int, int)> newLastAdded = new List<(int, int)>();
+                        foreach (var l in lastAdded)
                         {
-                            IList<(int, int)> newLastAdded = new List<(int, int)>();
-                            foreach (var l in lastAdded)
+                            if (l.Item1 > 0)
                             {
-                                if (l.Item1 > 0)
+                                if (heightMap[l.Item1 - 1][l.Item2] < 9)
                                 {
-                                    if (heightMap[l.Item1 - 1][l.Item2] < 9)
+                                    if(basin.Add((l.Item1 - 1, l.Item2)))
                                     {
-                                        if(basin.Add((l.Item1 - 1, l.Item2)))
-                                        {
-                                            newLastAdded.Add((l.Item1 - 1, l.Item2));
-                                        }
-                                    }
-                                }
-                                if (l.Item1 < heightMap.Count - 1)
-                                {
-                                    if (heightMap[l.Item1 + 1][l.Item2] < 9)
-                                    {
-                                        if(basin.Add((l.Item1 + 1, l.Item2)))
-                                        {
-                                            newLastAdded.Add((l.Item1 + 1, l.Item2));
-                                        }
-                                    }
-                                }
-                                if (l.Item2 > 0)
-                                {
-                                    if (heightMap[l.Item1][l.Item2 - 1] < 9)
-                                    {
-                                        if (basin.Add((l.Item1, l.Item2 - 1)))
-                                        {
-                                            newLastAdded.Add((l.Item1, l.Item2 - 1));
-                                        }
-                                    }
-                                }
-                                if (l.Item2 < heightMap[0].Count - 1)
-                                {
-                                    if (heightMap[l.Item1][l.Item2 + 1] < 9)
-                                    {
-                                        if(basin.Add((l.Item1, l.Item2 + 1)))
-                                        {
-                                            newLastAdded.Add((l.Item1, l.Item2 + 1));
-                                        }
+                                        newLastAdded.Add((l.Item1 - 1, l.Item2));
                                     }
                                 }
                             }
-
-                            lastAdded = newLastAdded;
+                            if (l.Item1 < heightMap.Count - 1)
+                            {
+                                if (heightMap[l.Item1 + 1][l.Item2] < 9)
+                                {
+                                    if(basin.Add((l.Item1 + 1, l.Item2)))
+                                    {
+                                        newLastAdded.Add((l.Item1 + 1, l.Item2));
+                                    }
+                                }
+                            }
+                            if (l.Item2 > 0)
+                            {
+                                if (heightMap[l.Item1][l.Item2 - 1] < 9)
+                                {
+                                    if (basin.Add((l.Item1, l.Item2 - 1)))
+                                    {
+                                        newLastAdded.Add((l.Item1, l.Item2 - 1));
+                                    }
+                                }
+                            }
+                            if (l.Item2 < heightMap[0].Count - 1)
+                            {
+                                if (heightMap[l.Item1][l.Item2 + 1] < 9)
+                                {
+                                    if(basin.Add((l.Item1, l.Item2 + 1)))
+                                    {
+                                        newLastAdded.Add((l.Item1, l.Item2 + 1));
+                                    }
+                                }
+                            }
                         }
 
-                        basins.Add(basin.Count);
+                        lastAdded = newLastAdded;
                     }
+
+                    basins.Add(basin.Count);
+                }
                     
-                    bool IsLowPoint()
+                bool IsLowPoint()
+                {
+                    if (i > 0 && value >= heightMap[i - 1][j])
                     {
-                        if (i > 0 && value >= heightMap[i - 1][j])
-                        {
-                            return false;
-                        }
-
-                        if (i < heightMap.Count - 1 && value >= heightMap[i + 1][j])
-                        {
-                            return false;
-                        }
-
-                        if (j > 0 && value >= line[j - 1])
-                        {
-                            return false;
-                        }
-
-                        if (j < line.Count - 1 && value >= line[j + 1])
-                        {
-                            return false;
-                        }
-
-                        return true;
+                        return false;
                     }
+
+                    if (i < heightMap.Count - 1 && value >= heightMap[i + 1][j])
+                    {
+                        return false;
+                    }
+
+                    if (j > 0 && value >= line[j - 1])
+                    {
+                        return false;
+                    }
+
+                    if (j < line.Count - 1 && value >= line[j + 1])
+                    {
+                        return false;
+                    }
+
+                    return true;
                 }
             }
-
-            var largestBasinsProduct = basins.OrderByDescending(b => b).Take(3).Product();
-
-            Result = $"{result}  {largestBasinsProduct}";
-            return Task.CompletedTask;
         }
 
-        public override int Nummer => 202109;
+        var largestBasinsProduct = basins.OrderByDescending(b => b).Take(3).Product();
+
+        Result = $"{result}  {largestBasinsProduct}";
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202109;
 }

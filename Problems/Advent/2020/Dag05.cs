@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag05 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"BFBFFFFLLL
+public class Dag05 : Problem
+{
+    #region input
+
+    private const string input = @"BFBFFFFLLL
 BBFBBFBRLL
 BFBBFFFRRR
 FBFFBBBLLL
@@ -850,34 +850,33 @@ FBFBBBFLRR
 BBFFBFFRLL
 FBFFFFBRLL
 FBFFBFBLRL";
-        #endregion  
-        public override Task ExecuteAsync()
+    #endregion  
+    public override Task ExecuteAsync()
+    {
+        List<int> seats = new List<int>();
+        foreach (var bp in input.Split(Environment.NewLine))
         {
-            List<int> seats = new List<int>();
-            foreach (var bp in input.Split(Environment.NewLine))
-            {
-                var row = Convert.ToInt32(bp.Substring(0, 7).Replace('B', '1').Replace('F', '0'), 2);
-                var column = Convert.ToInt32(bp.Substring(7).Replace('R', '1').Replace('L', '0'), 2);
-                seats.Add(8*row+column);
-            }
-
-            seats.Sort();
-            int prev = -2;
-            foreach (var seat in seats)
-            {
-                if (seat - prev == 2)
-                {
-                    Result = (seat - 1).ToString();
-                    break;
-                }
-
-                prev = seat;
-            }
-
-            //Result = seats.Max().ToString();
-            return Task.CompletedTask;
+            var row = Convert.ToInt32(bp.Substring(0, 7).Replace('B', '1').Replace('F', '0'), 2);
+            var column = Convert.ToInt32(bp.Substring(7).Replace('R', '1').Replace('L', '0'), 2);
+            seats.Add(8*row+column);
         }
 
-        public override int Nummer => 202005;
+        seats.Sort();
+        int prev = -2;
+        foreach (var seat in seats)
+        {
+            if (seat - prev == 2)
+            {
+                Result = (seat - 1).ToString();
+                break;
+            }
+
+            prev = seat;
+        }
+
+        //Result = seats.Max().ToString();
+        return Task.CompletedTask;
     }
+
+    public override int Nummer => 202005;
 }

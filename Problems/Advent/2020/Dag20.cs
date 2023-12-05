@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Problems.Advent._2020
-{
-    public class Dag20 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string testinput = @"Tile 2311:
+public class Dag20 : Problem
+{
+    #region input
+
+    private const string testinput = @"Tile 2311:
 ..##.#..#.
 ##..#.....
 #...##..#.
@@ -121,7 +121,7 @@ Tile 3079:
 
 
 
-        private const string input = @"Tile 1249:
+    private const string input = @"Tile 1249:
 ...#......
 #..#..#.##
 ##........
@@ -1849,446 +1849,445 @@ Tile 2131:
 .#...##.##
 #..###....
 ";
-        #endregion
+    #endregion
 
-        private const int Size = 12;
-        public override Task ExecuteAsync()
+    private const int Size = 12;
+    public override Task ExecuteAsync()
+    {
+        IList<Tile> tiles = new List<Tile>();
+        Tile currentTile = null;
+        int currentLine = 0;
+        foreach (var line in input.Split(Environment.NewLine))
         {
-            IList<Tile> tiles = new List<Tile>();
-            Tile currentTile = null;
-            int currentLine = 0;
-            foreach (var line in input.Split(Environment.NewLine))
+            if (string.IsNullOrEmpty(line))
             {
-                if (string.IsNullOrEmpty(line))
+                continue;
+            }
+            if (line.StartsWith("Tile"))
+            {
+                long id = long.Parse(line.Substring(5).Replace(":", ""));
+                currentTile = new Tile {Id = id};
+                tiles.Add(currentTile);
+                currentLine = 0;
+            }
+            else
+            {
+                int i = 0;
+                foreach (var c in line)
                 {
-                    continue;
+                    if (c == '#')
+                    {
+                        currentTile.Squares[currentLine, i] = true;
+                    }
+                    i++;
                 }
-                if (line.StartsWith("Tile"))
+                currentLine++;
+            }
+        }
+
+        foreach (var tile in tiles)
+        {
+            tile.SetValues();
+        }
+
+        IDictionary<int, IList<Tile>> tilesByEdge = new Dictionary<int, IList<Tile>>();
+        foreach (var tile in tiles)
+        {
+            AddTile(tile.UpValue);
+            AddTile(tile.UpValueFlipped);
+            AddTile(tile.RightValue);
+            AddTile(tile.RightValueFlipped);
+            AddTile(tile.DownValue);
+            AddTile(tile.DownValueFlipped);
+            AddTile(tile.LeftValue);
+            AddTile(tile.LeftValueFlipped);
+            void AddTile(int edge)
+            {
+                if (!tilesByEdge.ContainsKey(edge))
                 {
-                    long id = long.Parse(line.Substring(5).Replace(":", ""));
-                    currentTile = new Tile {Id = id};
-                    tiles.Add(currentTile);
-                    currentLine = 0;
+                    tilesByEdge[edge] = new List<Tile>();
+                }
+                tilesByEdge[edge].Add(tile);
+            }
+        }
+
+        Console.WriteLine(tilesByEdge.Values.Max(t => t.Count));
+        Tile firstTile = null;
+        long result = 1;
+        foreach (var tile in tiles)
+        {
+            var up = tilesByEdge[tile.UpValue].Where(i => i.Id != tile.Id).Count();
+            var right = tilesByEdge[tile.RightValue].Where(i => i.Id != tile.Id).Count();
+            var down = tilesByEdge[tile.DownValue].Where(i => i.Id != tile.Id).Count();
+            var left = tilesByEdge[tile.LeftValue].Where(i => i.Id != tile.Id).Count();
+            if (up + down + right + left == 2)
+            {
+                firstTile = tile;
+                if (up == 0 && right == 0)
+                {
+                    firstTile.Rotation = 3;
+                }
+
+                else if (down == 0 && right == 0)
+                {
+                    firstTile.Rotation = 2;
+                }
+                else if (down == 0 && left == 0)
+                {
+                    firstTile.Rotation = 1;
+                }
+                result *= tile.Id;
+                Console.WriteLine(tile.Id);
+            }
+        }
+
+        Tile[,] totalMap = new Tile[Size, Size];
+
+        for (int row = 0; row < Size; row++)
+        {
+            if (row != 0)
+            {
+                var downEdge = totalMap[row - 1, 0].Sides().down;
+                firstTile = tilesByEdge[downEdge].Single(t => t.Id != totalMap[row - 1, 0].Id);
+                if (downEdge == firstTile.UpValue)
+                {
+                    firstTile.IsFlipped = false;
+                    firstTile.Rotation = 0;
+                }
+                else if (downEdge == firstTile.UpValueFlipped)
+                {
+                    firstTile.IsFlipped = true;
+                    firstTile.Rotation = 0;
+                }
+                else if (downEdge == firstTile.RightValue)
+                {
+                    firstTile.IsFlipped = false;
+                    firstTile.Rotation = 3;
+                }
+                else if (downEdge == firstTile.RightValueFlipped)
+                {
+                    firstTile.IsFlipped = true;
+                    firstTile.Rotation = 3;
+                }
+                else if (downEdge == firstTile.DownValue)
+                {
+                    firstTile.IsFlipped = true;
+                    firstTile.Rotation = 2;
+                }
+                else if (downEdge == firstTile.DownValueFlipped)
+                {
+                    firstTile.IsFlipped = false;
+                    firstTile.Rotation = 2;
+                }
+                else if (downEdge == firstTile.LeftValue)
+                {
+                    firstTile.IsFlipped = true;
+                    firstTile.Rotation = 1;
+                }
+                else if (downEdge == firstTile.LeftValueFlipped)
+                {
+                    firstTile.IsFlipped = false;
+                    firstTile.Rotation = 1;
+                }
+            }
+
+            for (int column = 0; column < Size; column++)
+            {
+                if (column == 0)
+                {
+                    totalMap[row, column] = firstTile;
                 }
                 else
                 {
-                    int i = 0;
-                    foreach (var c in line)
+                    var leftNeighbour = totalMap[row, column - 1];
+                    var rightEdge = leftNeighbour.Sides().right;
+                    var nextTile = tilesByEdge[rightEdge].Single(t => t.Id != leftNeighbour.Id);
+                    if (rightEdge == nextTile.UpValue)
                     {
-                        if (c == '#')
-                        {
-                            currentTile.Squares[currentLine, i] = true;
-                        }
-                        i++;
+                        nextTile.IsFlipped = true;
+                        nextTile.Rotation = 1;
                     }
-                    currentLine++;
+                    else if (rightEdge == nextTile.UpValueFlipped)
+                    {
+                        nextTile.IsFlipped = false;
+                        nextTile.Rotation = 3;
+                    }
+                    else if (rightEdge == nextTile.RightValue)
+                    {
+                        nextTile.IsFlipped = true;
+                        nextTile.Rotation = 0;
+                    }
+                    else if (rightEdge == nextTile.RightValueFlipped)
+                    {
+                        nextTile.IsFlipped = false;
+                        nextTile.Rotation = 2;
+                    }
+                    else if (rightEdge == nextTile.DownValue)
+                    {
+                        nextTile.IsFlipped = false;
+                        nextTile.Rotation = 1;
+                    }
+                    else if (rightEdge == nextTile.DownValueFlipped)
+                    {
+                        nextTile.IsFlipped = true;
+                        nextTile.Rotation = 3;
+                    }
+                    else if (rightEdge == nextTile.LeftValue)
+                    {
+                        nextTile.IsFlipped = false;
+                        nextTile.Rotation = 0;
+                    }
+                    else if (rightEdge == nextTile.LeftValueFlipped)
+                    {
+                        nextTile.IsFlipped = true;
+                        nextTile.Rotation = 2;
+                    }
+
+                    totalMap[row, column] = nextTile;
                 }
             }
+        }
 
-            foreach (var tile in tiles)
+        IList<string> map = new List<string>();
+        for (int i = 0; i < Size; i++)
+        {
+            for (int k = 1; k < 9; k++)
             {
-                tile.SetValues();
-            }
+                var sb = new StringBuilder();
 
-            IDictionary<int, IList<Tile>> tilesByEdge = new Dictionary<int, IList<Tile>>();
-            foreach (var tile in tiles)
-            {
-                AddTile(tile.UpValue);
-                AddTile(tile.UpValueFlipped);
-                AddTile(tile.RightValue);
-                AddTile(tile.RightValueFlipped);
-                AddTile(tile.DownValue);
-                AddTile(tile.DownValueFlipped);
-                AddTile(tile.LeftValue);
-                AddTile(tile.LeftValueFlipped);
-                void AddTile(int edge)
+                for (int j = 0; j < Size; j++)
                 {
-                    if (!tilesByEdge.ContainsKey(edge))
+                    for (int l = 1; l < 9; l++)
                     {
-                        tilesByEdge[edge] = new List<Tile>();
-                    }
-                    tilesByEdge[edge].Add(tile);
-                }
-            }
-
-            Console.WriteLine(tilesByEdge.Values.Max(t => t.Count));
-            Tile firstTile = null;
-            long result = 1;
-            foreach (var tile in tiles)
-            {
-                var up = tilesByEdge[tile.UpValue].Where(i => i.Id != tile.Id).Count();
-                var right = tilesByEdge[tile.RightValue].Where(i => i.Id != tile.Id).Count();
-                var down = tilesByEdge[tile.DownValue].Where(i => i.Id != tile.Id).Count();
-                var left = tilesByEdge[tile.LeftValue].Where(i => i.Id != tile.Id).Count();
-                if (up + down + right + left == 2)
-                {
-                    firstTile = tile;
-                    if (up == 0 && right == 0)
-                    {
-                        firstTile.Rotation = 3;
-                    }
-
-                    else if (down == 0 && right == 0)
-                    {
-                        firstTile.Rotation = 2;
-                    }
-                     else if (down == 0 && left == 0)
-                    {
-                        firstTile.Rotation = 1;
-                    }
-                    result *= tile.Id;
-                    Console.WriteLine(tile.Id);
-                }
-            }
-
-            Tile[,] totalMap = new Tile[Size, Size];
-
-            for (int row = 0; row < Size; row++)
-            {
-                if (row != 0)
-                {
-                    var downEdge = totalMap[row - 1, 0].Sides().down;
-                    firstTile = tilesByEdge[downEdge].Single(t => t.Id != totalMap[row - 1, 0].Id);
-                    if (downEdge == firstTile.UpValue)
-                    {
-                        firstTile.IsFlipped = false;
-                        firstTile.Rotation = 0;
-                    }
-                    else if (downEdge == firstTile.UpValueFlipped)
-                    {
-                        firstTile.IsFlipped = true;
-                        firstTile.Rotation = 0;
-                    }
-                    else if (downEdge == firstTile.RightValue)
-                    {
-                        firstTile.IsFlipped = false;
-                        firstTile.Rotation = 3;
-                    }
-                    else if (downEdge == firstTile.RightValueFlipped)
-                    {
-                        firstTile.IsFlipped = true;
-                        firstTile.Rotation = 3;
-                    }
-                    else if (downEdge == firstTile.DownValue)
-                    {
-                        firstTile.IsFlipped = true;
-                        firstTile.Rotation = 2;
-                    }
-                    else if (downEdge == firstTile.DownValueFlipped)
-                    {
-                        firstTile.IsFlipped = false;
-                        firstTile.Rotation = 2;
-                    }
-                    else if (downEdge == firstTile.LeftValue)
-                    {
-                        firstTile.IsFlipped = true;
-                        firstTile.Rotation = 1;
-                    }
-                    else if (downEdge == firstTile.LeftValueFlipped)
-                    {
-                        firstTile.IsFlipped = false;
-                        firstTile.Rotation = 1;
+                        sb.Append(totalMap[i, j].Square(k, l) ? '#' : '.');
                     }
                 }
+                map.Add(sb.ToString());
+            }
+        }
 
-                for (int column = 0; column < Size; column++)
+        IList<(int dx, int dy)> monster = new List<(int dx, int dy)>
+        {
+            (0,0),
+            (1,1),
+            (4,1),
+            (5,0),
+            (6,0),
+            (7,1),
+            (10,1),
+            (11,0),
+            (12,0),
+            (13,1),
+            (16,1),
+            (17,0),
+            (18,-1),
+            (18,0),
+            (19,0)
+        };
+
+        foreach (var line in map)
+        {
+            Console.WriteLine(line);
+        }
+
+        Console.WriteLine();
+
+        for (int rotation = 0; rotation <= 7; rotation++)
+        {
+            CheckMapForMonsters(map.ToList());
+            IList<string> rotatedMap = new List<string>();
+            for (int i = 0; i < map.Count; i++)
+            {
+                var sb = new StringBuilder();
+                for (int j = 0; j < map.Count; j++)
                 {
-                    if (column == 0)
-                    {
-                        totalMap[row, column] = firstTile;
-                    }
-                    else
-                    {
-                        var leftNeighbour = totalMap[row, column - 1];
-                        var rightEdge = leftNeighbour.Sides().right;
-                        var nextTile = tilesByEdge[rightEdge].Single(t => t.Id != leftNeighbour.Id);
-                        if (rightEdge == nextTile.UpValue)
-                        {
-                            nextTile.IsFlipped = true;
-                            nextTile.Rotation = 1;
-                        }
-                        else if (rightEdge == nextTile.UpValueFlipped)
-                        {
-                            nextTile.IsFlipped = false;
-                            nextTile.Rotation = 3;
-                        }
-                        else if (rightEdge == nextTile.RightValue)
-                        {
-                            nextTile.IsFlipped = true;
-                            nextTile.Rotation = 0;
-                        }
-                        else if (rightEdge == nextTile.RightValueFlipped)
-                        {
-                            nextTile.IsFlipped = false;
-                            nextTile.Rotation = 2;
-                        }
-                        else if (rightEdge == nextTile.DownValue)
-                        {
-                            nextTile.IsFlipped = false;
-                            nextTile.Rotation = 1;
-                        }
-                        else if (rightEdge == nextTile.DownValueFlipped)
-                        {
-                            nextTile.IsFlipped = true;
-                            nextTile.Rotation = 3;
-                        }
-                        else if (rightEdge == nextTile.LeftValue)
-                        {
-                            nextTile.IsFlipped = false;
-                            nextTile.Rotation = 0;
-                        }
-                        else if (rightEdge == nextTile.LeftValueFlipped)
-                        {
-                            nextTile.IsFlipped = true;
-                            nextTile.Rotation = 2;
-                        }
-
-                        totalMap[row, column] = nextTile;
-                    }
+                    sb.Append(map[j][map.Count - 1 - i]);
                 }
+                rotatedMap.Add(sb.ToString());
             }
 
-            IList<string> map = new List<string>();
-            for (int i = 0; i < Size; i++)
+            map = rotatedMap;
+            if (rotation == 3)
             {
-                for (int k = 1; k < 9; k++)
+                for (int k = 0; k < map.Count; k++)
                 {
-                    var sb = new StringBuilder();
+                    map[k] = new String(map[k].Reverse().ToArray());
+                }
+            }
+        }
 
-                    for (int j = 0; j < Size; j++)
+        void CheckMapForMonsters(IList<string> seaMap)
+        {
+            bool monsterFound = false;
+            for (int x = 0; x < seaMap.Count - 19; x++)
+            {
+                for (int y = 1; y < seaMap.Count - 1; y++)
+                {
+                    if (seaMap[y][x] != '.')
                     {
-                        for (int l = 1; l < 9; l++)
+                        bool isMonster = true;
                         {
-                            sb.Append(totalMap[i, j].Square(k, l) ? '#' : '.');
-                        }
-                    }
-                    map.Add(sb.ToString());
-                }
-            }
-
-            IList<(int dx, int dy)> monster = new List<(int dx, int dy)>
-            {
-                (0,0),
-                (1,1),
-                (4,1),
-                (5,0),
-                (6,0),
-                (7,1),
-                (10,1),
-                (11,0),
-                (12,0),
-                (13,1),
-                (16,1),
-                (17,0),
-                (18,-1),
-                (18,0),
-                (19,0)
-            };
-
-            foreach (var line in map)
-            {
-                Console.WriteLine(line);
-            }
-
-            Console.WriteLine();
-
-            for (int rotation = 0; rotation <= 7; rotation++)
-            {
-                CheckMapForMonsters(map.ToList());
-                IList<string> rotatedMap = new List<string>();
-                for (int i = 0; i < map.Count; i++)
-                {
-                    var sb = new StringBuilder();
-                    for (int j = 0; j < map.Count; j++)
-                    {
-                        sb.Append(map[j][map.Count - 1 - i]);
-                    }
-                    rotatedMap.Add(sb.ToString());
-                }
-
-                map = rotatedMap;
-                if (rotation == 3)
-                {
-                    for (int k = 0; k < map.Count; k++)
-                    {
-                        map[k] = new String(map[k].Reverse().ToArray());
-                    }
-                }
-            }
-
-            void CheckMapForMonsters(IList<string> seaMap)
-            {
-                bool monsterFound = false;
-                for (int x = 0; x < seaMap.Count - 19; x++)
-                {
-                    for (int y = 1; y < seaMap.Count - 1; y++)
-                    {
-                        if (seaMap[y][x] != '.')
-                        {
-                            bool isMonster = true;
+                            foreach ((int dx, int dy) d in monster)
                             {
+                                if (seaMap[y+d.dy][x+d.dx] == '.')
+                                {
+                                    isMonster = false;
+                                    break;
+                                }
+                            }
+
+                            if (isMonster)
+                            {
+                                monsterFound = true;
                                 foreach ((int dx, int dy) d in monster)
                                 {
-                                    if (seaMap[y+d.dy][x+d.dx] == '.')
-                                    {
-                                        isMonster = false;
-                                        break;
-                                    }
-                                }
-
-                                if (isMonster)
-                                {
-                                    monsterFound = true;
-                                    foreach ((int dx, int dy) d in monster)
-                                    {
-                                        var line = seaMap[y + d.dy].ToCharArray();
-                                        line[x + d.dx] = 'O';
-                                        seaMap[y + d.dy] = new string(line);
-                                    }
+                                    var line = seaMap[y + d.dy].ToCharArray();
+                                    line[x + d.dx] = 'O';
+                                    seaMap[y + d.dy] = new string(line);
                                 }
                             }
                         }
                     }
                 }
+            }
 
-                if (monsterFound)
+            if (monsterFound)
+            {
+                long res = 0;
+                foreach (var c in seaMap)
                 {
-                    long res = 0;
-                    foreach (var c in seaMap)
-                    {
-                        res += c.Count(s => s == '#');
-                    }
-
-
-                    foreach (var line in seaMap)
-                    {
-                        Console.WriteLine(line);
-                    }
-
-                    Result = res.ToString();
+                    res += c.Count(s => s == '#');
                 }
-            }
-            return Task.CompletedTask;
-        }
 
-        private class Tile
-        {
-            public bool[,] Squares { get; } = new bool[10, 10];
-            public long Id { get; set; }
 
-            public bool IsFlipped { get; set; }
-            public int Rotation { get; set; }
-
-            public int UpValue { get; private set; }
-            public int UpValueFlipped { get; private set; }
-            public int RightValue { get; private set; }
-            public int RightValueFlipped { get; private set; }
-            public int DownValue { get; private set; }
-            public int DownValueFlipped { get; private set; }
-            public int LeftValue { get; private set; }
-            public int LeftValueFlipped { get; private set; }
-
-            public bool Square(int i, int j)
-            {
-                return (IsFlipped, Rotation) switch
+                foreach (var line in seaMap)
                 {
-                    (false, 0) => Squares[i, j],
-                    (false, 3) => Squares[j, 9 - i],
-                    (false, 2) => Squares[9 - i, 9 - j],
-                    (false, 1) => Squares[9 - j, i],
-                    (true, 0) => Squares[i, 9 - j],
-                    (true, 1) => Squares[j, i],
-                    (true, 2) => Squares[9 - i, j],
-                    (true, 3) => Squares[9 - j, 9 - i],
-
-                };
-            }
-
-            public (int up, int right, int down, int left) Sides()
-            {
-                return (IsFlipped, Rotation) switch
-                {
-                    (false, 0) => (UpValue, RightValue, DownValue, LeftValue),
-                    (false, 1) => (LeftValueFlipped, UpValue, RightValueFlipped, DownValue),
-                    (false, 2) => (DownValueFlipped, LeftValueFlipped, UpValueFlipped, RightValueFlipped),
-                    (false, 3) => (RightValue, DownValueFlipped, LeftValue, UpValueFlipped),
-                    (true, 0) => (UpValueFlipped, LeftValue, DownValueFlipped, RightValue),
-                    (true, 1) => (LeftValue, DownValue, RightValue, UpValue),
-                    (true, 2) => (DownValue, RightValueFlipped, UpValue, LeftValueFlipped),
-                    (true, 3) => (RightValueFlipped, UpValueFlipped, LeftValueFlipped, DownValueFlipped),
-                        _ => throw new Exception()
-                };
-            }
-
-            public override string ToString()
-            {
-                return $"{IsFlipped} {Rotation} {Id}";
-            }
-
-            public void SetValues()
-            {
-                int power = 1;
-                for (int i = 0; i < 10; i++)
-                {
-                    if (Squares[0, i])
-                    {
-                        UpValue += power;
-                    }
-
-                    if (Squares[0, 9 - i])
-                    {
-                        UpValueFlipped += power;
-                    }
-
-                    if (Squares[i, 9])
-                    {
-                        RightValue += power;
-                    }
-
-                    if (Squares[9 - i, 9])
-                    {
-                        RightValueFlipped += power;
-                    }
-
-                    if (Squares[9, i])
-                    {
-                        DownValue += power;
-                    }
-
-                    if (Squares[9, 9 - i])
-                    {
-                        DownValueFlipped += power;
-                    }
-
-                    if (Squares[i, 0])
-                    {
-                        LeftValue += power;
-                    }
-
-                    if (Squares[9 - i, 0])
-                    {
-                        LeftValueFlipped += power;
-                    }
-                    power *= 2;
+                    Console.WriteLine(line);
                 }
-            }
 
-            public override bool Equals(object? obj)
-            {
-                return Equals((Tile) obj);
-            }
-
-            protected bool Equals(Tile other)
-            {
-                return Id == other.Id;
-            }
-
-            public override int GetHashCode()
-            {
-                return Id.GetHashCode();
+                Result = res.ToString();
             }
         }
-
-        public override int Nummer => 202020;
+        return Task.CompletedTask;
     }
+
+    private class Tile
+    {
+        public bool[,] Squares { get; } = new bool[10, 10];
+        public long Id { get; set; }
+
+        public bool IsFlipped { get; set; }
+        public int Rotation { get; set; }
+
+        public int UpValue { get; private set; }
+        public int UpValueFlipped { get; private set; }
+        public int RightValue { get; private set; }
+        public int RightValueFlipped { get; private set; }
+        public int DownValue { get; private set; }
+        public int DownValueFlipped { get; private set; }
+        public int LeftValue { get; private set; }
+        public int LeftValueFlipped { get; private set; }
+
+        public bool Square(int i, int j)
+        {
+            return (IsFlipped, Rotation) switch
+            {
+                (false, 0) => Squares[i, j],
+                (false, 3) => Squares[j, 9 - i],
+                (false, 2) => Squares[9 - i, 9 - j],
+                (false, 1) => Squares[9 - j, i],
+                (true, 0) => Squares[i, 9 - j],
+                (true, 1) => Squares[j, i],
+                (true, 2) => Squares[9 - i, j],
+                (true, 3) => Squares[9 - j, 9 - i],
+
+            };
+        }
+
+        public (int up, int right, int down, int left) Sides()
+        {
+            return (IsFlipped, Rotation) switch
+            {
+                (false, 0) => (UpValue, RightValue, DownValue, LeftValue),
+                (false, 1) => (LeftValueFlipped, UpValue, RightValueFlipped, DownValue),
+                (false, 2) => (DownValueFlipped, LeftValueFlipped, UpValueFlipped, RightValueFlipped),
+                (false, 3) => (RightValue, DownValueFlipped, LeftValue, UpValueFlipped),
+                (true, 0) => (UpValueFlipped, LeftValue, DownValueFlipped, RightValue),
+                (true, 1) => (LeftValue, DownValue, RightValue, UpValue),
+                (true, 2) => (DownValue, RightValueFlipped, UpValue, LeftValueFlipped),
+                (true, 3) => (RightValueFlipped, UpValueFlipped, LeftValueFlipped, DownValueFlipped),
+                _ => throw new Exception()
+            };
+        }
+
+        public override string ToString()
+        {
+            return $"{IsFlipped} {Rotation} {Id}";
+        }
+
+        public void SetValues()
+        {
+            int power = 1;
+            for (int i = 0; i < 10; i++)
+            {
+                if (Squares[0, i])
+                {
+                    UpValue += power;
+                }
+
+                if (Squares[0, 9 - i])
+                {
+                    UpValueFlipped += power;
+                }
+
+                if (Squares[i, 9])
+                {
+                    RightValue += power;
+                }
+
+                if (Squares[9 - i, 9])
+                {
+                    RightValueFlipped += power;
+                }
+
+                if (Squares[9, i])
+                {
+                    DownValue += power;
+                }
+
+                if (Squares[9, 9 - i])
+                {
+                    DownValueFlipped += power;
+                }
+
+                if (Squares[i, 0])
+                {
+                    LeftValue += power;
+                }
+
+                if (Squares[9 - i, 0])
+                {
+                    LeftValueFlipped += power;
+                }
+                power *= 2;
+            }
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals((Tile) obj);
+        }
+
+        protected bool Equals(Tile other)
+        {
+            return Id == other.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+    }
+
+    public override int Nummer => 202020;
 }

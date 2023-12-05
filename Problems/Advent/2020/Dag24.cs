@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Algorithms.Models;
 
-namespace Problems.Advent._2020
-{
-    public class Dag24 : Problem
-    {
-        #region input
+namespace Problems.Advent._2020;
 
-        private const string input = @"nwwnwnwnwsenwnwenwenwnwnwnwnwwneswwnw
+public class Dag24 : Problem
+{
+    #region input
+
+    private const string input = @"nwwnwnwnwsenwnwenwenwnwnwnwnwwneswwnw
 nenewsesweeeeeeeeeeeeneeee
 swswswseseneswseswnwseseseseswnewseswsesw
 swseseseeswsesesesesesesesesesenw
@@ -571,7 +571,7 @@ wwneeseswseesenenesweneswneswnenwnenw
 swswswwswwwwswswnwswwwnewwwwswse
 seeseswswsenwwswswsesenwswswesenwese";
 
-        private const string testinput = @"sesenwnenenewseeswwswswwnenewsewsw
+    private const string testinput = @"sesenwnenenewseeswwswswwnenewsewsw
 neeenesenwnwwswnenewnwwsewnenwseswesw
 seswneswswsenwwnwse
 nwnwneseeswswnenewneswwnewseswneseene
@@ -591,100 +591,99 @@ nenewswnwewswnenesenwnesewesw
 eneswnwswnwsenenwnwnwwseeswneewsenese
 neswnwewnwnwseenwseesewsenwsweewe
 wseweeenwnesenwwwswnew";
-        #endregion
-        public override Task ExecuteAsync()
-        {
-            Counter<(int, int)> flipped = new Counter<(int, int)>();
+    #endregion
+    public override Task ExecuteAsync()
+    {
+        Counter<(int, int)> flipped = new Counter<(int, int)>();
 
-            foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in input.Split(Environment.NewLine))
+        {
+            (int x, int y) current = (1000, 1000);
+            int dy = 0;
+            foreach (var d in line)
             {
-                (int x, int y) current = (1000, 1000);
-                int dy = 0;
-                foreach (var d in line)
+                if (d == 'n')
                 {
-                    if (d == 'n')
-                    {
-                        dy = 1;
-                    }
-                    else if (d == 's')
-                    {
-                        dy = -1;
-                    }
-                    else if (d == 'e')
-                    {
-                        int dx = (dy == 0 || current.y % 2 == 1) ? 1 : 0;
-                        current = (current.x + dx, current.y + dy);
-                        dy = 0;
-                    }
-                    else if (d == 'w')
-                    {
-                        int dx = (dy == 0 || current.y % 2 == 0) ? -1 : 0;
-                        current = (current.x + dx, current.y + dy);
-                        dy = 0;
-                    }
+                    dy = 1;
+                }
+                else if (d == 's')
+                {
+                    dy = -1;
+                }
+                else if (d == 'e')
+                {
+                    int dx = (dy == 0 || current.y % 2 == 1) ? 1 : 0;
+                    current = (current.x + dx, current.y + dy);
+                    dy = 0;
+                }
+                else if (d == 'w')
+                {
+                    int dx = (dy == 0 || current.y % 2 == 0) ? -1 : 0;
+                    current = (current.x + dx, current.y + dy);
+                    dy = 0;
+                }
+            }
+
+            flipped[current]++;
+        }
+
+        Console.WriteLine("part 1: " + flipped.Values.Count(v => v % 2 == 1).ToString());
+
+        HashSet<(int x, int y)> blackTiles = new HashSet<(int x, int y)>();
+        foreach (var tile in flipped.Keys.Where(v => flipped[v] % 2 == 1))
+        {
+            blackTiles.Add(tile);
+        }
+
+        for (int i = 1; i <= 100; i++)
+        {
+            Step();
+        }
+
+
+        Result = blackTiles.Count.ToString();
+        return Task.CompletedTask;
+
+
+        void Step()
+        {
+            HashSet<(int x, int y)> newBlackTiles = new HashSet<(int x, int y)>();
+            foreach (var blackTile in blackTiles)
+            {
+                var neighbours = Neighbours(blackTile).ToList();
+                var count = neighbours.Count(n => blackTiles.Contains(n));
+                if (count == 1 || count == 2)
+                {
+                    newBlackTiles.Add(blackTile);
                 }
 
-                flipped[current]++;
-            }
-
-            Console.WriteLine("part 1: " + flipped.Values.Count(v => v % 2 == 1).ToString());
-
-            HashSet<(int x, int y)> blackTiles = new HashSet<(int x, int y)>();
-            foreach (var tile in flipped.Keys.Where(v => flipped[v] % 2 == 1))
-            {
-                blackTiles.Add(tile);
-            }
-
-            for (int i = 1; i <= 100; i++)
-            {
-                Step();
-            }
-
-
-            Result = blackTiles.Count.ToString();
-            return Task.CompletedTask;
-
-
-            void Step()
-            {
-                HashSet<(int x, int y)> newBlackTiles = new HashSet<(int x, int y)>();
-                foreach (var blackTile in blackTiles)
+                foreach (var neighbour in neighbours)
                 {
-                    var neighbours = Neighbours(blackTile).ToList();
-                    var count = neighbours.Count(n => blackTiles.Contains(n));
-                    if (count == 1 || count == 2)
+                    if (!blackTiles.Contains(neighbour))
                     {
-                        newBlackTiles.Add(blackTile);
-                    }
-
-                    foreach (var neighbour in neighbours)
-                    {
-                        if (!blackTiles.Contains(neighbour))
+                        var nextNeighbours = Neighbours(neighbour).ToList();
+                        var nncount = nextNeighbours.Count(n => blackTiles.Contains(n));
+                        if (nncount == 2)
                         {
-                            var nextNeighbours = Neighbours(neighbour).ToList();
-                            var nncount = nextNeighbours.Count(n => blackTiles.Contains(n));
-                            if (nncount == 2)
-                            {
-                                newBlackTiles.Add(neighbour);
-                            }
+                            newBlackTiles.Add(neighbour);
                         }
                     }
                 }
-                blackTiles = newBlackTiles;
             }
-
-            IEnumerable<(int, int)> Neighbours((int x, int y) blackTile)
-            {
-                yield return (blackTile.x - 1, blackTile.y);
-                yield return (blackTile.x + 1, blackTile.y);
-                var even = blackTile.y % 2 == 0;
-                yield return (blackTile.x + (even ? -1 : 0), blackTile.y - 1);
-                yield return (blackTile.x + (even ? 0 : 1), blackTile.y - 1);
-                yield return (blackTile.x + (even ? -1 : 0), blackTile.y + 1);
-                yield return (blackTile.x + (even ? 0 : 1), blackTile.y + 1);
-            }
+            blackTiles = newBlackTiles;
         }
 
-        public override int Nummer => 202024;
+        IEnumerable<(int, int)> Neighbours((int x, int y) blackTile)
+        {
+            yield return (blackTile.x - 1, blackTile.y);
+            yield return (blackTile.x + 1, blackTile.y);
+            var even = blackTile.y % 2 == 0;
+            yield return (blackTile.x + (even ? -1 : 0), blackTile.y - 1);
+            yield return (blackTile.x + (even ? 0 : 1), blackTile.y - 1);
+            yield return (blackTile.x + (even ? -1 : 0), blackTile.y + 1);
+            yield return (blackTile.x + (even ? 0 : 1), blackTile.y + 1);
+        }
     }
+
+    public override int Nummer => 202024;
 }
