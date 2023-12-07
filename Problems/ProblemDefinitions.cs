@@ -9,7 +9,7 @@ namespace Problems;
 
 public static class ProblemDefinitions
 {
-    public static IDictionary<int, Problem> Problems = new Dictionary<int, Problem>();
+    public static IDictionary<int, Func<Problem>> Problems = new Dictionary<int, Func<Problem>>();
 
     static ProblemDefinitions()
     {
@@ -20,7 +20,7 @@ public static class ProblemDefinitions
             var instance = (Problem) Activator.CreateInstance(problem);
             if (instance.Nummer != 0)
             {
-                Problems.Add(instance.Nummer, instance);
+                Problems.Add(instance.Nummer, () => (Problem)Activator.CreateInstance(problem));
             }
         }
     }

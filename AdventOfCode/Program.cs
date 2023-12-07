@@ -13,15 +13,14 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        Problem problem = null;
-        while (problem == null)
+        while (true)
         {
             Console.WriteLine("Geef nummer van probleem op:");
             var input = Console.ReadLine();
             int nummer;
             if (int.TryParse(input, out nummer) && ProblemDefinitions.Problems.ContainsKey(nummer))
             {
-                problem = ProblemDefinitions.Problems[nummer];
+                var problem = ProblemDefinitions.Problems[nummer]();
                 var sw = new Stopwatch();
                 sw.Start();
                 await problem.ExecuteAsync();
@@ -29,14 +28,12 @@ class Program
                 Console.WriteLine($"Oplossing: {problem.Result}  ({sw.ElapsedMilliseconds} ms)");
                 if (!string.IsNullOrWhiteSpace(problem.Result))
                 {
-                    File.AppendAllLines(@"C:\temp\Eulerruns.txt",
+                    File.AppendAllLines(@"C:\temp\AdventOfOCodeRuns.txt",
                         new[]
                         {
-                            $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} Problem {input}: {problem.Result}"
+                            $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} Problem {input}: {problem.Result} ({sw.ElapsedMilliseconds}ms)"
                         });
                 }
-
-                Console.ReadLine();
             }
             else
             {
