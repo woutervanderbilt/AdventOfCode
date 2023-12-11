@@ -24,6 +24,7 @@ L7JLJL-JLJLJL--JLJ.L";
 
     public override async Task ExecuteAsync()
     {
+        Console.OutputEncoding = Encoding.UTF8; 
         var grid = new Grid<char>();
         string input = await GetInputAsync();
         int y = 0;
@@ -70,15 +71,9 @@ L7JLJL-JLJLJL--JLJ.L";
 
         HashSet<(int, int)> right = new HashSet<(int, int)>();
         HashSet<(int, int)> left = new HashSet<(int, int)>();
-        (int, int) prev = (-1, -1);
+        (int, int) prev = loop.Last();
         foreach (var loopMember in loop)
         {
-            if (prev == (-1, -1))
-            {
-                prev = loopMember;
-                continue;
-            }
-
             if (prev.Item1 == loopMember.Item1)
             {
                 if (prev.Item2 == loopMember.Item2 + 1)
@@ -128,7 +123,16 @@ L7JLJL-JLJLJL--JLJ.L";
             }
             else if(loop.Contains(m.Location))
             {
-                newgrid[m.Location.Item1, m.Location.Item2] = m.Value;
+                newgrid[m.Location.Item1, m.Location.Item2] = m.Value switch
+                {
+                    'J' => '┛',
+                    'F' => '┏',
+                    '7' => '┓',
+                    'L' => '┗',
+                    '|' => '┃',
+                    '-' => '━',
+                    _ => m.Value
+                };
             }
             else
             {
