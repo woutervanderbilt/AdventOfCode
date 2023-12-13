@@ -93,13 +93,6 @@ internal class Dag12 : Problem
                     {
                         continue;
                     }
-                    if (index == 0)
-                    {
-                        if (middleSpring != 0)
-                        {
-                            continue;
-                        }
-                    }
                     var leftLayout = Layout.Substring(0, Math.Max(0,index - 1));
                     var rightLayout = index + middleSpring >= Layout.Length ? String.Empty : Layout.Substring(index + middleSpring + 1);
 
