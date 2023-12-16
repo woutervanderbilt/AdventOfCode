@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,20 @@ namespace Algorithms.Models;
 public class Grid<T>
 {
     private IDictionary<(int, int), T> grid = new Dictionary<(int, int), T>();
+
+    public static Grid<char> FromInput(string input)
+    {
+        var grid = new Grid<char>();
+        foreach (var (line, y) in input.Split(Environment.NewLine).Reverse().Indexed())
+        {
+            foreach (var (c, x) in line.Indexed())
+            {
+                grid[x, y] = c;
+            }
+        }
+
+        return grid;
+    }
 
     public GridMember<T> this[int x, int y]
     {

@@ -47,6 +47,11 @@ public static class EnumerableExtensions
         }
     }
 
+    public static IEnumerable<(T item, int index)> Indexed<T>(this IEnumerable<T> source)
+    {
+        return source.Select((item, index) => (item, index));
+    }
+
     public static IEnumerable<IEnumerable<T>> Subsets<T>(this IEnumerable<T> source)
     {
         List<T> list = source.ToList();
