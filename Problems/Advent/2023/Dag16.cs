@@ -23,7 +23,7 @@ internal class Dag16 : Problem
     public override async Task ExecuteAsync()
     {
         string input = await GetInputAsync();
-        var grid = Grid<char>.FromInput(input);
+        var grid = Grid<char>.FromInput(input, c => c);
         int maxX = grid.MaxX;
         int maxY = grid.MaxY;
         long max = 0;

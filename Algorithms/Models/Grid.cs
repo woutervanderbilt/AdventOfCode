@@ -10,14 +10,14 @@ public class Grid<T>
 {
     private IDictionary<(int, int), T> grid = new Dictionary<(int, int), T>();
 
-    public static Grid<char> FromInput(string input)
+    public static Grid<T> FromInput(string input, Func<char, T> f)
     {
-        var grid = new Grid<char>();
+        var grid = new Grid<T>();
         foreach (var (line, y) in input.Split(Environment.NewLine).Reverse().Indexed())
         {
             foreach (var (c, x) in line.Indexed())
             {
-                grid[x, y] = c;
+                grid[x, y] = f(c);
             }
         }
 
