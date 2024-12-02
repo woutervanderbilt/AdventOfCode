@@ -20,6 +20,9 @@
 	  <EmbeddedResource Include="Advent\2023\Input\*.txt">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </EmbeddedResource>
+	  <EmbeddedResource Include="Advent\2024\Input\*.txt">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </EmbeddedResource>
   </ItemGroup>
 
 </Project>

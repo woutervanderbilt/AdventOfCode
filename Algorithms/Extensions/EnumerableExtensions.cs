@@ -117,4 +117,22 @@ public static class EnumerableExtensions
     {
         return source.AggregateEnumerable(seed, func).ToList();
     }
+
+    public static IEnumerable<TA> Zipper<TA, TB>(this IEnumerable<TB> source, Func<TB, TB, TA> func)
+    {
+        bool first = true;
+        TB prev = default;
+        foreach (var b in source)
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                yield return func(prev, b);
+            }
+            prev = b;
+        }
+    }
 }
