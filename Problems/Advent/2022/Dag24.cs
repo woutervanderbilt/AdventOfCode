@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -17,17 +15,16 @@ internal class Dag24 : Problem
 ######.#";
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         IDictionary<(int, int), IList<char>> blizzards = new Dictionary<(int, int), IList<char>>();
         int y = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             int x = 0;
             foreach (var c in line)
             {
                 if (c == '>' || c == 'v' || c == '<' || c == '^')
                 {
-                    blizzards[(x, y)] = new List<char>{c};
+                    blizzards[(x, y)] = new List<char> { c };
                 }
                 x++;
             }
@@ -47,7 +44,7 @@ internal class Dag24 : Problem
             (0, -1, '^'),
         };
         IList<(int, int, char)> movesBack = new List<(int, int, char)>
-        {                
+        {
             (0, -1, '^'),
             (-1, 0, '<'),
             (0, 0, '.'),
@@ -130,7 +127,7 @@ internal class Dag24 : Problem
 
                         }
                     }
-                        
+
                     Step(step + 1, nextPosition, path + move.Item3);
                 }
             }

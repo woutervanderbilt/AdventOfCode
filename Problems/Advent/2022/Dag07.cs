@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -33,14 +32,13 @@ $ ls
 7214296 k";
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
-        Directory current = new Directory{Name = "/"};
+        Directory current = new Directory { Name = "/" };
         IList<Directory> directories = new List<Directory>();
         directories.Add(current);
-        foreach (var line in input.Split(Environment.NewLine).Skip(1))
+        foreach (var line in Input.Split(Environment.NewLine).Skip(1))
         {
             var split = line.Split();
-            if (split[0]=="$")
+            if (split[0] == "$")
             {
                 if (split[1] == "cd")
                 {
@@ -86,7 +84,7 @@ $ ls
                 }
                 else
                 {
-                        
+
                     var file = current.Files.SingleOrDefault(f => f.Name == split[1]);
                     if (file == null)
                     {
@@ -98,7 +96,7 @@ $ ls
                         current.Files.Add(file);
                     }
                 }
-                    
+
             }
         }
 

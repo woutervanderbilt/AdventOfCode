@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2018;
 
@@ -166,17 +166,17 @@ public class Dag13 : Problem
 \-+-/  \-+--/
   \------/";
 
-        
+
     public override Task ExecuteAsync()
     {
         IDictionary<Coordinate, TrackPart> track = new Dictionary<Coordinate, TrackPart>();
         IList<Cart> carts = new List<Cart>();
         int rowNumber = 0;
         int cartId = 1;
-        foreach (var row in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+        foreach (var row in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
         {
             int columnNumber = 0;
-                
+
             foreach (var location in row)
             {
                 if (location != ' ')
@@ -227,8 +227,8 @@ public class Dag13 : Problem
                     }
 
                     track[coordinate] = newTrackpart;
-                    var westNeighbourCoordinate = new Coordinate(coordinate.Row, coordinate.Column-1);
-                    var northNeighbourCoordinate = new Coordinate(coordinate.Row-1, coordinate.Column);
+                    var westNeighbourCoordinate = new Coordinate(coordinate.Row, coordinate.Column - 1);
+                    var northNeighbourCoordinate = new Coordinate(coordinate.Row - 1, coordinate.Column);
                     if (track.ContainsKey(westNeighbourCoordinate))
                     {
                         var westNeighbour = track[westNeighbourCoordinate];

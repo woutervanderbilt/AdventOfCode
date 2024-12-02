@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +24,7 @@ AND D J";
         while (isRunning)
         {
             var r = computer.Run();
-            StringBuilder s = new  StringBuilder();
+            StringBuilder s = new StringBuilder();
             foreach (var l in r)
             {
                 if (l > 255)
@@ -34,7 +32,7 @@ AND D J";
                     Console.WriteLine(l);
                     return Task.CompletedTask;
                 }
-                s.Append((char) l);
+                s.Append((char)l);
             }
             Console.WriteLine(s);
             string userInput = null;

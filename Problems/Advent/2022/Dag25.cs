@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -23,8 +21,7 @@ internal class Dag25 : Problem
 122";
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
-        Result = LongToSnafu(input.Split(Environment.NewLine)
+        Result = LongToSnafu(Input.Split(Environment.NewLine)
             .Select(SnafuToLong)
             .Sum());
     }

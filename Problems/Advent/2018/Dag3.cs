@@ -1278,7 +1278,7 @@ public class Dag3 : Problem
     public override Task ExecuteAsync()
     {
         IList<Rectangle> rectangles = new List<Rectangle>();
-        foreach (var r in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+        foreach (var r in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
         {
             var rectangle = new Rectangle();
             var rs0 = r.Split('@');
@@ -1292,8 +1292,8 @@ public class Dag3 : Problem
             rectangle.Length = int.Parse(rs3[1]);
             rectangles.Add(rectangle);
         }
-        Console.WriteLine(rectangles.Max(r => r.X+r.Width)+" "+ rectangles.Max(r => r.Y + r.Length));
-        int[,] s = new int[1000,1000];
+        Console.WriteLine(rectangles.Max(r => r.X + r.Width) + " " + rectangles.Max(r => r.Y + r.Length));
+        int[,] s = new int[1000, 1000];
         foreach (var rectangle in rectangles)
         {
             for (int x = 0; x < rectangle.Width; x++)
@@ -1340,7 +1340,7 @@ public class Dag3 : Problem
             }
         }
 
-        Result = c.ToString() + " "+ id;
+        Result = c.ToString() + " " + id;
         return Task.CompletedTask;
     }
 

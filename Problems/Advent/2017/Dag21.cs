@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2017;
 
@@ -124,7 +123,7 @@ internal class Dag21 : Problem
     public override Task ExecuteAsync()
     {
         IDictionary<string, string> mapping = new Dictionary<string, string>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Split(' ');
             var fromGrid = StringToGrid(words[0]);
@@ -143,7 +142,7 @@ internal class Dag21 : Problem
                 }
             }
         }
-            
+
         var grid = new Grid<char>();
         grid[0, 0] = '.';
         grid[0, 1] = '#';

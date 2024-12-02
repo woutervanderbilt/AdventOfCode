@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2018;
 
@@ -54,7 +52,7 @@ internal class Dag20 : Problem
                         stack.Push(new HashSet<(int, int, int)>(currentPositions));
                         choicesStack.Push(choices);
                         choices = new HashSet<(int, int, int)>();
-                        Console.WriteLine($"Start choices at {string.Join(',',currentPositions)}");
+                        Console.WriteLine($"Start choices at {string.Join(',', currentPositions)}");
                         copyNewCurrentPositions = false;
                         breakOutOfLoop = true;
                         break;
@@ -122,7 +120,7 @@ internal class Dag20 : Problem
             //grid.Print();
         }
 
-        grid.Print(false, '+',' ');
+        grid.Print(false, '+', ' ');
 
         //Result = minDoors.Values.Max().ToString();
         //return Task.CompletedTask;
@@ -146,7 +144,7 @@ internal class Dag20 : Problem
                 }
                 else
                 {
-                        
+
                 }
                 foreach (var neighbour in grid.Neighbours(location, false))
                 {

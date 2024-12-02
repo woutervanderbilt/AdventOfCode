@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2015;
 
@@ -68,7 +67,7 @@ internal class Dag24 : Problem
                     result.AddRange(Subsets(copy, i + 1, value + sum));
                 }
             }
-                
+
             return result;
         }
 

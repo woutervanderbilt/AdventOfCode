@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Problems.Advent;
 
@@ -34,7 +30,7 @@ jnz c -5";
 
     public override Task ExecuteAsync()
     {
-        var assembunny = new Assembunny(input) {C = 1};
+        var assembunny = new Assembunny(input) { C = 1 };
         assembunny.Run();
 
         Result = assembunny.A.ToString();

@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2022;
 
@@ -17,11 +15,10 @@ internal class Dag08 : Problem
 
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         var grid = new Grid<int>();
         {
             int y = 0;
-            foreach (var line in input.Split(Environment.NewLine))
+            foreach (var line in Input.Split(Environment.NewLine))
             {
                 int x = 0;
                 foreach (var c in line)
@@ -147,7 +144,7 @@ internal class Dag08 : Problem
                     xx--;
                 }
 
-                score *= x - xx - (xx < 0 ?  1 : 0);
+                score *= x - xx - (xx < 0 ? 1 : 0);
 
                 xx = x + 1;
                 while (xx <= grid.MaxY && grid[xx, y] < tree)
@@ -178,7 +175,7 @@ internal class Dag08 : Problem
                     maxScore = score;
                 }
             }
-                
+
         }
 
         Result = maxScore.ToString();

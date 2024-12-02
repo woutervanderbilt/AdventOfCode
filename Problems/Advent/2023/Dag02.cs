@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2023;
@@ -16,8 +13,7 @@ internal class Dag02 : Problem
 
         long sumValidGameIds = 0;
         long totalPower = 0;
-        string input = await GetInputAsync();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             long minRed = 0;
             long minBlue = 0;

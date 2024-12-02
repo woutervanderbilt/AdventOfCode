@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2019;
 
@@ -14,7 +13,7 @@ public class Dag16 : Problem
 
     private const int skip = 5971989;
     private const string testinput = "12345678";
-    private readonly IList<long> wavePattern = new List<long>{0,1,0,-1};
+    private readonly IList<long> wavePattern = new List<long> { 0, 1, 0, -1 };
     public override Task ExecuteAsync()
     {
         IList<long> inputLongs = input.Select(c => long.Parse(c.ToString())).ToList();
@@ -29,7 +28,7 @@ public class Dag16 : Problem
         inputLongs = new List<long>();
         for (int i = 0; i < 10000 * 650 - skip; i++)
         {
-            inputLongs.Add(digits[i%650]);
+            inputLongs.Add(digits[i % 650]);
         }
         for (int i = 0; i < 100; i++)
         {
@@ -55,7 +54,7 @@ public class Dag16 : Problem
         for (int i = 0; i < inputList.Count; i++)
         {
             long result = 0;
-            IList<long> pattern = Pattern(i+1).Skip(1).Take(inputList.Count).ToList();
+            IList<long> pattern = Pattern(i + 1).Skip(1).Take(inputList.Count).ToList();
             for (int j = 0; j < inputList.Count; j++)
             {
                 result += pattern[j] * inputList[j];

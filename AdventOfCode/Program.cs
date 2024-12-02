@@ -21,6 +21,7 @@ class Program
             if (int.TryParse(input, out nummer) && ProblemDefinitions.Problems.ContainsKey(nummer))
             {
                 var problem = ProblemDefinitions.Problems[nummer]();
+                await problem.Initialize();
                 var sw = new Stopwatch();
                 sw.Start();
                 await problem.ExecuteAsync();

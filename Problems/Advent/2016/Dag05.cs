@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +17,7 @@ public class Dag05 : Problem
         int i = 0;
         while (true)
         {
-            var hash = provider.ComputeHash(ASCIIEncoding.ASCII.GetBytes(s+i));
+            var hash = provider.ComputeHash(ASCIIEncoding.ASCII.GetBytes(s + i));
             var hexhash = ByteArrayToString(hash);
             if (hexhash.StartsWith("00000"))
             {

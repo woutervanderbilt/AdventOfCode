@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2019;
@@ -1874,7 +1873,7 @@ K)L";
     public override Task ExecuteAsync()
     {
         IDictionary<string, OrbitingObject> orbitingObjects = new Dictionary<string, OrbitingObject>();
-        foreach (var orbit in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+        foreach (var orbit in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
         {
             string[] objects = orbit.Split(')');
             OrbitingObject orbiter, orbitee;
@@ -1927,7 +1926,7 @@ K)L";
             currentOrbitingObjects = newOrbitingObjects;
         }
 
-        Result = orbitingObjects.Values.Sum(o => o.TotalOrbits).ToString()+" "+step.ToString();
+        Result = orbitingObjects.Values.Sum(o => o.TotalOrbits).ToString() + " " + step.ToString();
         return Task.CompletedTask;
     }
 

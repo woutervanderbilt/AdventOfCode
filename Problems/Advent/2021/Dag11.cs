@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2021;
 
@@ -23,7 +22,7 @@ internal class Dag11 : Problem
     {
         var grid = new Grid<int>();
         int i = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             int j = 0;
             foreach (var c in line)
@@ -38,7 +37,7 @@ internal class Dag11 : Problem
 
         long result = 0;
         int count = 1;
-        while(true)
+        while (true)
         {
             var flashed = Step();
             if (count <= 100)
@@ -67,7 +66,7 @@ internal class Dag11 : Problem
                     flashed.Add((member.x, member.y));
                 }
             }
-            while (newFlashed .Any())
+            while (newFlashed.Any())
             {
                 IList<(int, int)> newNewFlashed = new List<(int, int)>();
                 foreach (var member in newFlashed)

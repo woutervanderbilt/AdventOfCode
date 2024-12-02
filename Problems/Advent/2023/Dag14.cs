@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2023;
 
@@ -23,9 +21,8 @@ O.#..O.#.#
 #OO..#....";
     public override async Task ExecuteAsync()
     {
-        string input = await GetInputAsync();
         var grid = new Grid<char>();
-        foreach (var (line, y) in input.Split(Environment.NewLine).Reverse().Indexed())
+        foreach (var (line, y) in Input.Split(Environment.NewLine).Reverse().Indexed())
         {
             foreach (var (c, x) in line.Indexed())
             {
@@ -71,7 +68,7 @@ O.#..O.#.#
                         {
                             freeSpaces.Enqueue(y);
                         }
-                        else if(freeSpaces.TryDequeue(out var freeSpace))
+                        else if (freeSpaces.TryDequeue(out var freeSpace))
                         {
                             newGrid[x, freeSpace] = 'O';
                             freeSpaces.Enqueue(y);

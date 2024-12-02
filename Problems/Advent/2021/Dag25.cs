@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2021;
@@ -191,7 +187,7 @@ v.v..>>v.v
             {
                 for (int x = 0; x < maxX; x++)
                 {
-                    Console.Write(currentGrid[x,y]);
+                    Console.Write(currentGrid[x, y]);
                 }
                 Console.WriteLine();
             }

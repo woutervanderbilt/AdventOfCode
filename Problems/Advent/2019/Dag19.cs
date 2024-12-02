@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2019;
@@ -23,7 +20,7 @@ public class Dag19 : Problem
             y = FindMinimumY(y);
         }
 
-        Result = $"{10000 * (x-99) + y}";
+        Result = $"{10000 * (x - 99) + y}";
 
 
         long FindMinimumY(long start)
@@ -47,17 +44,17 @@ public class Dag19 : Problem
 
     private bool Fits(long x, long y)
     {
-        computer.Reset().AddParameters(x-99, y+99);
+        computer.Reset().AddParameters(x - 99, y + 99);
         if (computer.Run().First() == 0)
         {
             return false;
         }
-        computer.Reset().AddParameters(x-99, y);
+        computer.Reset().AddParameters(x - 99, y);
         if (computer.Run().First() == 0)
         {
             return false;
         }
-        computer.Reset().AddParameters(x, y+99);
+        computer.Reset().AddParameters(x, y + 99);
         if (computer.Run().First() == 0)
         {
             return false;

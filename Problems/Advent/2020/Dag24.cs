@@ -1,10 +1,8 @@
+using Algorithms.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2020;
 
@@ -596,7 +594,7 @@ wseweeenwnesenwwwswnew";
     {
         Counter<(int, int)> flipped = new Counter<(int, int)>();
 
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             (int x, int y) current = (1000, 1000);
             int dy = 0;

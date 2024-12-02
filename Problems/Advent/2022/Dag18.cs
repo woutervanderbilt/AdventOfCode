@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -23,9 +22,8 @@ internal class Dag18 : Problem
 2,3,5";
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         HashSet<(int x, int y, int z)> grid = new HashSet<(int, int, int)>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var coordinates = line.Split(',');
             grid.Add((int.Parse(coordinates[0]), int.Parse(coordinates[1]), int.Parse(coordinates[2])));

@@ -1,8 +1,6 @@
-using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using Algorithms.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
 
@@ -19,12 +17,12 @@ public class Dag13 : Problem
     public override Task ExecuteAsync()
     {
         var inputlines = input.Split(Environment.NewLine);
-        ResidueClassBigInt c = new ResidueClassBigInt(0,1);
+        ResidueClassBigInt c = new ResidueClassBigInt(0, 1);
         int offset = -1;
         foreach (var busLine in inputlines[1].Split(','))
         {
             offset++;
-            if(busLine == "x")
+            if (busLine == "x")
             {
                 continue;
             }

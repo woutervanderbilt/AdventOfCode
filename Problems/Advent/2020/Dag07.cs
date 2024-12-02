@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -655,7 +652,7 @@ clear brown bags contain no other bags.";
         return Task.CompletedTask;
 
 
-        var currentBags = new List<Bag> {GetBag("shiny gold")};
+        var currentBags = new List<Bag> { GetBag("shiny gold") };
 
 
 
@@ -700,7 +697,7 @@ clear brown bags contain no other bags.";
             }
             else
             {
-                bag = new Bag {Colour = colour};
+                bag = new Bag { Colour = colour };
                 bags[colour] = bag;
             }
 

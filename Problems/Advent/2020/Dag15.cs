@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -20,7 +16,7 @@ public class Dag15 : Problem
         //var dictionary = new Dictionary<int, int>();
         int[] blaat = new int[30000000];
         int index = 1;
-        foreach (var value in values.Take(values.Count-1))
+        foreach (var value in values.Take(values.Count - 1))
         {
             //dictionary[value] = index;
             //Console.WriteLine(value);

@@ -1,8 +1,5 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.XPath;
 
 namespace Problems.Advent._2020;
 
@@ -340,7 +337,7 @@ public class Dag03 : Problem
         var map = input.Split(Environment.NewLine);
         var width = map[0].Length;
         long result = CountBySlope(1, 1) * CountBySlope(1, 3) * CountBySlope(1, 5) * CountBySlope(1, 7) *
-                      CountBySlope(2,1);
+                      CountBySlope(2, 1);
 
         long CountBySlope(int dx, int dy)
         {

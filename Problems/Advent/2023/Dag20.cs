@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Problems.Advent._2023;
 
@@ -26,8 +24,8 @@ internal class Dag20 : Problem
         IDictionary<string, IModule> modules = new Dictionary<string, IModule>();
         var pulseQueue = new Queue<(bool isHigh, IModule target, IModule source)>();
 
-        string input = await GetInputAsync();
-        foreach (var line in input.Split(Environment.NewLine))
+
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var split = line.Replace(" ", "").Split("->");
             if (split[0][0] == '%')
@@ -179,7 +177,7 @@ internal class Dag20 : Problem
         public long Part2 { get; private set; }
         public void ReceivePulse(bool isHigh, IModule from, int buttonCount)
         {
-            
+
             Memory[from.Name] = isHigh;
             if (Memory.Values.All(h => h))
             {
@@ -284,7 +282,7 @@ internal class Dag20 : Problem
         {
         }
     }
-    
+
 
     public override int Nummer => 202320;
 }

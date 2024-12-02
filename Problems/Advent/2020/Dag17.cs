@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -30,7 +28,7 @@ public class Dag17 : Problem
     {
         HashSet<Cube> activeCubes = new HashSet<Cube>();
         int x = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             for (int y = 0; y < line.Length; y++)
             {
@@ -81,7 +79,7 @@ public class Dag17 : Problem
 
         IEnumerable<Cube> Neighbours(Cube cube)
         {
-            IList<Cube> list = new List<Cube>{cube.Copy()};
+            IList<Cube> list = new List<Cube> { cube.Copy() };
             for (int i = 0; i < dimensions; i++)
             {
                 IList<Cube> newList = new List<Cube>();
@@ -118,15 +116,15 @@ public class Dag17 : Problem
         public Cube Copy()
         {
             int[] copy = new int[dimensions];
-            Coordinates.CopyTo(copy,0);
-            return new Cube{Coordinates = copy};
+            Coordinates.CopyTo(copy, 0);
+            return new Cube { Coordinates = copy };
         }
 
         public int[] Coordinates { get; set; }
 
         public override bool Equals(object? obj)
         {
-            return Equals((Cube) obj);
+            return Equals((Cube)obj);
         }
 
         public bool Equals(Cube other)

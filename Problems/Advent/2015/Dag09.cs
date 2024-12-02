@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2015;
 
@@ -42,7 +40,7 @@ Straylight to Arbre = 127";
     {
         IDictionary<(string, string), int> distances = new Dictionary<(string, string), int>();
         HashSet<string> cities = new HashSet<string>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Split(' ');
             distances[(words[0], words[2])] = int.Parse(words[4]);
@@ -74,7 +72,7 @@ Straylight to Arbre = 127";
 
         int Distance(string start, string destination)
         {
-            return distances.ContainsKey((start,destination)) ? distances[(start,destination)] : distances[(destination, start)];
+            return distances.ContainsKey((start, destination)) ? distances[(start, destination)] : distances[(destination, start)];
         }
         return Task.CompletedTask;
     }

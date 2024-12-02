@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2018;
@@ -1259,7 +1258,7 @@ internal class Dag25 : Problem
     public override Task ExecuteAsync()
     {
         var points = new List<(int x, int y, int z, int t)>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Split(',').Select(int.Parse).ToList();
             points.Add((words[0], words[1], words[2], words[3]));
@@ -1299,7 +1298,7 @@ internal class Dag25 : Problem
             {
                 seed++;
             }
-                
+
             if (seed == points.Count)
             {
                 break;

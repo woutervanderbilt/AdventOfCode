@@ -78,7 +78,7 @@ public class Dag17 : Problem
                 else
                 {
                     prev = false;
-                    sb.Append((char) c);
+                    sb.Append((char)c);
                 }
             }
         }

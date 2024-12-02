@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2015;
@@ -220,7 +219,7 @@ internal class Dag22 : Problem
 
         void ApplyLastingEffects()
         {
-            if(Shield > 0)
+            if (Shield > 0)
             {
                 Shield--;
                 if (Shield == 0)

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -1857,7 +1856,7 @@ Tile 2131:
         IList<Tile> tiles = new List<Tile>();
         Tile currentTile = null;
         int currentLine = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (string.IsNullOrEmpty(line))
             {
@@ -1866,7 +1865,7 @@ Tile 2131:
             if (line.StartsWith("Tile"))
             {
                 long id = long.Parse(line.Substring(5).Replace(":", ""));
-                currentTile = new Tile {Id = id};
+                currentTile = new Tile { Id = id };
                 tiles.Add(currentTile);
                 currentLine = 0;
             }
@@ -2129,7 +2128,7 @@ Tile 2131:
                         {
                             foreach ((int dx, int dy) d in monster)
                             {
-                                if (seaMap[y+d.dy][x+d.dx] == '.')
+                                if (seaMap[y + d.dy][x + d.dx] == '.')
                                 {
                                     isMonster = false;
                                     break;
@@ -2275,7 +2274,7 @@ Tile 2131:
 
         public override bool Equals(object? obj)
         {
-            return Equals((Tile) obj);
+            return Equals((Tile)obj);
         }
 
         protected bool Equals(Tile other)

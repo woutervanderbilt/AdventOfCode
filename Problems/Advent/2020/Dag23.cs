@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -27,7 +24,7 @@ public class Dag23 : Problem
         {
             var newCup = new Cup
             {
-                Number = i, 
+                Number = i,
                 //Previous = lastCup
             };
             if (lastCup != null)
@@ -46,7 +43,7 @@ public class Dag23 : Problem
         {
             var newCup = new Cup
             {
-                Number = i, 
+                Number = i,
                 //Previous = lastCup
             };
             lastCup.Next = newCup;
@@ -64,7 +61,7 @@ public class Dag23 : Problem
         }
         sw.Stop();
         Console.WriteLine(sw.ElapsedMilliseconds);
-        Result = ((long) cupsByNumber[1].Next.Number * cupsByNumber[1].Next.Next.Number).ToString();
+        Result = ((long)cupsByNumber[1].Next.Number * cupsByNumber[1].Next.Next.Number).ToString();
 
 
         return Task.CompletedTask;

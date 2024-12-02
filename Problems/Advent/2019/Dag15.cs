@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2019;
@@ -94,13 +92,13 @@ public class Dag15 : Problem
         }
 
 
-        HashSet<(long,long)> visited = new HashSet<(long, long)>();
+        HashSet<(long, long)> visited = new HashSet<(long, long)>();
         int step = 0;
-        IList<(long,long)> current = new List<(long, long)>{targetLocation};
+        IList<(long, long)> current = new List<(long, long)> { targetLocation };
         long totalMap = map.Count(m => m.Value != 0);
         while (visited.Count < totalMap)
         {
-            IList<(long,long)> next = new List<(long, long)>();
+            IList<(long, long)> next = new List<(long, long)>();
             foreach (var currentLocation in current)
             {
                 var n = North(currentLocation);
@@ -133,7 +131,7 @@ public class Dag15 : Problem
             current = next;
         }
 
-        (long, long) North((long,long) l)
+        (long, long) North((long, long) l)
         {
             return (l.Item1, l.Item2 + 1);
         }

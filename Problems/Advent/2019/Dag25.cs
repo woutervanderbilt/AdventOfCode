@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2019;
 

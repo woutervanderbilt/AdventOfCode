@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -858,7 +855,7 @@ FBFFBFBLRL";
         {
             var row = Convert.ToInt32(bp.Substring(0, 7).Replace('B', '1').Replace('F', '0'), 2);
             var column = Convert.ToInt32(bp.Substring(7).Replace('R', '1').Replace('L', '0'), 2);
-            seats.Add(8*row+column);
+            seats.Add(8 * row + column);
         }
 
         seats.Sort();

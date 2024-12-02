@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2023;
@@ -23,16 +22,16 @@ internal class Dag11 : Problem
         IList<(int, int)> galaxies = new List<(int, int)>();
         HashSet<int> usedX = new HashSet<int>();
         HashSet<int> usedY = new HashSet<int>();
-        string input = await GetInputAsync();
+
         int y = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             int x = 0;
             foreach (var c in line)
             {
                 if (c == '#')
                 {
-                    galaxies.Add((x,y));
+                    galaxies.Add((x, y));
                     usedX.Add(x);
                     usedY.Add(y);
                 }
@@ -41,7 +40,7 @@ internal class Dag11 : Problem
 
             y++;
         }
-        
+
         Result = (ComputeTotalDistance(2), ComputeTotalDistance(1000000)).ToString();
 
         long ComputeTotalDistance(int expansion)

@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -10047,17 +10045,17 @@ public class Dag10 : Problem
             //counts[a] = counts[a - 1] + (a > 1 ? counts[a - 2] : 0) + (a > 2 ? counts[a - 3] : 0);
         }
         sw.Stop();
-        Console.WriteLine(sw.ElapsedMilliseconds+" ms");
+        Console.WriteLine(sw.ElapsedMilliseconds + " ms");
         Console.WriteLine((((double)sw.ElapsedTicks) / Stopwatch.Frequency) * 1000000000);
         Result = vLast.ToString();
         return Task.CompletedTask;
-            
+
 
 
         int ones = 0;
         int threes = 1;
         long current = 0;
-        foreach (var a in values.OrderBy(l=>l))
+        foreach (var a in values.OrderBy(l => l))
         {
             var d = a - current;
             if (d == 1)

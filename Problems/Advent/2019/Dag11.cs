@@ -36,7 +36,7 @@ public class Dag11 : Problem
         private int DirectionIndex { get; set; }
         private (int, int) Location { get; set; }
 
-        private IDictionary<(int,int), int> Painted { get; set; } = new Dictionary<(int, int), int>();
+        private IDictionary<(int, int), int> Painted { get; set; } = new Dictionary<(int, int), int>();
 
         public int NumberOfSquaresPainted => Painted.Count;
 

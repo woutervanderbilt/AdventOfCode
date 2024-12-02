@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2015;
@@ -116,7 +114,7 @@ internal class Dag18 : Problem
     {
         var grid = new bool[100, 100];
         int i = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             int j = 0;
             foreach (var c in line)
@@ -146,7 +144,7 @@ internal class Dag18 : Problem
                     {
                         for (int l = -1; l <= 1; l++)
                         {
-                            if ((l | k) == 0 || i + k < 0 || i + k == 100 || j + l < 0 || j + l == 100 || !grid[i+k, j+l])
+                            if ((l | k) == 0 || i + k < 0 || i + k == 100 || j + l < 0 || j + l == 100 || !grid[i + k, j + l])
                             {
                                 continue;
                             }

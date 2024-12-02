@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2017;
 
@@ -1434,7 +1432,7 @@ xufneyr (153)";
     public override Task ExecuteAsync()
     {
         IDictionary<string, Program> programs = new Dictionary<string, Program>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Split(' ');
             Program program = programs.ContainsKey(words[0]) ? programs[words[0]] : new Program();

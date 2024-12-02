@@ -1,10 +1,7 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2022;
 
@@ -27,13 +24,12 @@ internal class Dag22 : Problem
 
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         var grid = new Grid<char>();
         IList<(int, char)> instructions = new List<(int, char)>();
         {
             bool buildingGrid = true;
             int y = 0;
-            foreach (var line in input.Split(Environment.NewLine))
+            foreach (var line in Input.Split(Environment.NewLine))
             {
                 if (string.IsNullOrWhiteSpace(line))
                 {
@@ -84,7 +80,7 @@ internal class Dag22 : Problem
 
         IDictionary<int, (int, int)> xBoundaries = new Dictionary<int, (int, int)>();
         IDictionary<int, (int, int)> yBoundaries = new Dictionary<int, (int, int)>();
-            
+
         for (int x = minX; x <= maxX; x++)
         {
             if (x == 66)
@@ -98,7 +94,7 @@ internal class Dag22 : Problem
                 {
                     first = y;
                 }
-                else if(first.HasValue && grid[x,y] == ' ')
+                else if (first.HasValue && grid[x, y] == ' ')
                 {
                     xBoundaries[x] = (first.Value, y - 1);
                     break;
@@ -234,7 +230,7 @@ internal class Dag22 : Problem
         Result = (1000 * (-currentPosition.y + 1)
                   + 4 * (currentPosition.x + 1)
                   + DirectionValue(currentDirection)).ToString();
-            
+
 
         (GridMember<char> member, GridDirection direction) DetermineFold((int, int) from, GridDirection direction)
         {

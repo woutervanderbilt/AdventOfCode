@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2018;
@@ -46,7 +45,7 @@ Infection:
         IList<Group> infection = new List<Group>();
         var currentList = immuneSystem;
         var isImmune = true;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (line.StartsWith("Immune") || string.IsNullOrWhiteSpace(line))
             {
@@ -59,7 +58,7 @@ Infection:
                 continue;
             }
 
-            var words = line.Replace("(","").Split(' ').ToList();
+            var words = line.Replace("(", "").Split(' ').ToList();
             var group = new Group();
             group.IsImmuneGroup = isImmune;
             group.NumberOfUnits = int.Parse(words[0]);

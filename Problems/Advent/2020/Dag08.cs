@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -700,7 +697,7 @@ jmp +1";
         while (true)
         {
             index++;
-            var console = new GameConsole(input){IsRunning = true};
+            var console = new GameConsole(input) { IsRunning = true };
             if (console.Instructions[index].Operation == GameConsole.InstructionType.Nop)
             {
                 console.Instructions[index].Operation = GameConsole.InstructionType.Jmp;

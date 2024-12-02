@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2023;
@@ -19,17 +16,16 @@ zoneight234
 7pqrstsixteen";
     public override async Task ExecuteAsync()
     {
-        string input = await GetInputAsync();
         var digits = new List<string> { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
         var reverseDigits = digits.Select(d => new string(d.Reverse().ToArray())).ToList();
 
-        (long, long) result = (0,0);
-        foreach (var line in input.Split(Environment.NewLine))
+        (long, long) result = (0, 0);
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             result.Item1 += 10 * FirstDigit(line, false, false) + FirstDigit(line, true, false);
         }
 
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             result.Item2 += 10 * FirstDigit(line, false, true) + FirstDigit(line, true, true);
         }

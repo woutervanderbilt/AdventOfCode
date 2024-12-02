@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Algorithms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms;
 
 namespace Problems.Advent._2022;
 
@@ -12,11 +10,10 @@ internal class Dag11 : Problem
 {
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         Monkey currentMonkey = null;
         IList<Monkey> monkeys = new List<Monkey>();
 
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (line.StartsWith("Monkey"))
             {
@@ -39,7 +36,7 @@ internal class Dag11 : Problem
                         }
                     }
                 }
-                else if(words.Any(w => w == "Operation:"))
+                else if (words.Any(w => w == "Operation:"))
                 {
                     currentMonkey.Operation = currentMonkey.Number switch
                     {

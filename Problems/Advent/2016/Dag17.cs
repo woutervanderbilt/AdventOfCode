@@ -15,8 +15,8 @@ public class Dag17 : Problem
     {
         var provider = new MD5CryptoServiceProvider();
         IDictionary<(int, int), IList<string>> paths = EmptyDictionary();
-        paths[(1,1)].Add("");
-        var open = new List<char> {'b', 'c', 'd', 'e', 'f'};
+        paths[(1, 1)].Add("");
+        var open = new List<char> { 'b', 'c', 'd', 'e', 'f' };
         while (true)
         {
             var next = EmptyDictionary();
@@ -24,7 +24,7 @@ public class Dag17 : Problem
             {
                 for (int j = 1; j <= 4; j++)
                 {
-                    foreach (var path in paths[(i,j)])
+                    foreach (var path in paths[(i, j)])
                     {
                         var hash = provider.ComputeHash(ASCIIEncoding.ASCII.GetBytes(input + path));
                         var hexhash = ByteArrayToString(hash);
@@ -36,7 +36,7 @@ public class Dag17 : Problem
                                 {
                                     if (i > 1)
                                     {
-                                        next[(i-1,j)].Add(path + "U");
+                                        next[(i - 1, j)].Add(path + "U");
                                     }
                                 }
                                 else if (k == 1)
@@ -69,8 +69,8 @@ public class Dag17 : Problem
             paths = next;
             if (paths[(4, 4)].Any())
             {
-                Console.WriteLine(paths[(4,4)].FirstOrDefault().Length);
-                paths[(4,4)].Clear();
+                Console.WriteLine(paths[(4, 4)].FirstOrDefault().Length);
+                paths[(4, 4)].Clear();
             }
         }
 

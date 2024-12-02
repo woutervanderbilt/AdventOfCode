@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Problems.Advent._2020;
 
@@ -20,7 +19,7 @@ public class GameConsole
                 _ => throw new Exception("Onbekende instructie")
             };
             var argument = int.Parse(split[1].Substring(1)) * (split[1][0] == '-' ? -1 : 1);
-            Instructions.Add(new Instruction{Operation = type, Argument = argument});
+            Instructions.Add(new Instruction { Operation = type, Argument = argument });
         }
     }
 
@@ -45,7 +44,7 @@ public class GameConsole
         {
             Jmp(instruction.Argument);
         }
-        else if(instruction.Operation == InstructionType.Nop)
+        else if (instruction.Operation == InstructionType.Nop)
         {
             Nop(instruction.Argument);
         }

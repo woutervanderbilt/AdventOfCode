@@ -19,7 +19,7 @@ internal class Dag16 : Problem
         }
 
         var binaryInput = binaryInputBuilder.ToString();
-            
+
         var packet = new Packet(binaryInput);
 
         Result = $"{packet.VersionSum()} {packet.Value()}";
@@ -65,7 +65,7 @@ internal class Dag16 : Problem
                     int totalSubPacketLength = 0;
                     while (totalSubPacketLength < SubPacketLength)
                     {
-                        var subPacket = new Packet(binary.Substring(22+totalSubPacketLength));
+                        var subPacket = new Packet(binary.Substring(22 + totalSubPacketLength));
                         totalSubPacketLength += subPacket.Length;
                         SubPackets.Add(subPacket);
                     }

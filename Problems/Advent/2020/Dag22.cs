@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -116,7 +114,7 @@ Player 2:
     private class Game
     {
         public LinkedList<int> Player1 { get; set; } = new LinkedList<int>();
-        public LinkedList<int> Player2 { get; set;  } = new LinkedList<int>();
+        public LinkedList<int> Player2 { get; set; } = new LinkedList<int>();
 
         public bool Player1Won { get; set; }
 

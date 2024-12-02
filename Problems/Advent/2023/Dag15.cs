@@ -1,10 +1,6 @@
-﻿using System;
+﻿using Algorithms.Extensions;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2023;
 
@@ -19,8 +15,8 @@ internal class Dag15 : Problem
         {
             boxes[i] = new List<(string, int)>();
         }
-        string input = await GetInputAsync();
-        foreach (var line in input.Split(','))
+
+        foreach (var line in Input.Split(','))
         {
             List<(string, int)> box = null;
             string label = line.Split('=')[0].Split('-')[0];

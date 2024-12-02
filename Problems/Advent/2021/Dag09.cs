@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2021;
 
@@ -120,7 +119,7 @@ internal class Dag09 : Problem
     public override Task ExecuteAsync()
     {
         IList<IList<int>> heightMap = new List<IList<int>>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             heightMap.Add(line.Select(c => int.Parse(c.ToString())).ToList());
         }
@@ -147,7 +146,7 @@ internal class Dag09 : Problem
                             {
                                 if (heightMap[l.Item1 - 1][l.Item2] < 9)
                                 {
-                                    if(basin.Add((l.Item1 - 1, l.Item2)))
+                                    if (basin.Add((l.Item1 - 1, l.Item2)))
                                     {
                                         newLastAdded.Add((l.Item1 - 1, l.Item2));
                                     }
@@ -157,7 +156,7 @@ internal class Dag09 : Problem
                             {
                                 if (heightMap[l.Item1 + 1][l.Item2] < 9)
                                 {
-                                    if(basin.Add((l.Item1 + 1, l.Item2)))
+                                    if (basin.Add((l.Item1 + 1, l.Item2)))
                                     {
                                         newLastAdded.Add((l.Item1 + 1, l.Item2));
                                     }
@@ -177,7 +176,7 @@ internal class Dag09 : Problem
                             {
                                 if (heightMap[l.Item1][l.Item2 + 1] < 9)
                                 {
-                                    if(basin.Add((l.Item1, l.Item2 + 1)))
+                                    if (basin.Add((l.Item1, l.Item2 + 1)))
                                     {
                                         newLastAdded.Add((l.Item1, l.Item2 + 1));
                                     }
@@ -190,7 +189,7 @@ internal class Dag09 : Problem
 
                     basins.Add(basin.Count);
                 }
-                    
+
                 bool IsLowPoint()
                 {
                     if (i > 0 && value >= heightMap[i - 1][j])

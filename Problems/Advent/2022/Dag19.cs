@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -13,9 +12,8 @@ internal class Dag19 : Problem
 Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian.";
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         IList<Factory> factories = new List<Factory>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var factory = new Factory();
             var words = line.Split();
@@ -118,27 +116,27 @@ Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsid
         public State BuyOreRobot(long cost)
         {
             Ore -= cost;
-            OreRobots ++;
+            OreRobots++;
             return this;
         }
-        public State BuyClayRobot( long cost)
+        public State BuyClayRobot(long cost)
         {
             Ore -= cost;
-            ClayRobots ++;
+            ClayRobots++;
             return this;
         }
         public State BuyObsidianRobot(long oreCost, long clayCost)
         {
             Ore -= oreCost;
             Clay -= clayCost;
-            ObsidianRobots ++;
+            ObsidianRobots++;
             return this;
         }
 
         public State BuyGeodeRobot(long oreCost, long obsidianCost)
         {
             Ore -= oreCost;
-            Obsidian -=obsidianCost;
+            Obsidian -= obsidianCost;
             GeodeRobots++;
             return this;
         }
@@ -174,7 +172,7 @@ Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsid
     {
         public long Id { get; set; }
         public long OreCost { get; set; }
-        public long ClayCost { get; set; } 
+        public long ClayCost { get; set; }
         public (long, long) ObsidianCost { get; set; }
         public (long, long) GeodeCost { get; set; }
 
@@ -185,7 +183,7 @@ Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsid
                 yield return state.Copy().BuyGeodeRobot(GeodeCost.Item1, GeodeCost.Item2);
                 yield break;
             }
-            if (!state.SkippedOre && state.Ore >= OreCost 
+            if (!state.SkippedOre && state.Ore >= OreCost
                                   && (state.OreRobots < ClayCost || state.OreRobots < ObsidianCost.Item1 || state.OreRobots < GeodeCost.Item1))
             {
                 yield return state.Copy().BuyOreRobot(OreCost);

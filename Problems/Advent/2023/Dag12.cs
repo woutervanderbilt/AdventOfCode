@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2023;
@@ -18,9 +17,9 @@ internal class Dag12 : Problem
 
     public override async Task ExecuteAsync()
     {
-        string input = await GetInputAsync();
+
         IList<SpringSet> springSets = new List<SpringSet>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var split = line.Split(' ');
             springSets.Add(new SpringSet
@@ -40,7 +39,7 @@ internal class Dag12 : Problem
     private class SpringSet
     {
         public static IDictionary<SpringSet, long> cache = new Dictionary<SpringSet, long>();
-  
+
         public string Layout { get; set; }
         public IList<int> Springs { get; set; }
 
@@ -93,7 +92,7 @@ internal class Dag12 : Problem
                     {
                         continue;
                     }
-                    var leftLayout = Layout.Substring(0, Math.Max(0,index - 1));
+                    var leftLayout = Layout.Substring(0, Math.Max(0, index - 1));
                     var rightLayout = index + middleSpring >= Layout.Length ? String.Empty : Layout.Substring(index + middleSpring + 1);
 
                     if (leftLayout.Length < rightLayout.Length)

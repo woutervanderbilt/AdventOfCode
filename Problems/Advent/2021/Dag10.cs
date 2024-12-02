@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2021;
@@ -113,7 +111,7 @@ internal class Dag10 : Problem
     {
         long score = 0;
         IList<long> scores = new List<long>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             Stack<char> stack = new Stack<char>();
             bool correct = true;
@@ -170,7 +168,7 @@ internal class Dag10 : Problem
                 while (stack.TryPop(out var c))
                 {
                     linescore *= 5;
-                    if(c == '(')
+                    if (c == '(')
                     {
                         linescore++;
                     }

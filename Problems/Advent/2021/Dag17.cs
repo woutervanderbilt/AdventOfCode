@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2021;
 
 internal class Dag17 : Problem
 {
-    private readonly (int x, int y) MinTarget = (240,-90);
+    private readonly (int x, int y) MinTarget = (240, -90);
     private readonly (int x, int y) MaxTarget = (292, -57);
     public override Task ExecuteAsync()
     {
         long highest = 0;
-        var test = Try(6,9);
+        var test = Try(6, 9);
         int count = 0;
 
         for (int vx = 1; vx <= 400; vx++)

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2021;
@@ -708,7 +707,7 @@ internal class Dag04 : Problem
                 {
                     if (Values[i, j] == value)
                     {
-                        Hit[i,j] = true;
+                        Hit[i, j] = true;
                         if (FullRow(i) || FullColumn(j))
                         {
                             Complete = true;

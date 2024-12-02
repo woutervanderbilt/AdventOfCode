@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2018;
 
@@ -32,7 +30,7 @@ internal class Dag22 : Problem
                 }
                 else
                 {
-                    erosionLevels[x, y] = (erosionLevels[x-1,y] * erosionLevels[x,y-1] + depth) % mod;
+                    erosionLevels[x, y] = (erosionLevels[x - 1, y] * erosionLevels[x, y - 1] + depth) % mod;
                 }
             }
         }
@@ -45,7 +43,7 @@ internal class Dag22 : Problem
         regionTypes[target] = 0;
         IList<(int x, int y, int d)> lastSteps = new List<(int x, int y, int d)>();
         counter[(0, 0, 1)] = 0;
-        lastSteps.Add((0,0,1));
+        lastSteps.Add((0, 0, 1));
         int min = 0;
         var minAtTarget = int.MaxValue;
         while (min < minAtTarget)
@@ -114,7 +112,7 @@ internal class Dag22 : Problem
 
                     if (lastStep.y > 0)
                     {
-                        neighbourType = RegionType(lastStep.x, lastStep.y -1) % 3;
+                        neighbourType = RegionType(lastStep.x, lastStep.y - 1) % 3;
                         if (lastStep.d == 0 && neighbourType is 1 or 2
                             || lastStep.d == 1 && neighbourType is 0 or 2
                             || lastStep.d == 2 && neighbourType is 0 or 1)
@@ -122,7 +120,7 @@ internal class Dag22 : Problem
                             yield return ((lastStep.x, lastStep.y - 1, lastStep.d), 1);
                         }
                     }
-                        
+
                 }
 
             }
@@ -150,7 +148,7 @@ internal class Dag22 : Problem
             {
                 erosionLevel = (RegionType(x - 1, y) * RegionType(x, y - 1) + depth) % mod;
             }
-            regionTypes[(x,y)] = erosionLevel;
+            regionTypes[(x, y)] = erosionLevel;
             return erosionLevel;
         }
 

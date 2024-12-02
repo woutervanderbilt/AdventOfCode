@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using Algorithms.Extensions;
+using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2023;
 
@@ -24,11 +23,11 @@ L7JLJL-JLJLJL--JLJ.L";
 
     public override async Task ExecuteAsync()
     {
-        Console.OutputEncoding = Encoding.UTF8; 
+        Console.OutputEncoding = Encoding.UTF8;
         var grid = new Grid<char>();
-        string input = await GetInputAsync();
+
         int y = 0;
-        foreach (var line in input.Split(Environment.NewLine).Reverse())
+        foreach (var line in Input.Split(Environment.NewLine).Reverse())
         {
             int x = 0;
             foreach (char c in line)
@@ -83,7 +82,7 @@ L7JLJL-JLJLJL--JLJ.L";
                     AddMemberGroup((prev.Item1 + 1, loopMember.Item2), right);
                     AddMemberGroup((prev.Item1 - 1, loopMember.Item2), left);
                 }
-                else if(prev.Item2 == loopMember.Item2 - 1)
+                else if (prev.Item2 == loopMember.Item2 - 1)
                 {
                     AddMemberGroup((prev.Item1 + 1, prev.Item2), left);
                     AddMemberGroup((prev.Item1 - 1, prev.Item2), right);
@@ -121,7 +120,7 @@ L7JLJL-JLJLJL--JLJ.L";
             {
                 newgrid[m.Location.Item1, m.Location.Item2] = '.';
             }
-            else if(loop.Contains(m.Location))
+            else if (loop.Contains(m.Location))
             {
                 newgrid[m.Location.Item1, m.Location.Item2] = m.Value switch
                 {

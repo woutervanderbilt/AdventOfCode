@@ -174,7 +174,7 @@ rotate based on position of letter d finds the index of letter d (4), then rotat
                     var sb = new StringBuilder(pass.Substring(rotate)).Append(pass.Substring(0, rotate));
                     return sb.ToString();
                 }
-                else if(instruction.StartsWith("rotate right"))
+                else if (instruction.StartsWith("rotate right"))
                 {
                     int rotate = int.Parse(words[2]);
                     if (reverse)
@@ -189,7 +189,7 @@ rotate based on position of letter d finds the index of letter d (4), then rotat
                     int rotate = pass.IndexOf(words[6].First());
                     if (reverse)
                     {
-                        rotate = new List<int> {1,1,6,2,7,3,0,4}[rotate];
+                        rotate = new List<int> { 1, 1, 6, 2, 7, 3, 0, 4 }[rotate];
                         var sb2 = new StringBuilder(pass.Substring(rotate)).Append(pass.Substring(0, rotate));
                         return sb2.ToString();
                     }

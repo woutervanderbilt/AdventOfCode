@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2021;
@@ -1010,7 +1008,7 @@ forward 5";
     public override Task ExecuteAsync()
     {
         var (h, d, a) = (0, 0, 0);
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Split(' ');
             var distance = int.Parse(words[1]);

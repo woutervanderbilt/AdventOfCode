@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Algorithms;
+﻿using Algorithms;
 using Algorithms.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Problems.Advent._2017;
 

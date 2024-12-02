@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -157,7 +156,7 @@ rotate column x=1 by 5";
     public override Task ExecuteAsync()
     {
         var display = new Display();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (line.StartsWith("rect"))
             {

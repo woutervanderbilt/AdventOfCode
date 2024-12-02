@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -609,7 +607,7 @@ mem[26] = 1";
     {
         IDictionary<int, bool> mask = new Dictionary<int, bool>();
         IDictionary<long, long> mem = new Dictionary<long, long>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var split = line.Split(" ");
             if (split[0] == "mask")
@@ -634,7 +632,7 @@ mem[26] = 1";
             {
                 var location = long.Parse(new Regex(@"(?<=\[)\d*(?=\])").Match(split[0]).Value);
                 var value = long.Parse(split[2]);
-                IList<long> locations = new List<long>{0};
+                IList<long> locations = new List<long> { 0 };
                 long power = 1;
                 for (int i = 0; i < 36; i++)
                 {

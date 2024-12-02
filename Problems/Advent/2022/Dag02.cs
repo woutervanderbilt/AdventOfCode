@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -10,9 +7,8 @@ internal class Dag02 : Problem
 {
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         int score = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             //score += line switch
             //{

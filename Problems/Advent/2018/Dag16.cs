@@ -4094,12 +4094,12 @@ After:  [0, 2, 2, 2]
 
 
         int total = 0;
-        var regelEnumerator = ((IEnumerable<string>)input.Split(new[] {Environment.NewLine}, StringSplitOptions.None)).GetEnumerator();
+        var regelEnumerator = ((IEnumerable<string>)input.Split(new[] { Environment.NewLine }, StringSplitOptions.None)).GetEnumerator();
         regelEnumerator.MoveNext();
         while (regelEnumerator.Current.StartsWith("Before"))
         {
             string c = regelEnumerator.Current;
-            int[] register = {int.Parse(c.Substring(9,1)), int.Parse(c.Substring(12, 1)), int.Parse(c.Substring(15, 1)), int.Parse(c.Substring(18, 1)) };
+            int[] register = { int.Parse(c.Substring(9, 1)), int.Parse(c.Substring(12, 1)), int.Parse(c.Substring(15, 1)), int.Parse(c.Substring(18, 1)) };
             regelEnumerator.MoveNext();
             c = regelEnumerator.Current;
             int[] instructions = c.Split(' ').Select(int.Parse).ToArray();
@@ -4134,12 +4134,12 @@ After:  [0, 2, 2, 2]
         }
 
         IDictionary<int, string> opCodes = SolveOpcodes(possibleValues, new Dictionary<int, string>());
-        var currentRegister = new int[]{0, 0, 0, 0};
+        var currentRegister = new int[] { 0, 0, 0, 0 };
         foreach (var instructionSet in instructionSets)
         {
             currentRegister = ExecuteInstructions(currentRegister, instructionSet, opCodes[instructionSet[0]]);
         }
-        Result = total.ToString()+" "+currentRegister[0];
+        Result = total.ToString() + " " + currentRegister[0];
         return Task.CompletedTask;
     }
 

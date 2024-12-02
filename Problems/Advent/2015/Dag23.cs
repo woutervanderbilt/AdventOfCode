@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2015;
@@ -57,7 +56,7 @@ jmp -7";
 
     public override Task ExecuteAsync()
     {
-        var instructions = input.Split(Environment.NewLine).Select(l => l.Replace(",","").Split(' ')).ToList();
+        var instructions = input.Split(Environment.NewLine).Select(l => l.Replace(",", "").Split(' ')).ToList();
         IDictionary<string, long> registers = new Dictionary<string, long>();
         registers["a"] = 1;
         registers["b"] = 0;

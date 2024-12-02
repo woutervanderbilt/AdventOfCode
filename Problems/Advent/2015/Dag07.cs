@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2015;
@@ -352,7 +351,7 @@ he RSHIFT 5 -> hh";
     {
         IDictionary<string, int> signals = new Dictionary<string, int>();
         IDictionary<string, IList<Instruction>> instructions = new Dictionary<string, IList<Instruction>>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var split = line.Split(' ');
             var instruction = new Instruction();

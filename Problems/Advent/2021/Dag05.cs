@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Algorithms.Models;
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2021;
 
@@ -524,7 +522,7 @@ internal class Dag05 : Problem
     public override Task ExecuteAsync()
     {
         var lines = input.Split(Environment.NewLine);
-        Counter<(int, int)> counter = new Counter<(int, int)>(); 
+        Counter<(int, int)> counter = new Counter<(int, int)>();
         foreach (var line in lines)
         {
             var words = line.Split(' ');
@@ -554,7 +552,7 @@ internal class Dag05 : Problem
                 var dy = fromY < toY ? 1 : -1;
                 for (int i = 0; i <= Math.Abs(fromX - toX); i++)
                 {
-                    counter[(x,y)]++;
+                    counter[(x, y)]++;
                     x += dx;
                     y += dy;
                 }

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using Algorithms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms;
-using Algorithms.Models;
 
 namespace Problems.Advent._2019;
 
@@ -73,9 +70,9 @@ public class Dag10 : Problem
     {
         IDictionary<(int, int), Asteroid> asteroids = new Dictionary<(int, int), Asteroid>();
         int y = 0;
-        foreach (var line in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+        foreach (var line in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
         {
-            for(int x = 0; x<line.Length; x++)
+            for (int x = 0; x < line.Length; x++)
             {
                 if (line[x] == '#')
                 {
@@ -91,7 +88,7 @@ public class Dag10 : Problem
         {
             foreach (var asteroid2 in asteroids.Values)
             {
-                if(asteroid.X > asteroid2.X || (asteroid.X == asteroid2.X && asteroid.Y >= asteroid2.Y))
+                if (asteroid.X > asteroid2.X || (asteroid.X == asteroid2.X && asteroid.Y >= asteroid2.Y))
                 {
                     continue;
                 }
@@ -116,7 +113,7 @@ public class Dag10 : Problem
                     currentX += stepX;
                     currentY += stepY;
                 }
-                if(inSight)
+                if (inSight)
                 {
                     asteroid.InSight.Add(asteroid2);
                     asteroid2.InSight.Add(asteroid);
@@ -128,7 +125,7 @@ public class Dag10 : Problem
         IList<Asteroid> x0yn = new List<Asteroid>();
         IList<Asteroid> xpy0 = new List<Asteroid>();
         IList<Asteroid> xny0 = new List<Asteroid>();
-        Dictionary<(int, int),IList<Asteroid>> xpyp = new Dictionary<(int, int), IList<Asteroid>>();
+        Dictionary<(int, int), IList<Asteroid>> xpyp = new Dictionary<(int, int), IList<Asteroid>>();
         Dictionary<(int, int), IList<Asteroid>> xpyn = new Dictionary<(int, int), IList<Asteroid>>();
         Dictionary<(int, int), IList<Asteroid>> xnyn = new Dictionary<(int, int), IList<Asteroid>>();
         Dictionary<(int, int), IList<Asteroid>> xnyp = new Dictionary<(int, int), IList<Asteroid>>();
@@ -156,7 +153,7 @@ public class Dag10 : Problem
                     x0yn.Add(asteroid);
                 }
             }
-            else if(dx > 0)
+            else if (dx > 0)
             {
                 if (dy == 0)
                 {
@@ -166,9 +163,9 @@ public class Dag10 : Problem
                 {
                     if (!xpyp.ContainsKey((sx, sy)))
                     {
-                        xpyp[(sx,sy)] = new List<Asteroid>();
+                        xpyp[(sx, sy)] = new List<Asteroid>();
                     }
-                    xpyp[(sx,sy)].Add(asteroid);
+                    xpyp[(sx, sy)].Add(asteroid);
                 }
                 else
                 {
@@ -203,22 +200,22 @@ public class Dag10 : Problem
                 }
             }
         }
-        var ray1 = new Ray(x0yp.OrderBy(a => a.DistanceTo(chosenStation)).ToList(),0);
+        var ray1 = new Ray(x0yp.OrderBy(a => a.DistanceTo(chosenStation)).ToList(), 0);
 
-        IList<Ray> rays2 = xpyp.OrderBy(r => (double) r.Key.Item1 / r.Key.Item2)
+        IList<Ray> rays2 = xpyp.OrderBy(r => (double)r.Key.Item1 / r.Key.Item2)
             .Select(r => new Ray(r.Value.OrderBy(a => a.DistanceTo(chosenStation)).ToList(), (double)r.Key.Item1 / r.Key.Item2)).ToList();
 
-        var ray3 = new Ray(xpy0.OrderBy(a => a.DistanceTo(chosenStation)).ToList(),0);
+        var ray3 = new Ray(xpy0.OrderBy(a => a.DistanceTo(chosenStation)).ToList(), 0);
 
         IList<Ray> rays4 = xpyn.OrderByDescending(r => (double)r.Key.Item1 / r.Key.Item2)
             .Select(r => new Ray(r.Value.OrderBy(a => a.DistanceTo(chosenStation)).ToList(), (double)r.Key.Item1 / r.Key.Item2)).ToList();
 
-        var ray5 = new Ray(x0yn.OrderBy(a => a.DistanceTo(chosenStation)).ToList(),0);
+        var ray5 = new Ray(x0yn.OrderBy(a => a.DistanceTo(chosenStation)).ToList(), 0);
 
         IList<Ray> rays6 = xnyn.OrderBy(r => (double)r.Key.Item1 / r.Key.Item2)
             .Select(r => new Ray(r.Value.OrderBy(a => a.DistanceTo(chosenStation)).ToList(), (double)r.Key.Item1 / r.Key.Item2)).ToList();
 
-        var ray7 = new Ray(xny0.OrderBy(a => a.DistanceTo(chosenStation)).ToList(),0);
+        var ray7 = new Ray(xny0.OrderBy(a => a.DistanceTo(chosenStation)).ToList(), 0);
 
         IList<Ray> rays8 = xnyp.OrderByDescending(r => (double)r.Key.Item1 / r.Key.Item2)
             .Select(r => new Ray(r.Value.OrderBy(a => a.DistanceTo(chosenStation)).ToList(), (double)r.Key.Item1 / r.Key.Item2)).ToList();
@@ -257,12 +254,12 @@ public class Dag10 : Problem
         for (int i = 1; i <= 200; i++)
         {
             currentAsteroid = currentRay.GetNextAsteroid();
-            Console.WriteLine(i+" "+100*currentAsteroid.X + currentAsteroid.Y);
+            Console.WriteLine(i + " " + 100 * currentAsteroid.X + currentAsteroid.Y);
             currentRay = currentRay.NextRay;
         }
 
 
-        Result = chosenStation.InSight.Count.ToString() +" " + (100*currentAsteroid.X + currentAsteroid.Y);
+        Result = chosenStation.InSight.Count.ToString() + " " + (100 * currentAsteroid.X + currentAsteroid.Y);
         return Task.CompletedTask;
     }
 

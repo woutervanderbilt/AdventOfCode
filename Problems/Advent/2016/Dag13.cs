@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Problems.Advent;
@@ -14,7 +12,7 @@ public class Dag13 : Problem
         HashSet<(int, int)> visited = new HashSet<(int, int)>();
         IList<(int, int)> current = new List<(int, int)>();
         visited.Add((1, 1));
-        current.Add((1,1));
+        current.Add((1, 1));
         int step = 0;
         bool found = false;
         while (step < 50)

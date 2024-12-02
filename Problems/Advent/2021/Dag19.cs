@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2021;
@@ -1183,7 +1182,7 @@ internal class Dag19 : Problem
         {
             IList<Scanner> list = new List<Scanner>();
             Scanner scanner = null;
-            foreach (var line in input.Split(Environment.NewLine))
+            foreach (var line in Input.Split(Environment.NewLine))
             {
                 if (string.IsNullOrWhiteSpace(line))
                 {
@@ -1360,10 +1359,10 @@ internal class Dag19 : Problem
                         6 => (-beacon.x, -beacon.z, -beacon.y),
                         7 => (-beacon.x, -beacon.y, beacon.z),
                         8 => (-beacon.y, beacon.x, beacon.z),
-                        9 => (beacon.z, beacon.x,beacon.y),
+                        9 => (beacon.z, beacon.x, beacon.y),
                         10 => (beacon.y, beacon.x, -beacon.z),
                         11 => (-beacon.z, beacon.x, -beacon.y),
-                        12 => (-beacon.z ,-beacon.x, beacon.y),
+                        12 => (-beacon.z, -beacon.x, beacon.y),
                         13 => (beacon.y, -beacon.x, beacon.z),
                         14 => (beacon.z, -beacon.x, -beacon.y),
                         15 => (-beacon.y, -beacon.x, -beacon.z),

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Algorithms.Models;
+using System;
 using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2021;
 
@@ -292,7 +291,7 @@ add z y";
                                                 b = register[words[2]];
                                             }
                                         }
-                                            
+
                                         switch (words[0])
                                         {
                                             case "inp":
@@ -391,7 +390,7 @@ add z y";
                 }
             }
         }
-            
+
         return Task.CompletedTask;
     }
 

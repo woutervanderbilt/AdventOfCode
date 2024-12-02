@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2021;
 
@@ -125,7 +124,7 @@ internal class Dag15 : Problem
         var risks = new Grid<int>();
         {
             int y = 0;
-            foreach (var line in input.Split(Environment.NewLine))
+            foreach (var line in Input.Split(Environment.NewLine))
             {
                 var x = 0;
                 foreach (var c in line)
@@ -157,7 +156,7 @@ internal class Dag15 : Problem
                         {
                             value = 1;
                         }
-                        risks[x1,y1] = value;
+                        risks[x1, y1] = value;
                     }
                 }
             }
@@ -170,7 +169,7 @@ internal class Dag15 : Problem
             new List<(int, int)> { (risks.MaxX, risks.MaxY) }, false).cost.ToString();
         IList<(int x, int y)> lastSteps = new List<(int x, int y)>();
         minRisks[(0, 0)] = 0;
-        lastSteps.Add((0,0));
+        lastSteps.Add((0, 0));
         while (lastSteps.Any())
         {
             var loop = lastSteps.ToList();
@@ -181,12 +180,12 @@ internal class Dag15 : Problem
                 foreach (var neighbour in risks.Neighbours(step, false))
                 {
                     var totalRisk = risk + risks[neighbour.X, neighbour.Y];
-                    if(!minRisks.ContainsKey((neighbour.X, neighbour.Y)))
+                    if (!minRisks.ContainsKey((neighbour.X, neighbour.Y)))
                     {
                         minRisks[(neighbour.X, neighbour.Y)] = totalRisk;
                         lastSteps.Add((neighbour.X, neighbour.Y));
                     }
-                    else if(minRisks[(neighbour.X, neighbour.Y)] > totalRisk)
+                    else if (minRisks[(neighbour.X, neighbour.Y)] > totalRisk)
                     {
                         minRisks[(neighbour.X, neighbour.Y)] = totalRisk;
                         lastSteps.Add((neighbour.X, neighbour.Y));

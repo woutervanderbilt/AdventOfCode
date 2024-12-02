@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2015;
@@ -16,7 +14,7 @@ Sugar: capacity -1, durability 0, flavor 0, texture 2, calories 8";
     {
         var ingredients = input.Split(Environment.NewLine).Select(l =>
         {
-            var words = l.Replace(",","").Split(' ');
+            var words = l.Replace(",", "").Split(' ');
             return (long.Parse(words[2]), long.Parse(words[4]), long.Parse(words[6]), long.Parse(words[8]),
                 long.Parse(words[10]));
         }).ToList();

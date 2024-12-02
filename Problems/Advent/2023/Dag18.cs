@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2023;
 
@@ -13,8 +11,8 @@ internal class Dag18 : Problem
     public override async Task ExecuteAsync()
     {
         var instructions = new List<Instruction>();
-        string input = await GetInputAsync();
-        foreach (var line in input.Split(Environment.NewLine))
+
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var split = line.Split(' ');
             instructions.Add(new Instruction(split[0], long.Parse(split[1]), split[2]));
@@ -22,7 +20,7 @@ internal class Dag18 : Problem
 
         long x = 0;
         long y = 0;
-        IList<(long, long)> vertices = new List<(long, long)>{(x,y)};
+        IList<(long, long)> vertices = new List<(long, long)> { (x, y) };
         long edge2 = 0;
         foreach (var instruction in instructions)
         {
@@ -42,7 +40,7 @@ internal class Dag18 : Problem
                 "U" => (x, y - length),
                 "L" => (x - length, y)
             };
-            vertices.Add((x,y));
+            vertices.Add((x, y));
         }
 
         long result = edge2 / 2 + 1 + vertices.ConsecutivePairs().Sum(v => v.Item1.Item2 * (v.Item1.Item1 - v.Item2.Item1));

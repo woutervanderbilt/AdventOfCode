@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -280,7 +277,7 @@ nearby tickets:
         IList<int> myTicket = new List<int>();
         IList<IList<int>> nearbyTickets = new List<IList<int>>();
         int blaat = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (blaat == 0)
             {

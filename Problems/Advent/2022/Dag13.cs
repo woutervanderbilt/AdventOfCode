@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -11,10 +9,9 @@ internal class Dag13 : Problem
 {
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         IList<(string, string)> pairs = new List<(string, string)>();
         string? left = null;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (string.IsNullOrWhiteSpace(line))
             {
@@ -42,7 +39,7 @@ internal class Dag13 : Problem
             }
         }
 
-        List<ListData> list = input.Split(Environment.NewLine).Where(l => !string.IsNullOrWhiteSpace(l))
+        List<ListData> list = Input.Split(Environment.NewLine).Where(l => !string.IsNullOrWhiteSpace(l))
             .Select(Parse)
             .ToList();
         list.Add(Parse("[[2]]"));
@@ -119,13 +116,13 @@ internal class Dag13 : Problem
                 {
                     stack.Push(currentList);
                 }
-                currentList = new ListData{IsList = true};
+                currentList = new ListData { IsList = true };
             }
             else if (c == ']')
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    currentList.Values.Add(new ListData{IsList = false, Value = int.Parse(value)});
+                    currentList.Values.Add(new ListData { IsList = false, Value = int.Parse(value) });
                     value = "";
                 }
                 if (stack.Any())
@@ -144,7 +141,7 @@ internal class Dag13 : Problem
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    currentList.Values.Add(new ListData{IsList = false, Value = int.Parse(value)});
+                    currentList.Values.Add(new ListData { IsList = false, Value = int.Parse(value) });
                     value = "";
                 }
             }
@@ -164,7 +161,7 @@ internal class Dag13 : Problem
     private class ListData : IComparable<ListData>
     {
         public IList<ListData> Values { get; set; } = new List<ListData>();
-        public int? Value { get; set;  }
+        public int? Value { get; set; }
         public bool IsList { get; set; }
         public string s { get; set; }
 

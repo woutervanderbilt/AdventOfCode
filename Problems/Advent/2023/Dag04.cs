@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2023;
 
@@ -17,12 +16,12 @@ Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
 Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
     public override async Task ExecuteAsync()
     {
-        string input = await GetInputAsync();
+
         long result = 0;
         CounterLong<int> counter = new CounterLong<int>();
         IList<long> wins = new List<long>();
         IList<long> numberOfCopys = new List<long>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var split = line.Split(':');
             var values = split[1].Split('|');

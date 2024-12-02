@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2017;
 
@@ -41,7 +40,7 @@ internal class Dag22 : Problem
     {
         var grid = new Grid<char>();
         int y = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             int x = 0;
             foreach (var c in line)

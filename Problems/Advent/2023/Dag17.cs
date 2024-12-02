@@ -1,10 +1,6 @@
-﻿using System;
+﻿using Algorithms.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2023;
 
@@ -26,8 +22,7 @@ internal class Dag17 : Problem
 
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
-        var grid = Grid<int>.FromInput(input, c => int.Parse(c.ToString()));
+        var grid = Grid<int>.FromInput(Input, c => int.Parse(c.ToString()));
         int maxX = grid.MaxX;
         int maxY = grid.MaxY;
         HashSet<Node> visitedNodes = new HashSet<Node>();

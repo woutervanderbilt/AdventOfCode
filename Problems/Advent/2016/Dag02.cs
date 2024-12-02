@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent;
@@ -103,7 +102,7 @@ LDULURUULLUDLDDRLLDURRULRLURLLURLRRLRDLDDRUURULLRUURUURRUDDDLRRLDDLULDURLLRDURDL
 
         var currentButton = buttons[4];
         Result = string.Empty;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             foreach (var instruction in line)
             {
@@ -113,7 +112,7 @@ LDULURUULLUDLDDRLLDURRULRLURLLURLRRLRDLDDRUURULLRUURUURRUDDDLRRLDDLULDURLLRDURDL
 
             Result += currentButton.Value;
         }
-            
+
         return Task.CompletedTask;
     }
 

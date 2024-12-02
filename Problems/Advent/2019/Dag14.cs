@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2019;
 
@@ -92,9 +90,9 @@ public class Dag14 : Problem
     {
         IDictionary<string, Resource> costs = new Dictionary<string, Resource>();
 
-        foreach (var line in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+        foreach (var line in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
         {
-            var split = line.Split(new[] {"=>"}, StringSplitOptions.None);
+            var split = line.Split(new[] { "=>" }, StringSplitOptions.None);
             var needed = split[0];
             var target = split[1];
             string targetName = new Regex("[A-Z]+").Match(target).Value;

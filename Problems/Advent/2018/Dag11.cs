@@ -8,7 +8,7 @@ public class Dag11 : Problem
 
     public override Task ExecuteAsync()
     {
-        int[,] cells = new int[300,300];
+        int[,] cells = new int[300, 300];
         for (int x = 1; x <= 300; x++)
         {
             for (int y = 1; y <= 300; y++)

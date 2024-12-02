@@ -1,10 +1,8 @@
+using Algorithms.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2020;
 
@@ -1042,7 +1040,7 @@ public class Dag09 : Problem
             }
 
             var first = list[index - 25];
-            for (int j = index-24; j < index; j++)
+            for (int j = index - 24; j < index; j++)
             {
                 var jth = list[j];
                 if (first != jth)

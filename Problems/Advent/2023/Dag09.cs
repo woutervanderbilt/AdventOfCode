@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2023;
@@ -11,10 +10,10 @@ internal class Dag09 : Problem
     public override async Task ExecuteAsync()
     {
         IList<IList<long>> oasis = new List<IList<long>>();
-        string input = await GetInputAsync();
-        foreach (var line in input.Split(Environment.NewLine))
+
+        foreach (var line in Input.Split(Environment.NewLine))
         {
-                oasis.Add(line.Split(' ').Select(long.Parse).ToList());
+            oasis.Add(line.Split(' ').Select(long.Parse).ToList());
         }
 
         long result = 0;
@@ -26,7 +25,7 @@ internal class Dag09 : Problem
             while (current.Any(c => c != 0))
             {
                 var newCurrent = new List<long>();
-                long? prev = null; 
+                long? prev = null;
                 foreach (var v in current)
                 {
                     if (prev.HasValue)
@@ -52,7 +51,7 @@ internal class Dag09 : Problem
             result2 += deltas[0][0];
         }
 
-       
+
 
         Result = (result, result2).ToString();
     }

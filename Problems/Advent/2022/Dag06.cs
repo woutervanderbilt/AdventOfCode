@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -10,11 +8,10 @@ internal class Dag06 : Problem
 {
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         int markerLength = 14;
         string buffer = "";
         int index = 1;
-        foreach (var c in input)
+        foreach (var c in Input)
         {
             buffer += c;
             if (buffer.Length > markerLength)

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2018;
@@ -42,7 +40,7 @@ addr 1 4 4
 seti 5 9 4";
     public override Task ExecuteAsync()
     {
-        long i1=0, i3=65536, i5 = 733884;
+        long i1 = 0, i3 = 65536, i5 = 733884;
         HashSet<long> results = new HashSet<long>();
         HashSet<(long, long)> states = new HashSet<(long, long)>();
         while (true)
@@ -72,7 +70,7 @@ seti 5 9 4";
         }
 
         Result = results.Last().ToString();
-           
+
 
         int r0 = 0;
         var device = new ElfDevice(input, 6);

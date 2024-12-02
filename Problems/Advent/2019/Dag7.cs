@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Algorithms.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2019;
 
@@ -19,7 +17,7 @@ public class Dag7 : Problem
         Result = Part2().ToString();
         return Task.CompletedTask;
         long max = 0;
-        foreach (var permutation in Enumerable.Range(0,5).Permutations().Select(p => p.ToList()))
+        foreach (var permutation in Enumerable.Range(0, 5).Permutations().Select(p => p.ToList()))
         {
             long input = 0;
             for (int i = 0; i < 5; i++)

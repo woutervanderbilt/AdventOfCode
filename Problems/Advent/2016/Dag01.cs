@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent;
@@ -16,7 +14,7 @@ class Dag01 : Problem
         int x = 0;
         int y = 0;
         int direction = 0;
-        HashSet<(int, int)> visited = new HashSet<(int, int)> {(0, 0)};
+        HashSet<(int, int)> visited = new HashSet<(int, int)> { (0, 0) };
         foreach (var s in input.Split(','))
         {
             var trimmed = s.Trim();
@@ -42,7 +40,7 @@ class Dag01 : Problem
                     }
                 }
             }
-            else if(direction == 1)
+            else if (direction == 1)
             {
                 for (int i = 1; i <= d; i++)
                 {

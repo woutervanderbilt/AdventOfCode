@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -26,9 +25,8 @@ Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3";
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         IDictionary<(int, int), (int, int)> sensors = new Dictionary<(int, int), (int, int)>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Split();
             var x = words[2].Replace(",", "").Substring(2);
@@ -37,7 +35,7 @@ Sensor at x=20, y=1: closest beacon is at x=15, y=3";
             var by = words[9].Replace(",", "").Substring(2);
             sensors[(int.Parse(x), int.Parse(y))] = (int.Parse(bx), int.Parse(by));
         }
-            
+
 
         int count = 0;
         int fixedY = 2000000;

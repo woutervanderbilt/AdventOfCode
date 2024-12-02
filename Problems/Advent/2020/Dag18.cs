@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -391,9 +388,9 @@ public class Dag18 : Problem
     public override Task ExecuteAsync()
     {
         long result = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
-            result += Compute(line.Replace(" ",""));
+            result += Compute(line.Replace(" ", ""));
         }
 
         Result = result.ToString();
@@ -451,7 +448,7 @@ public class Dag18 : Problem
 
     long Compute(string line)
     {
-        Stack<(long,char)> stack = new Stack<(long, char)>();
+        Stack<(long, char)> stack = new Stack<(long, char)>();
         long l = -1;
         long current = 0;
         char previous = ' ';
@@ -459,7 +456,7 @@ public class Dag18 : Problem
         line = TransformLine(line);
         foreach (var c in line)
         {
-            if(long.TryParse(c.ToString(), out l))
+            if (long.TryParse(c.ToString(), out l))
             {
                 if (start)
                 {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2017;
@@ -1012,7 +1011,7 @@ mx dec -934 if w == 4068";
     {
         IDictionary<string, long> register = new Dictionary<string, long>();
         long highest = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Split(' ');
             if (!register.ContainsKey(words[0]))

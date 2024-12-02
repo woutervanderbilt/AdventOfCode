@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent;
 
@@ -65,7 +64,7 @@ public class Dag24 : Problem
                 if (k >= 0)
                 {
                     visited.Add((j, k));
-                    current.Add((j,k));
+                    current.Add((j, k));
                     break;
                 }
             }
@@ -121,11 +120,11 @@ public class Dag24 : Problem
         }
 
         int min = int.MaxValue;
-        foreach (var permutation in new List<int>{1,2,3,4,5,6,7}.Permutations())
+        foreach (var permutation in new List<int> { 1, 2, 3, 4, 5, 6, 7 }.Permutations())
         {
             int start = 0;
             int total = 0;
-            foreach (var i in permutation.Union(new List<int>{0}))
+            foreach (var i in permutation.Union(new List<int> { 0 }))
             {
                 total += distances[(start, i)];
                 start = i;

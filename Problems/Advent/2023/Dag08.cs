@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms;
 
 namespace Problems.Advent._2023;
 
@@ -24,8 +23,8 @@ XXX = (XXX, XXX)";
     {
         var dict = new Dictionary<string, (string, string)>();
         string instructions = null;
-        string input = await GetInputAsync();
-        foreach (var line in input.Split(Environment.NewLine))
+
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (instructions == null)
             {
@@ -38,7 +37,7 @@ XXX = (XXX, XXX)";
                 continue;
             }
 
-            var split = line.Replace(" ","").Replace("(","").Replace(")","").Split('=');
+            var split = line.Replace(" ", "").Replace("(", "").Replace(")", "").Split('=');
             var dest = split[1].Split(',');
             dict[split[0]] = (dest[0], dest[1]);
         }

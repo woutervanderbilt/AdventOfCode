@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2019;
@@ -21,7 +19,7 @@ public class Dag4 : Problem
             int c = 10;
             while (p > 0)
             {
-                if(p%10 > c)
+                if (p % 10 > c)
                 {
                     return false;
                 }
@@ -38,7 +36,7 @@ public class Dag4 : Problem
                     }
                     sameCount = 0;
                 }
-                    
+
 
                 c = p % 10;
                 p /= 10;

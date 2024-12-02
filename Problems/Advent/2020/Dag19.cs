@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -608,7 +607,7 @@ bbabbbaabaaabbabaaabaabbbbabbbaabbbaababbaaaaabbaabbbbba";
         IList<string> messages = new List<string>();
         int ruleIndex = 0;
         bool parseRules = true;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (parseRules)
             {
@@ -619,7 +618,7 @@ bbabbbaabaaabbabaaabaabbbbabbbaabbbaababbaaaaabbaabbbbba";
                 }
                 var split = line.Split(":");
                 int number = int.Parse(split[0]);
-                var rule = new Rule{Number = number};
+                var rule = new Rule { Number = number };
                 rules[number] = rule;
                 if (split[1].StartsWith(" \""))
                 {
@@ -779,7 +778,7 @@ bbabbbaabaaabbabaaabaabbbbabbbaabbbaababbaaaaabbaabbbbba";
                 while (added)
                 {
                     added = false;
-                       
+
                     IList<string> newLoop = new List<string>();
                     foreach (var cachedMatch in loop)
                     {

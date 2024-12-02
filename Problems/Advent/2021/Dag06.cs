@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Algorithms.Models;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2021;
 
@@ -32,7 +29,7 @@ internal class Dag06 : Problem
         var vector = new Matrix(1, 9);
         foreach (var l in input.Split(',').Select(int.Parse))
         {
-            vector[0,l]++;
+            vector[0, l]++;
         }
 
         var result = vector.Times(power);

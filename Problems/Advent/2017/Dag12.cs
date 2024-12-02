@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2017;
@@ -2011,7 +2010,7 @@ internal class Dag12 : Problem
     public override Task ExecuteAsync()
     {
         IDictionary<int, HashSet<int>> connections = new Dictionary<int, HashSet<int>>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Replace(",", "").Split(' ');
             int left = int.Parse(words[0]);

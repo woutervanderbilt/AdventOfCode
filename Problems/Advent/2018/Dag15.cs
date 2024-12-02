@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2018;
 
@@ -127,7 +127,7 @@ public class Dag15 : Problem
         IDictionary<Coordinate, Location> map = new Dictionary<Coordinate, Location>();
         int rowNumber = 0;
         int creatureid = 1;
-        foreach (var row in input.Split(new[] {Environment.NewLine}, StringSplitOptions.None))
+        foreach (var row in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
         {
             int columnNumber = 0;
             foreach (var locationChar in row)
@@ -298,7 +298,7 @@ public class Dag15 : Problem
 
             if (Elves.All(e => e.IsAlive))
             {
-                Console.WriteLine(Elves.First().Strength+" "+BattleResult);
+                Console.WriteLine(Elves.First().Strength + " " + BattleResult);
             }
             //Console.WriteLine(this);
         }
@@ -333,9 +333,9 @@ public class Dag15 : Problem
                 return;
             }
             IDictionary<Coordinate, IList<Path>> paths = new Dictionary<Coordinate, IList<Path>>();
-            paths.Add(creature.Location.Coordinate, new List<Path>{new Path(creature.Location)});
+            paths.Add(creature.Location.Coordinate, new List<Path> { new Path(creature.Location) });
             IDictionary<Coordinate, IList<Path>> addedLocations = new Dictionary<Coordinate, IList<Path>>();
-            addedLocations.Add(creature.Location.Coordinate, new List<Path>{new Path(creature.Location)});
+            addedLocations.Add(creature.Location.Coordinate, new List<Path> { new Path(creature.Location) });
             Location target = null;
             while (target == null && addedLocations.Any())
             {
@@ -352,7 +352,7 @@ public class Dag15 : Problem
                                 var newPath = new Path(path, neighbour);
                                 if (!newAddedLocations.ContainsKey(neighbour.Coordinate))
                                 {
-                                    newAddedLocations.Add(neighbour.Coordinate, new List<Path>{newPath});
+                                    newAddedLocations.Add(neighbour.Coordinate, new List<Path> { newPath });
                                     if (targets.Contains(neighbour.Coordinate) &&
                                         (target == null || target.Coordinate > neighbour.Coordinate))
                                     {
@@ -361,7 +361,7 @@ public class Dag15 : Problem
                                 }
                                 else
                                 {
-                                    if(newAddedLocations[neighbour.Coordinate].All(p => p.FirstStep != newPath.FirstStep))
+                                    if (newAddedLocations[neighbour.Coordinate].All(p => p.FirstStep != newPath.FirstStep))
                                         newAddedLocations[neighbour.Coordinate].Add(newPath);
                                 }
                             }

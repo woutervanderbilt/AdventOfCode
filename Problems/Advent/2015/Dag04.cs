@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +16,7 @@ internal class Dag04 : Problem
         {
             n++;
             hash = ByteArrayToString(provider.ComputeHash(ASCIIEncoding.ASCII.GetBytes($"{input}{n}")));
-        } 
+        }
 
         Result = n.ToString();
         return Task.CompletedTask;

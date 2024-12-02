@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2017;
@@ -68,7 +67,7 @@ internal class Dag24 : Problem
     public override Task ExecuteAsync()
     {
         var components = input.Split(Environment.NewLine).Select(l => l.Split('/').Select(int.Parse).ToList()).ToList();
-            
+
         long length = 0;
         long strength = 0;
         Add(0, new HashSet<int>(), 0);

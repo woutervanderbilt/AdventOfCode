@@ -1146,7 +1146,7 @@ public class Dag4 : Problem
     public override Task ExecuteAsync()
     {
         IList<LogMelding> logMeldingen = new List<LogMelding>();
-        foreach (var melding in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+        foreach (var melding in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
         {
             var logMelding = new LogMelding();
             logMelding.Tijdstip = DateTime.ParseExact(melding.Substring(1, 16), "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
@@ -1172,7 +1172,7 @@ public class Dag4 : Problem
                 }
                 else
                 {
-                    guards[currentGuard] = new List<Tuple<int, int>> {sleepTime};
+                    guards[currentGuard] = new List<Tuple<int, int>> { sleepTime };
                 }
             }
             else if (logMelding.Melding.Contains("falls asleep"))
@@ -1189,7 +1189,7 @@ public class Dag4 : Problem
             LaziestMinute(kv1.Value).Item2 > LaziestMinute(kv2.Value).Item2 ? kv1 : kv2);
 
 
-        Result = (sleepiestGuard.Key * laziestMinute)+" "+LaziestMinute(guardWithLaziestMinute.Value).Item1 * guardWithLaziestMinute.Key;
+        Result = (sleepiestGuard.Key * laziestMinute) + " " + LaziestMinute(guardWithLaziestMinute.Value).Item1 * guardWithLaziestMinute.Key;
         return Task.CompletedTask;
     }
 

@@ -1,10 +1,7 @@
-﻿using System;
+﻿using Algorithms.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2022;
 
@@ -15,7 +12,6 @@ internal class Dag17 : Problem
 
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
 
         Grid<bool> chamber = new Grid<bool>();
         for (int x = 1; x <= 7; x++)
@@ -72,9 +68,9 @@ internal class Dag17 : Problem
             while (true)
             {
                 int prevPosition = position;
-                var wind = input[jetIndex];
+                var wind = Input[jetIndex];
                 jetIndex++;
-                if (jetIndex == input.Length)
+                if (jetIndex == Input.Length)
                 {
                     jetIndex = 0;
                 }
@@ -149,7 +145,7 @@ internal class Dag17 : Problem
         }
 
         Result = (heightToAdd + highestIndex).ToString();
-            
+
     }
 
     public override int Nummer => 202217;

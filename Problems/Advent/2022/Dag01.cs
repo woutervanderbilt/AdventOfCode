@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -11,13 +8,12 @@ internal class Dag01 : Problem
 
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         int elf1 = 0;
         int elf2 = 0;
         int elf3 = 0;
 
         int current = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (int.TryParse(line, out var calories))
             {

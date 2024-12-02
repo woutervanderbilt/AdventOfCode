@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent;
@@ -349,7 +348,7 @@ bot 71 gives low to bot 152 and high to bot 121";
             return false;
         }
         public void Give()
-        {}
+        { }
     }
 
     private class Bot : IGiveTo

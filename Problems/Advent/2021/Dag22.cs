@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2021;
@@ -494,7 +493,7 @@ off x=105..106,y=105..106,z=105..120";
     public override Task ExecuteAsync()
     {
         IList<Cube> cubes = new List<Cube>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Split(' ');
             var cube = new Cube();
@@ -656,7 +655,7 @@ off x=105..106,y=105..106,z=105..120";
         }
     }
 
-       
+
 
     public override int Nummer => 202122;
 }

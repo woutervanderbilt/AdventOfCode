@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2019;
@@ -14,7 +13,7 @@ L996,U773,L865,D472,L988,D570,L388,U458,L87,U885,L115,U55,R75,U582,R695,U883,R83
 
     public override Task ExecuteAsync()
     {
-        var strings = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
+        var strings = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
         IList<string> string1 = strings[0].Split(',');
         IList<string> string2 = strings[1].Split(',');
         var path1 = GetPath(string1);

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -19,10 +17,9 @@ internal class Dag20 : Problem
 
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         IList<Number> list = new List<Number>();
         Number? prev = null;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var number = new Number { Value = long.Parse(line) * 811589153 };
             if (prev != null)
@@ -104,7 +101,7 @@ internal class Dag20 : Problem
             number.Next.Previous = this;
             Next = number.Next;
             Previous = number;
-            number.Next = this; 
+            number.Next = this;
         }
 
         public override string ToString()

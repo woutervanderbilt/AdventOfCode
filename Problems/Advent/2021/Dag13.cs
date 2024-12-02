@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2021;
 
@@ -810,13 +810,13 @@ fold along y=6";
         var grid = new Grid<bool>();
         IList<(bool, int)> folds = new List<(bool, int)>();
         bool inputFoldPart = false;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (string.IsNullOrWhiteSpace(line))
             {
                 inputFoldPart = true;
             }
-            else if(inputFoldPart)
+            else if (inputFoldPart)
             {
                 var fold = line.Split(' ').Last().Split('=');
                 folds.Add((fold[0] == "x", int.Parse(fold[1])));

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Problems;
 
@@ -17,7 +15,7 @@ public static class ProblemDefinitions
             .Where(t => t.IsSubclassOf(typeof(Problem)) && t.IsClass && !t.IsAbstract);
         foreach (var problem in problems)
         {
-            var instance = (Problem) Activator.CreateInstance(problem);
+            var instance = (Problem)Activator.CreateInstance(problem);
             if (instance.Nummer != 0)
             {
                 Problems.Add(instance.Nummer, () => (Problem)Activator.CreateInstance(problem));

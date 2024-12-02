@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace Problems.Advent._2021;
 
@@ -152,7 +150,7 @@ internal class Dag18 : Problem
     {
         public SnailFishNumber(string input)
         {
-            if (int.TryParse(input.Substring(0,1), out var value))
+            if (int.TryParse(input.Substring(0, 1), out var value))
             {
                 RegularValue = value;
                 IsRegular = true;
@@ -182,7 +180,7 @@ internal class Dag18 : Problem
             input = input.Substring(0, input.Length - 1);
             Left = new SnailFishNumber(input.Substring(1, splitIndex));
             Left.IsLeftPart = true;
-            Right = new SnailFishNumber(input.Substring(splitIndex+1));
+            Right = new SnailFishNumber(input.Substring(splitIndex + 1));
             Left.Parent = this;
             Right.Parent = this;
         }
@@ -228,7 +226,7 @@ internal class Dag18 : Problem
                 }
                 long leftAddition = Left.RegularValue;
                 long rightAddition = Right.RegularValue;
-                    
+
                 if (IsLeftPart)
                 {
                     var rightPart = Parent.Right;
@@ -371,7 +369,7 @@ internal class Dag18 : Problem
             Right?.SetParent(this);
         }
 
-        public static SnailFishNumber operator + (SnailFishNumber lhs, SnailFishNumber rhs)
+        public static SnailFishNumber operator +(SnailFishNumber lhs, SnailFishNumber rhs)
         {
             var sum = new SnailFishNumber
             {

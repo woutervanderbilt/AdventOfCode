@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2023;
 
@@ -24,12 +22,12 @@ internal class Dag21 : Problem
 
     public override async Task ExecuteAsync()
     {
-        string input = await GetInputAsync();
-        var grid = Grid<char>.FromInput(input, c => c);
+
+        var grid = Grid<char>.FromInput(Input, c => c);
         var s = grid.AllMembers().Single(m => m.value == 'S');
-        grid.CanMove = (_, m) => m.Value != '#'; 
+        grid.CanMove = (_, m) => m.Value != '#';
         var reachable = ReachableLocations((s.x, s.y), 64, grid);
-        
+
 
         Console.WriteLine();
 
@@ -78,7 +76,7 @@ internal class Dag21 : Problem
                                   new HashSet<(int, int)>(l.Concat(d)).Count +
                                   new HashSet<(int, int)>(l.Concat(u)).Count);
         result2 += (maxFullGrid + 1) *
-                   (new HashSet<(int,int)>(d2.Where(m => m is { Item1: < 131, Item2: < 131 })
+                   (new HashSet<(int, int)>(d2.Where(m => m is { Item1: < 131, Item2: < 131 })
                        .Concat(r1.Where(m => m is { Item1: > 130, Item2: > 130 })
                            .Select(m => (m.Item1 - 131, m.Item2 - 131)))).Count +
 

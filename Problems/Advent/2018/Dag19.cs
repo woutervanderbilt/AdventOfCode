@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Algorithms;
 using System.Threading.Tasks;
-using Algorithms;
 
 namespace Problems.Advent._2018;
 

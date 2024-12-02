@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Problems.Advent._2019;
 
@@ -65,11 +63,11 @@ public class IntCodeComputer
 
             int p1Mode = (int)(instruction / 100) % 10;
             int p2Mode = (int)(instruction / 1000) % 10;
-            int p3Mode = (int) (instruction / 10000) % 10;
+            int p3Mode = (int)(instruction / 10000) % 10;
             switch (instruction % 100)
             {
                 case 1:
-                    Program[(int)GetParameterForWriting(3,p3Mode)] =
+                    Program[(int)GetParameterForWriting(3, p3Mode)] =
                         GetParameter(1, p1Mode)
                         + GetParameter(2, p2Mode);
                     CurrentPosition += 4;
@@ -90,7 +88,7 @@ public class IntCodeComputer
                     CurrentPosition += 2;
                     break;
                 case 4:
-                    long output = GetParameter(1,p1Mode);
+                    long output = GetParameter(1, p1Mode);
                     CurrentPosition += 2;
                     yield return output;
                     break;

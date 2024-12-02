@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2019;
@@ -100,7 +99,7 @@ public class Dag18 : Problem
     public override Task ExecuteAsync()
     {
         long minSteps = long.MaxValue;
-        map = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
+        map = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
         numberOfLines = map.Count;
         IList<(int, int)> locations = new List<(int, int)>();
         int l = 0;
@@ -112,7 +111,7 @@ public class Dag18 : Problem
             {
                 if (v == '@')
                 {
-                    locations.Add((l,c));
+                    locations.Add((l, c));
                 }
 
                 c++;
@@ -230,7 +229,7 @@ public class Dag18 : Problem
                         char value = map[newSquare.Item1][newSquare.Item2];
                         if (value == '#')
                         {
-                            continue;       
+                            continue;
                         }
                         if (value == '.' || value == '@' || IsOpenDoor() || IsTakenKey())
                         {

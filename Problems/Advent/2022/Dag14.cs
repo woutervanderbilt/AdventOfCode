@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2022;
 
@@ -11,9 +11,8 @@ internal class Dag14 : Problem
 503,4 -> 502,4 -> 502,9 -> 494,9";
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         Grid<char> map = new Grid<char>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             int? currentX = null;
             int? currentY = null;
@@ -26,7 +25,7 @@ internal class Dag14 : Problem
 
                 var s = word.Split(',');
                 int x = int.Parse(s[0]);
-                int y =  int.Parse(s[1]);
+                int y = int.Parse(s[1]);
                 if (currentX != null)
                 {
                     if (x == currentX)
@@ -49,17 +48,17 @@ internal class Dag14 : Problem
                 currentY = y;
             }
         }
-            
+
         var maxY = map.MaxY;
 
-        for (int i = 500-maxY-2; i <= 500 + maxY + 2; i++)
+        for (int i = 500 - maxY - 2; i <= 500 + maxY + 2; i++)
         {
             map[i, maxY + 2] = '#';
         }
         map[500, 0] = '+';
         map.FillBlanks('.');
-            
-            
+
+
         //map.Print(reverseY:true);
         while (Step(out var current))
         {

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Algorithms.Extensions;
+﻿using Algorithms.Extensions;
 using Algorithms.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
 
@@ -12,12 +9,11 @@ internal class Dag10 : Problem
 {
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         int register = 1;
         int cycle = 0;
         long strenth = 0;
         var grid = new Grid<bool>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (line == "noop")
             {
@@ -28,14 +24,14 @@ internal class Dag10 : Problem
             {
                 var split = line.Split();
                 var value = int.Parse(split[1]);
-                cycle ++;
+                cycle++;
                 AddSignalStrength();
                 cycle++;
                 AddSignalStrength();
                 register += value;
             }
 
-                
+
         }
         grid.Print();
         void AddSignalStrength()

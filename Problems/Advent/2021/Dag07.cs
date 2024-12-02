@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Problems.Advent._2019;
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Problems.Advent._2019;
 
 namespace Problems.Advent._2021;
 
@@ -26,7 +24,7 @@ internal class Dag07 : Problem
         var minFuel = int.MaxValue;
         for (int i = min; i <= max; i++)
         {
-            var fuel = crabs.Sum(c => Math.Abs(c - i)* (Math.Abs(c - i) + 1)/2);
+            var fuel = crabs.Sum(c => Math.Abs(c - i) * (Math.Abs(c - i) + 1) / 2);
             if (fuel < minFuel)
             {
                 minFuel = fuel;

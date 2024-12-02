@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2021;
@@ -2012,7 +2010,7 @@ internal class Dag01 : Problem
         var (a, b, c) = (int.MaxValue, int.MaxValue, int.MaxValue);
         var prev = a;
         int increaseCount = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var depth = int.Parse(line);
             if (depth > prev)

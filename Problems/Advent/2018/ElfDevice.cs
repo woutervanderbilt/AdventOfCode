@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Algorithms.Models;
 
 namespace Problems.Advent._2018;
 
@@ -116,14 +115,14 @@ internal class ElfDevice
 
         if (InstructionPointer == 28)
         {
-            Console.WriteLine($"{InstructionPointer}  {string.Join(',',Register)}");
+            Console.WriteLine($"{InstructionPointer}  {string.Join(',', Register)}");
         }
 
         result[c] = value;
 
         Register = result;
         InstructionPointer = (int)Register[InstructionPointerBinding] + 1;
-  
+
         return true;
     }
 }

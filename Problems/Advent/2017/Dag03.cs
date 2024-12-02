@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2017;
@@ -20,7 +18,7 @@ internal class Dag03 : Problem
         }
 
         Result = spiral[location].ToString();
-            
+
 
 
         return Task.CompletedTask;

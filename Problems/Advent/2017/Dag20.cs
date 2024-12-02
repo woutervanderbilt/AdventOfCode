@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2017;
@@ -1017,9 +1015,9 @@ p=<-2781,1254,-451>, v=<-399,186,-64>, a=<26,-13,0>";
         long i = 0;
         foreach (var particle in input.Split(Environment.NewLine))
         {
-            var words = particle.Replace(">","").Split(' ');
+            var words = particle.Replace(">", "").Split(' ');
             var l = words[0].Substring(3).Split(',');
-            var v= words[1].Substring(3).Split(',');
+            var v = words[1].Substring(3).Split(',');
             var a = words[2].Substring(3).Split(',');
             particles.Add((i, int.Parse(l[0]), int.Parse(l[1]), int.Parse(l[2]), int.Parse(v[0]), int.Parse(v[1]),
                 int.Parse(v[2]), int.Parse(a[0]), int.Parse(a[1]), int.Parse(a[2])));
@@ -1049,11 +1047,11 @@ p=<-2781,1254,-451>, v=<-399,186,-64>, a=<26,-13,0>";
                 }
                 else
                 {
-                    collisions.Add((x,y,z));
+                    collisions.Add((x, y, z));
                 }
             }
 
-            particles = newParticleList.Where(p => !collisions.Contains((p.x,p.y,p.z))).ToList();
+            particles = newParticleList.Where(p => !collisions.Contains((p.x, p.y, p.z))).ToList();
         }
 
         return Task.CompletedTask;

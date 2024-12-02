@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
 
 namespace Problems.Advent._2021;
 
@@ -32,8 +29,8 @@ internal class Dag23 : Problem
 
     public override Task ExecuteAsync()
     {
-        var state = new State{RoomA = "", RoomB = "", RoomC = "", RoomD = "", Hallway = "......."};
-            
+        var state = new State { RoomA = "", RoomB = "", RoomC = "", RoomD = "", Hallway = "......." };
+
         foreach (var line in input2.Split(Environment.NewLine).Skip(2))
         {
             if (line.StartsWith("  ##"))
@@ -460,7 +457,7 @@ internal class Dag23 : Problem
 
         public override bool Equals(object? obj)
         {
-            return Equals((State) obj);
+            return Equals((State)obj);
         }
 
         protected bool Equals(State other)

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using Algorithms.Extensions;
+using Algorithms.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
-using Algorithms.Models;
-using Problems.Advent._2018;
 
 namespace Problems.Advent._2022;
 
@@ -20,15 +17,14 @@ internal class Dag23 : Problem
 .....";
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         var grid = new Grid<bool>();
         int y = 0;
-        foreach (var line in input.Split(Environment.NewLine).Reverse())
+        foreach (var line in Input.Split(Environment.NewLine).Reverse())
         {
             int x = 0;
             foreach (var c in line)
             {
-                grid[x,y] = c == '#';
+                grid[x, y] = c == '#';
                 x++;
             }
 
@@ -114,16 +110,16 @@ internal class Dag23 : Problem
                 GridMember<bool> TryMove(GridDirection gridDirection)
                 {
                     return gridDirection switch
-                        {
-                            GridDirection.North => grid.North(elf.Location),
-                            GridDirection.NorthEast => grid.NorthEast(elf.Location),
-                            GridDirection.East => grid.East(elf.Location),
-                            GridDirection.SouthEast => grid.SouthEast(elf.Location),
-                            GridDirection.South => grid.South(elf.Location),
-                            GridDirection.SouthWest => grid.SouthWest(elf.Location),
-                            GridDirection.West => grid.West(elf.Location),
-                            GridDirection.NorthWest => grid.NorthWest(elf.Location),
-                        }
+                    {
+                        GridDirection.North => grid.North(elf.Location),
+                        GridDirection.NorthEast => grid.NorthEast(elf.Location),
+                        GridDirection.East => grid.East(elf.Location),
+                        GridDirection.SouthEast => grid.SouthEast(elf.Location),
+                        GridDirection.South => grid.South(elf.Location),
+                        GridDirection.SouthWest => grid.SouthWest(elf.Location),
+                        GridDirection.West => grid.West(elf.Location),
+                        GridDirection.NorthWest => grid.NorthWest(elf.Location),
+                    }
                         ;
                 }
             }
@@ -134,7 +130,7 @@ internal class Dag23 : Problem
                 if (move.Value.Count == 1)
                 {
                     newGrid[move.Key.Item1, move.Key.Item2] = true;
-                    if(move.Key != move.Value[0].Location)
+                    if (move.Key != move.Value[0].Location)
                     {
                         someElfMoved = true;
                     }

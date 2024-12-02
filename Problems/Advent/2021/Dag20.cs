@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Algorithms.Extensions;
+﻿using Algorithms.Extensions;
 using Algorithms.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Problems.Advent._2021;
 
@@ -126,7 +124,7 @@ internal class Dag20 : Problem
         var grid = new Grid<bool>();
         bool first = true;
         int y = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (first)
             {
@@ -134,7 +132,7 @@ internal class Dag20 : Problem
                 first = false;
                 continue;
             }
-            else if(string.IsNullOrWhiteSpace(line))
+            else if (string.IsNullOrWhiteSpace(line))
             {
                 continue;
             }

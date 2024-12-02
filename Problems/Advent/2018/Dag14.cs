@@ -8,7 +8,7 @@ public class Dag14 : Problem
     private const int input = 77201;
     public override Task ExecuteAsync()
     {
-        IList<byte> recipes = new List<byte>{ 3, 7 };
+        IList<byte> recipes = new List<byte> { 3, 7 };
         int firstElfIndex = 0;
         int secondElfIndex = 1;
         while (true)

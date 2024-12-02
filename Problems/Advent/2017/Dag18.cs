@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Algorithms.Models;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2017;
 
@@ -62,7 +61,7 @@ jgz a -19";
         var pointer2 = 0;
         Queue<long> sentTo1 = new Queue<long>();
         Queue<long> sentTo2 = new Queue<long>();
-        while(!(terminated1 && terminated2))
+        while (!(terminated1 && terminated2))
         {
             bool dl1 = false;
             bool dl2 = false;

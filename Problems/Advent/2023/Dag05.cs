@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2023;
@@ -43,7 +42,7 @@ humidity-to-location map:
 56 93 4";
     public override async Task ExecuteAsync()
     {
-        string input = await GetInputAsync();
+
         var seeds = new List<long>();
         var seedRanges = new List<(long, long)>();
         IDictionary<string, string> mapNames = new Dictionary<string, string>();
@@ -51,7 +50,7 @@ humidity-to-location map:
             new Dictionary<(string, string), List<(long destinationStart, long sourceStart, long length)>>();
         (string, string) mapName = default;
         List<(long destinationStart, long sourceStart, long length)> list = default;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (line.StartsWith("seeds:"))
             {

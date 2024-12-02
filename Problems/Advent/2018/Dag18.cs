@@ -63,7 +63,7 @@ public class Dag18 : Problem
         int target = 1000000000;
         IList<string> hs = new List<string>();
         IList<int> results = new List<int>();
-        var map = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None).ToList();
+        var map = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToList();
         int result = 0;
         for (int m = 1; m <= target; m++)
         {

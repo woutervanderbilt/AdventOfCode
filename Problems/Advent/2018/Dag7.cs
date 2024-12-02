@@ -111,7 +111,7 @@ Step R must be finished before step N can begin.";
 
     public override Task ExecuteAsync()
     {
-        IList<Tuple<string, string>> pairs = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None)
+        IList<Tuple<string, string>> pairs = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
             .Select(s => new Tuple<string, string>(s.Substring(5, 1), s.Substring(36, 1))).ToList();
         IDictionary<string, List<string>> restrictions = new Dictionary<string, List<string>>();
         foreach (var s in pairs.Select(p => p.Item1))

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2022;
 
@@ -22,9 +20,8 @@ Valve II has flow rate=0; tunnels lead to valves AA, JJ
 Valve JJ has flow rate=21; tunnel leads to valve II";
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         IDictionary<string, Valve> valves = new Dictionary<string, Valve>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Split();
             var name = words[1];
@@ -54,7 +51,7 @@ Valve JJ has flow rate=21; tunnel leads to valve II";
                     toValve = new Valve { Name = toValveName };
                     valves[toValveName] = toValve;
                 }
-                    
+
                 valve.FlowsTo.Add(toValve);
             }
         }
@@ -78,7 +75,7 @@ Valve JJ has flow rate=21; tunnel leads to valve II";
                 if (fromValve != toValve && toValve.Name != "AA")
                 {
                     bool found = false;
-                    HashSet<string> visited = new HashSet<string>{fromValve.Name};
+                    HashSet<string> visited = new HashSet<string> { fromValve.Name };
                     IList<Valve> current = new List<Valve> { fromValve };
 
                     int steps = 0;
@@ -95,7 +92,7 @@ Valve JJ has flow rate=21; tunnel leads to valve II";
                                 {
                                     continue;
                                 }
-                                    
+
                                 newCurrent.Add(nextValve);
                                 if (nextValve == toValve)
                                 {
@@ -217,7 +214,7 @@ Valve JJ has flow rate=21; tunnel leads to valve II";
                         }
                     }
                 }
-                    
+
             }
 
             if (elephantsStepsRemaining == 0)
@@ -272,7 +269,7 @@ Valve JJ has flow rate=21; tunnel leads to valve II";
                 int localFlowrate = flowrate;
                 long localPressure = totalPressure;
                 var pathLength = shortestPaths[(currentValve.Name, targetValve.Name)];
-                for(int j = 1; j <= pathLength; j++)
+                for (int j = 1; j <= pathLength; j++)
                 {
                     localMinute++;
                     localPressure += localFlowrate;
@@ -321,7 +318,7 @@ Valve JJ has flow rate=21; tunnel leads to valve II";
                 bestRoute = visitedValves;
             };
         }
-            
+
         Result = max.ToString();
     }
 

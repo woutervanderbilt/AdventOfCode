@@ -1746,7 +1746,7 @@ public class Dag03 : Problem
     {
         Result = input.Split(Environment.NewLine).Count(s =>
         {
-            var lengths = s.Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).OrderBy(l =>l).ToList();
+            var lengths = s.Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).OrderBy(l => l).ToList();
             return lengths[0] + lengths[1] > lengths[2];
         }).ToString();
         var lines = input.Split(Environment.NewLine);
@@ -1758,7 +1758,7 @@ public class Dag03 : Problem
             var line3 = lines[3 * i - 1].Trim().Split(' ').Where(t => !string.IsNullOrWhiteSpace(t)).Select(int.Parse).ToList();
             for (int j = 0; j < 3; j++)
             {
-                var triangle = new List<int> {line1[j], line2[j], line3[j]}.OrderBy(l => l).ToList();
+                var triangle = new List<int> { line1[j], line2[j], line3[j] }.OrderBy(l => l).ToList();
                 if (triangle[0] + triangle[1] > triangle[2])
                 {
                     res++;

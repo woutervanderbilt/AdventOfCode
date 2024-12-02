@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2023;
 
@@ -20,8 +19,8 @@ internal class Dag22 : Problem
     public override async Task ExecuteAsync()
     {
         IList<Brick> bricks = new List<Brick>();
-        string input = await GetInputAsync();
-        foreach (var (line, index) in input.Split(Environment.NewLine).Indexed())
+
+        foreach (var (line, index) in Input.Split(Environment.NewLine).Indexed())
         {
             var split = line.Split('~');
             var left = split[0].Split(',');
@@ -84,7 +83,7 @@ internal class Dag22 : Problem
 
             var newBrick = brick with { MinZ = z + 1, MaxZ = z + dz + 1 };
             bricks[brick.Index] = newBrick;
-            if(fixedBricksByLayer.TryGetValue(z + dz + 1, out var fixedList))
+            if (fixedBricksByLayer.TryGetValue(z + dz + 1, out var fixedList))
             {
                 fixedList.Add(newBrick);
             }

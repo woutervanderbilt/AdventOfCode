@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Problems;
 
 namespace Problems.Advent._2023;
 
@@ -11,10 +9,10 @@ internal class Dag06 : Problem
 {
     public override async Task ExecuteAsync()
     {
-        string input = await GetInputAsync();
+
         var times = new List<long>();
         var distances = new List<long>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (line.StartsWith("Time:"))
             {

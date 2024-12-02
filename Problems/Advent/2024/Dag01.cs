@@ -1,25 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2024;
 
 internal class Dag01 : Problem
 {
-    private const string testinput = @"3   4
-4   3
-2   5
-1   3
-3   9
-3   3";
-
     public override async Task ExecuteAsync()
     {
         IList<int> left = [], right = [];
-        string input = await GetInputAsync();
-        foreach (var line in input.Split(Environment.NewLine))
+
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var numbers = line.Split("   ").Select(int.Parse).ToArray();
             left.Add(numbers[0]);

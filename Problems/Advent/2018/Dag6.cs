@@ -60,10 +60,10 @@ public class Dag6 : Problem
 
     public override Task ExecuteAsync()
     {
-        IList<Point> points = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None).Select((s) =>
+        IList<Point> points = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None).Select((s) =>
         {
             var ss = s.Split(',');
-            return new Point (int.Parse(ss[0]),int.Parse(ss[1]));
+            return new Point(int.Parse(ss[0]), int.Parse(ss[1]));
         }).ToList();
         int minX = points.Min(p => p.X);
         int maxX = points.Max(p => p.X);
@@ -144,7 +144,7 @@ public class Dag6 : Problem
             currentClosestValues = newClosestValues;
         }
         IList<Point> borderPoints = new List<Point>();
-        foreach (var borderPoint in allClosestValues.Keys.Where(p => p.X == minX || p.X == maxX || p.Y ==minY || p.Y == maxY))
+        foreach (var borderPoint in allClosestValues.Keys.Where(p => p.X == minX || p.X == maxX || p.Y == minY || p.Y == maxY))
         {
             foreach (var point in allClosestValues[borderPoint].Points)
             {
@@ -174,7 +174,7 @@ public class Dag6 : Problem
             }
         }
 
-        Result = finiteAreas.Values.Max()+" "+count;
+        Result = finiteAreas.Values.Max() + " " + count;
         return Task.CompletedTask;
     }
 
@@ -196,7 +196,7 @@ public class Dag6 : Problem
         public ClosestValue(int distance, Point point)
         {
             Distance = distance;
-            Points = new HashSet<Point>{ point };
+            Points = new HashSet<Point> { point };
         }
         public int Distance { get; }
         public HashSet<Point> Points { get; }

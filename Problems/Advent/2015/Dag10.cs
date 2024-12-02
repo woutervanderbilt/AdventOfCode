@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2015;
@@ -31,7 +29,7 @@ internal class Dag10 : Problem
                 {
                     count++;
                 }
-                else 
+                else
                 {
                     if (!first)
                     {

@@ -29,7 +29,7 @@ public class Dag13 : Problem
             }
         }
 
-        IDictionary<(int, int), int> field =new Dictionary<(int, int), int>();
+        IDictionary<(int, int), int> field = new Dictionary<(int, int), int>();
         var computer = new IntCodeComputer(input).Compile();
         int index = 0;
         int x = 0;
@@ -45,11 +45,11 @@ public class Dag13 : Problem
             {
                 if (index % 3 == 0)
                 {
-                    x = (int) output;
+                    x = (int)output;
                 }
                 else if (index % 3 == 1)
                 {
-                    y = (int) output;
+                    y = (int)output;
                 }
                 else
                 {
@@ -59,7 +59,7 @@ public class Dag13 : Problem
                     }
                     else
                     {
-                        field[(x, y)] = (int) output;
+                        field[(x, y)] = (int)output;
                         if (output == 2)
                         {
                             blockCount++;
@@ -160,7 +160,7 @@ public class Dag13 : Problem
 
                                     char GetLetter()
                                     {
-                                        return "bliep&sproetzijnlievekatten"[(c++)%27];
+                                        return "bliep&sproetzijnlievekatten"[(c++) % 27];
                                     }
                                 case 3:
                                     return '_';
@@ -176,11 +176,11 @@ public class Dag13 : Problem
             }
         }
 
-        Result = score.ToString()+" ("+steps+" steps)";
+        Result = score.ToString() + " (" + steps + " steps)";
         return Task.CompletedTask;
     }
 
-        
+
 
     public override int Nummer => 201913;
 }

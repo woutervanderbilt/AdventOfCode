@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2017;
@@ -12,7 +9,7 @@ internal class Dag15 : Problem
     private const long AStart = 116;
     private const long BStart = 299;
     private const int SampleSize = 5000000;
-    private const long Cutoff = 1 << 16; 
+    private const long Cutoff = 1 << 16;
     public override Task ExecuteAsync()
     {
         using var a = Generator(AStart, 16807, 4).GetEnumerator();

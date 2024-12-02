@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2018;
@@ -1020,7 +1019,7 @@ pos=<10,10,10>, r=5";
 
     public override Task ExecuteAsync()
     {
-        var nanobots = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None)
+        var nanobots = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
             .Select(s =>
             {
                 return new Nanobot(s.Substring(5)
@@ -1058,7 +1057,7 @@ pos=<10,10,10>, r=5";
         public int MinZ { get; set; }
         public int D { get; set; }
         public int Number { get; private set; }
-            
+
         public IList<Nanobot> NanobotsWithinRange { get; private set; }
 
         public bool SetNanobotsWithinRange(IList<Nanobot> nanobots, int max)
@@ -1177,9 +1176,9 @@ pos=<10,10,10>, r=5";
             {
                 max = Number;
                 result = Math.Abs(MinX) + Math.Abs(MinY) + Math.Abs(MinZ);
-                Console.WriteLine($"{(MinX,MinY,MinZ)} : {Math.Abs(MinX) + Math.Abs(MinY) + Math.Abs(MinZ)} {Number} {checkCount}");
+                Console.WriteLine($"{(MinX, MinY, MinZ)} : {Math.Abs(MinX) + Math.Abs(MinY) + Math.Abs(MinZ)} {Number} {checkCount}");
             }
-            else 
+            else
             {
                 foreach (var division in Divide(max).OrderByDescending(b => b.Number))
                 {

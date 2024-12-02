@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -2170,7 +2168,7 @@ ofxw";
                 result += current.Distinct().Count();
                 current = null;
             }
-            else if(current == null)
+            else if (current == null)
             {
                 current = s;
             }

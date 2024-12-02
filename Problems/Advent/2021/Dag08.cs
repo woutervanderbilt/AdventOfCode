@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2021;
 
@@ -209,12 +208,12 @@ gcedab facgbd efadg edacg bdafecg fedgb fda af aefc gafcde | dgecfa ebdgac fa bd
 gdba gedfb egfbad fegadc ecgfba dfbec gd cbedfga abefg fdg | fcadge gdbef fegbac agbef
 fbdec fdbceag feacb fbcgd dcbfge dec efgadc dcbafg ed dbge | cabgdf ceafb afgdec de
 cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda";
-        
+
     public override Task ExecuteAsync()
     {
         long result = 0;
         long sum = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             sum += Solve(line);
             bool pastPipe = false;
@@ -232,7 +231,7 @@ cbgaed fbagc cbfd bdaegf bdcag egdbfac afgce bcfadg baf bf | fb baf edgafb cbgda
             }
         }
 
-        Result = (result+" "+sum);
+        Result = (result + " " + sum);
         return Task.CompletedTask;
     }
 

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -1271,7 +1270,7 @@ iyr:2010 byr:1950 pid:405416908";
                 return false;
             }
 
-            if (!new List<string> {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}.Contains(Ecl))
+            if (!new List<string> { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" }.Contains(Ecl))
             {
                 return false;
             }

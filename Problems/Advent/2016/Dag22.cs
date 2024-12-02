@@ -1066,7 +1066,7 @@ Filesystem              Size  Used  Avail  Use%
 /dev/grid/node-x33-y29   87T   68T    19T   78%
 /dev/grid/node-x33-y30   94T   66T    28T   70%";
     #endregion
-        
+
     public override Task ExecuteAsync()
     {
         IList<Node> nodes = new List<Node>();
@@ -1082,7 +1082,7 @@ Filesystem              Size  Used  Avail  Use%
             var y = int.Parse(nodeLocation[2].Replace("y", string.Empty));
             var size = int.Parse(words[1].Replace("T", string.Empty));
             var used = int.Parse(words[2].Replace("T", string.Empty));
-            var node = new Node {X = x, Y = y, Size = size, Used = used};
+            var node = new Node { X = x, Y = y, Size = size, Used = used };
             nodes.Add(node);
             grid.Nodes[(x, y)] = node;
         }
@@ -1125,7 +1125,7 @@ Filesystem              Size  Used  Avail  Use%
         barSb.Append("+");
         var bar = barSb.ToString();
         Console.WriteLine(bar);
-        for (int x = 0; x <= grid.TargetX ;x++)
+        for (int x = 0; x <= grid.TargetX; x++)
         {
             var sb = new StringBuilder("|");
             for (int y = 0; y <= width; y++)
@@ -1147,7 +1147,7 @@ Filesystem              Size  Used  Avail  Use%
             {
                 foreach (var possibleGrid in grid1.PossibleGrids())
                 {
-                    if(possibleGrid.TargetX == 0 && possibleGrid.TargetY == 0)
+                    if (possibleGrid.TargetX == 0 && possibleGrid.TargetY == 0)
                     {
                         Result = step.ToString();
                         return Task.CompletedTask;
@@ -1323,7 +1323,7 @@ Filesystem              Size  Used  Avail  Use%
             return new Node()
             {
                 X = X,
-                Y=Y,
+                Y = Y,
                 Size = Size,
                 Used = Used
             };

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2021;
 
@@ -1020,7 +1018,7 @@ internal class Dag03 : Problem
         int gamma = 0;
         for (int i = length - 1; i >= 0; i--)
         {
-            if (counters[i] > inputSplit.Count/2)
+            if (counters[i] > inputSplit.Count / 2)
             {
                 gamma += p;
             }
@@ -1052,7 +1050,7 @@ internal class Dag03 : Problem
 
         bool FilterO2(bool bit, int count, int total) => bit && 2 * count >= total || !bit && 2 * count < total;
         bool FilterCo2(bool bit, int count, int total) => bit && 2 * count < total || !bit && 2 * count >= total;
-            
+
         IList<int> Filter(int index, int count, IList<int> candidates, Func<bool, int, int, bool> filter)
         {
             return candidates.Where(c => filter((c & index) != 0, count, candidates.Count)).ToList();

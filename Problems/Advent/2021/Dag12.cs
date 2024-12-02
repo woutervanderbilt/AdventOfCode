@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2021;
@@ -35,7 +34,7 @@ gq-RD";
     public override Task ExecuteAsync()
     {
         IDictionary<string, IList<string>> connections = new Dictionary<string, IList<string>>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             var words = line.Split('-');
             if (!connections.ContainsKey(words[0]))
@@ -61,7 +60,7 @@ gq-RD";
                 return 1;
             }
 
-            long result = 0; 
+            long result = 0;
             foreach (var cave in connections[current])
             {
                 if (cave.ToUpper() == cave)

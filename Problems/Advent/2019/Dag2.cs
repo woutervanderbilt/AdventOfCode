@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2019;
@@ -56,7 +53,7 @@ public class Dag2 : Problem
             }
         }
 
-            
+
 
         return Task.CompletedTask;
     }

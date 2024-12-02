@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2022;
@@ -10,14 +9,13 @@ internal class Dag21 : Problem
 {
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         long low = 0;
         long high = 1;
         long shout = 1;
         while (true)
         {
             IDictionary<string, Monkey> monkeys = new Dictionary<string, Monkey>();
-            foreach (var line in input.Split(Environment.NewLine))
+            foreach (var line in Input.Split(Environment.NewLine))
             {
                 var words = line.Split();
                 var name = words[0].Replace(":", "");
@@ -144,7 +142,7 @@ internal class Dag21 : Problem
             return (Name != null ? Name.GetHashCode() : 0);
         }
     }
-        
+
 
     public override int Nummer => 202221;
 }

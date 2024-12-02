@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2015;
@@ -315,7 +312,7 @@ internal class Dag08 : Problem
 ""aaa\""aaa""
 ""\x27""";
         long result = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             result -= line.Length;
             //var replaced = line.Replace(@"\\", @"*").Replace(@"\""",@"#");

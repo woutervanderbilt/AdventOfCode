@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +17,7 @@ public class Dag8 : Problem
         IList<IList<int>> layers = new List<IList<int>>();
         for (int i = 0; i < digits.Count / 150; i++)
         {
-            layers.Add(digits.GetRange(i*150,150));
+            layers.Add(digits.GetRange(i * 150, 150));
         }
         var orderedLayers = layers.OrderBy(l => l.Count(d => d == 0)).ToList();
         var layer = orderedLayers.First();
@@ -32,13 +31,13 @@ public class Dag8 : Problem
 
         foreach (var currentLayer in layers.Reverse())
         {
-            for(int d = 0; d<150; d++)
+            for (int d = 0; d < 150; d++)
             {
                 var digit = currentLayer[d];
-                    
+
                 if (digit == 1)
                 {
-                    image[d/25] = image[d / 25].Remove(d % 25, 1).Insert(d % 25, "█");
+                    image[d / 25] = image[d / 25].Remove(d % 25, 1).Insert(d % 25, "█");
                 }
                 else if (digit == 0)
                 {

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2020;
@@ -58,7 +56,7 @@ qzkjrtl zkhdzrb tbb pgkttq gbqfd jctgkq vprjz rkkrx zhnlt frlgls qbnzjb ggkz msr
     public override Task ExecuteAsync()
     {
         IList<Food> foods = new List<Food>();
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             Food food = new Food();
             var split = line.Split("(");
@@ -69,7 +67,7 @@ qzkjrtl zkhdzrb tbb pgkttq gbqfd jctgkq vprjz rkkrx zhnlt frlgls qbnzjb ggkz msr
 
             foreach (var allergene in split[1].Substring(9).Split(","))
             {
-                food.Allergenes.Add(allergene.Trim().Replace(")",""));
+                food.Allergenes.Add(allergene.Trim().Replace(")", ""));
             }
             foods.Add(food);
         }
@@ -93,7 +91,7 @@ qzkjrtl zkhdzrb tbb pgkttq gbqfd jctgkq vprjz rkkrx zhnlt frlgls qbnzjb ggkz msr
 
         foreach (var possibleIngredient in possibleIngredients)
         {
-            Console.WriteLine($"{possibleIngredient.Key} :  {string.Join(',',possibleIngredient.Value)}");
+            Console.WriteLine($"{possibleIngredient.Key} :  {string.Join(',', possibleIngredient.Value)}");
         }
 
         HashSet<string> ingredients = new HashSet<string>();

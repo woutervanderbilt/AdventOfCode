@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2015;
@@ -48,14 +47,14 @@ internal class Dag21 : Problem
                 {
                     foreach (var ring2 in rings)
                     {
-                        if (ring1 == (0, 0, 0) && ring2 != (0, 0, 0) || ring1 != (0,0,0) && ring1 == ring2)
+                        if (ring1 == (0, 0, 0) && ring2 != (0, 0, 0) || ring1 != (0, 0, 0) && ring1 == ring2)
                         {
                             continue;
                         }
                         var cost = weapon.Item1 + armorpiece.Item1 + ring1.Item1 + ring2.Item1;
                         if (Fight())
                         {
-                            if(cost < minCost)
+                            if (cost < minCost)
                                 minCost = cost;
                         }
                         else

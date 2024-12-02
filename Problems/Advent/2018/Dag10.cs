@@ -344,7 +344,7 @@ position=<-32422, -21587> velocity=< 3,  2>
 position=<-43361, -32468> velocity=< 4,  3>";
     public override Task ExecuteAsync()
     {
-        var stars = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None)
+        var stars = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
             .Select(s => new Star(int.Parse(s.Substring(10, 6)),
                 int.Parse(s.Substring(18, 6)), int.Parse(s.Substring(36, 2)), int.Parse(s.Substring(40, 2)))).ToList();
 
@@ -355,7 +355,7 @@ position=<-43361, -32468> velocity=< 4,  3>";
             count++;
             Step(stars);
             var minY = stars.Min(s => s.Y);
-                
+
             var dy = stars.Max(s => s.Y) - minY;
             if (dy < 40)
             {

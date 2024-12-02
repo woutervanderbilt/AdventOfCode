@@ -31,7 +31,7 @@ public class Dag9 : Problem
             }
             else
             {
-                Marble newMarble = new Marble {Value = i};
+                Marble newMarble = new Marble { Value = i };
                 newMarble.LeftNeighbour = currentMarble.RightNeighbour;
                 newMarble.RightNeighbour = currentMarble.RightNeighbour.RightNeighbour;
                 newMarble.LeftNeighbour.RightNeighbour = newMarble;

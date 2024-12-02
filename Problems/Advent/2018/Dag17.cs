@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2018;
 
@@ -2254,10 +2253,10 @@ y=13, x=498..504";
     public override Task ExecuteAsync()
     {
         HashSet<(int x, int y)> clayLocations = new HashSet<(int x, int y)>();
-        foreach (var line in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+        foreach (var line in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
         {
             var split = line.Split(',');
-            var range = split[1].Split(new[] {".."}, StringSplitOptions.None);
+            var range = split[1].Split(new[] { ".." }, StringSplitOptions.None);
             if (line.StartsWith("x"))
             {
                 int x = int.Parse(split[0].Substring(2));
@@ -2283,7 +2282,7 @@ y=13, x=498..504";
         waterLocations.Add((500, 0));
 
         Stack<(int x, int y)> flowLocations = new Stack<(int x, int y)>();
-        flowLocations.Push((500,0));
+        flowLocations.Push((500, 0));
         HashSet<(int x, int y)> flowDownLocations = new HashSet<(int x, int y)>();
         while (flowLocations.TryPeek(out var currentFlowLocation))
         {
@@ -2342,7 +2341,7 @@ y=13, x=498..504";
             var sb = new StringBuilder();
             for (int x = minX; x <= maxX; x++)
             {
-                sb.Append(flowDownLocations.Contains((x,y)) ? '|' : waterLocations.Contains((x, y)) ? '~' : clayLocations.Contains((x, y)) ? '#' : '.');
+                sb.Append(flowDownLocations.Contains((x, y)) ? '|' : waterLocations.Contains((x, y)) ? '~' : clayLocations.Contains((x, y)) ? '#' : '.');
             }
 
             Console.WriteLine(sb);

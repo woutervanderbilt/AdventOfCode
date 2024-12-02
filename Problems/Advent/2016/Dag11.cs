@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent;
@@ -19,10 +18,10 @@ The fourth floor contains nothing relevant.";
         var initialState = new State
         {
             E = 1,
-            ChipsAndGenerators = new List<int> {1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1, 1, 1, 1}
+            ChipsAndGenerators = new List<int> { 1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1, 1, 1, 1 }
         };
         visitedStates.Add(initialState);
-        IList<State> currentStates = new List<State> {initialState};
+        IList<State> currentStates = new List<State> { initialState };
         int steps = 0;
         bool finished = false;
         while (!finished)
@@ -45,7 +44,7 @@ The fourth floor contains nothing relevant.";
                     }
                     else
                     {
-                            
+
                     }
                 }
             }
@@ -96,10 +95,10 @@ The fourth floor contains nothing relevant.";
             IList<(int, int)> toMove = new List<(int, int)>();
             for (int i = 0; i < sameFloor.Count; i++)
             {
-                toMove.Add((sameFloor[i],-1));
+                toMove.Add((sameFloor[i], -1));
                 for (int j = i + 1; j < sameFloor.Count; j++)
                 {
-                    toMove.Add((sameFloor[i],sameFloor[j]));
+                    toMove.Add((sameFloor[i], sameFloor[j]));
                 }
             }
 
@@ -154,7 +153,7 @@ The fourth floor contains nothing relevant.";
 
         public override bool Equals(object? obj)
         {
-            return Equals((State) obj);
+            return Equals((State)obj);
         }
 
         protected bool Equals(State other)

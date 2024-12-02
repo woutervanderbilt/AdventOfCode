@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Algorithms.Extensions;
+﻿using Algorithms.Extensions;
 using Algorithms.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Problems.Advent._2023;
 
@@ -31,9 +29,9 @@ internal class Dag13 : Problem
         List<Grid<bool>> grids = new List<Grid<bool>>();
         var currentGrid = new Grid<bool>();
         grids.Add(currentGrid);
-        string input = await GetInputAsync();
+
         int y = 0;
-        foreach (var line in input.Split(Environment.NewLine))
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (string.IsNullOrWhiteSpace(line))
             {
@@ -77,7 +75,7 @@ internal class Dag13 : Problem
                                 for (int j = 0; j <= grid.MaxY; j++)
                                 {
                                     usedSmudge |= (xs, ys) == (xm - i, j);
-                                    usedSmudge |= (xs, ys) == (xm +i + 1, j);
+                                    usedSmudge |= (xs, ys) == (xm + i + 1, j);
                                     if (grid[xm - i, j].Value != grid[xm + i + 1, j].Value)
                                     {
                                         everythingIsMirrored = false;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2023;
@@ -30,8 +29,8 @@ hdj{m>838:A,pv}
         var parts = new List<Part>();
         var workflows = new Dictionary<string, Workflow>();
         bool parsingWorkflows = true;
-        string input = await GetInputAsync();
-        foreach (var line in input.Split(Environment.NewLine))
+
+        foreach (var line in Input.Split(Environment.NewLine))
         {
             if (string.IsNullOrWhiteSpace(line))
             {
@@ -80,7 +79,7 @@ hdj{m>838:A,pv}
                 long m = long.Parse(split[1].Substring(2));
                 long a = long.Parse(split[2].Substring(2));
                 long s = long.Parse(split[3].Substring(2));
-                parts.Add(new Part(x,m,a,s));
+                parts.Add(new Part(x, m, a, s));
             }
         }
 
@@ -366,9 +365,9 @@ hdj{m>838:A,pv}
             }
         }
 
-        
 
-            public (bool accepted, bool rejected, string nextWorkflow) Inspect(Part part)
+
+        public (bool accepted, bool rejected, string nextWorkflow) Inspect(Part part)
         {
             foreach (var instruction in Instructions)
             {

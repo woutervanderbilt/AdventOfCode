@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Algorithms.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2022;
 
@@ -11,10 +10,9 @@ internal class Dag09 : Problem
 {
     public override async Task ExecuteAsync()
     {
-        var input = await GetInputAsync();
         int knotcount = 10;
 
-        Result = input.Split(Environment.NewLine)
+        Result = Input.Split(Environment.NewLine)
             .Select(s => s.Split())
             .SelectMany(w => Enumerable.Repeat(ParseDirection(w[0]), int.Parse(w[1])))
             .AggregateList((IList<(int, int)>)Enumerable.Repeat((0, 0), knotcount).ToList(), ApplyMove)

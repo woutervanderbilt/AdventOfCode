@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Algorithms.Extensions;
+using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Extensions;
 
 namespace Problems.Advent._2015;
 
@@ -68,7 +67,7 @@ internal class Dag11 : Problem
                 {
                     return false;
                 }
-                if(d == prev && d != firstRepeat)
+                if (d == prev && d != firstRepeat)
                 {
                     firstRepeat = d;
                     repeatCount++;

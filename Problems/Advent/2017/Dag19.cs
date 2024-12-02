@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Algorithms.Models;
+using System;
 using System.Text;
 using System.Threading.Tasks;
-using Algorithms.Models;
 
 namespace Problems.Advent._2017;
 
@@ -300,6 +299,6 @@ internal class Dag19 : Problem
 
         return Task.CompletedTask;
     }
-        
+
     public override int Nummer => 201719;
 }

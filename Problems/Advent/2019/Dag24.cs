@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2019;
@@ -22,10 +20,10 @@ public class Dag24 : Problem
 #....";
     public override Task ExecuteAsync()
     {
-        IDictionary<int, IDictionary<(int,int), bool>> bugs = new Dictionary<int, IDictionary<(int, int), bool>>();
+        IDictionary<int, IDictionary<(int, int), bool>> bugs = new Dictionary<int, IDictionary<(int, int), bool>>();
         int i = 0;
-        var levelZeroBugs = new Dictionary<(int,int), bool>();
-        foreach (var line in input.Split(new []{Environment.NewLine}, StringSplitOptions.None))
+        var levelZeroBugs = new Dictionary<(int, int), bool>();
+        foreach (var line in input.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
         {
             int j = 0;
             foreach (var location in line)
@@ -54,7 +52,7 @@ public class Dag24 : Problem
 
         return Task.CompletedTask;
     }
-        
+
     IDictionary<int, IDictionary<(int, int), bool>> Step(IDictionary<int, IDictionary<(int, int), bool>> input)
     {
         var result = new Dictionary<int, IDictionary<(int, int), bool>>();
@@ -93,7 +91,7 @@ public class Dag24 : Problem
                     {
                         count += currentLevel[(i - 1, j)] ? 1 : 0;
                     }
-                    else if(previousLevel != null)
+                    else if (previousLevel != null)
                     {
                         count += previousLevel[(1, 2)] ? 1 : 0;
                     }
@@ -182,7 +180,7 @@ public class Dag24 : Problem
 
     private IDictionary<(int, int), bool> EmptyLevel()
     {
-        var result = new Dictionary<(int,int),bool>();
+        var result = new Dictionary<(int, int), bool>();
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < 5; j++)

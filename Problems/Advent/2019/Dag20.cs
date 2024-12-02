@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Problems.Advent._2019;
@@ -184,7 +183,7 @@ RE....#.#                           #......RF
 
     public override Task ExecuteAsync()
     {
-        var lines = input.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
+        var lines = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
         IDictionary<(int, int), IList<string>> locations = new Dictionary<(int, int), IList<string>>();
         IDictionary<string, IList<(int, int)>> portals = new Dictionary<string, IList<(int, int)>>();
@@ -199,7 +198,7 @@ RE....#.#                           #......RF
             {
                 if (line[j] == '.')
                 {
-                    locations[(i,j)] = new List<string>();
+                    locations[(i, j)] = new List<string>();
                     if (letters.Contains(line[j - 1]))
                     {
                         string portal = line.Substring(j - 2, 2);
@@ -214,7 +213,7 @@ RE....#.#                           #......RF
 
                     if (letters.Contains(lines[i - 1][j]))
                     {
-                        string portal = $"{lines[i - 2][j]}{lines[i-1][j]}";
+                        string portal = $"{lines[i - 2][j]}{lines[i - 1][j]}";
                         AddPortal(portal);
                     }
 
@@ -228,21 +227,21 @@ RE....#.#                           #......RF
 
                 void AddPortal(string portal)
                 {
-                    locations[(i,j)].Add(portal);
+                    locations[(i, j)].Add(portal);
                     if (portals.ContainsKey(portal))
                     {
-                        portals[portal].Add((i,j));
+                        portals[portal].Add((i, j));
                     }
                     else
                     {
-                        portals[portal] = new List<(int, int)>{(i,j)};
+                        portals[portal] = new List<(int, int)> { (i, j) };
                     }
                 }
             }
         }
 
-        HashSet<(int,int,int)> visited = new HashSet<(int, int, int)>();
-        IList<(int,int, int )> current = new List<(int, int, int)>();
+        HashSet<(int, int, int)> visited = new HashSet<(int, int, int)>();
+        IList<(int, int, int)> current = new List<(int, int, int)>();
         int step = 0;
         var start = portals["AA"].First();
         var end = portals["ZZ"].First();
@@ -254,7 +253,7 @@ RE....#.#                           #......RF
             IList<(int, int, int)> nextCurrent = new List<(int, int, int)>();
             foreach (var location in current)
             {
-                TestNeighbour((location.Item1 - 1, location.Item2, location.Item3)); 
+                TestNeighbour((location.Item1 - 1, location.Item2, location.Item3));
                 TestNeighbour((location.Item1 + 1, location.Item2, location.Item3));
                 TestNeighbour((location.Item1, location.Item2 - 1, location.Item3));
                 TestNeighbour((location.Item1, location.Item2 + 1, location.Item3));
