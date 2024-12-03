@@ -21,8 +21,13 @@ public abstract class Problem
             Input = TestInput;
             return;
         }
+
         var assembly = Assembly.GetAssembly(typeof(Dag01));
-        var resourcePath = assembly.GetManifestResourceNames().Single(s => s.EndsWith($"{Nummer}.txt"));
+        var resourcePath = assembly.GetManifestResourceNames().SingleOrDefault(s => s.EndsWith($"{Nummer}.txt"));
+        if (string.IsNullOrEmpty(resourcePath))
+        {
+            return;
+        }
         using Stream stream = assembly.GetManifestResourceStream(resourcePath)!;
         using StreamReader reader = new(stream);
         Input = await reader.ReadToEndAsync();
