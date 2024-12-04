@@ -290,6 +290,15 @@ public class Grid<T>
         return new Grid<T> { grid = flippedGrid };
     }
 
+    public IEnumerable<GridMember<T>> Spike(GridMember<T> start, GridDirection direction, int length)
+    {
+        for(int i = 0; i < length; i++)
+        {
+            yield return start;
+            start = MoveInDirection(start.Location, direction);
+        }
+    }
+
 }
 
 public class GridMember<T>
