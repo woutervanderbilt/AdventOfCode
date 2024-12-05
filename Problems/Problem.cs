@@ -13,10 +13,11 @@ public abstract class Problem
     protected string Input { get; private set; }
 
     protected virtual string? TestInput { get; } = null;
+    protected virtual bool UseTestInput { get; }
 
     public virtual async Task Initialize()
     {
-        if (TestInput != null)
+        if (UseTestInput && TestInput != null)
         {
             Input = TestInput;
             return;
