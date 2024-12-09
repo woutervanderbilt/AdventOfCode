@@ -14,7 +14,6 @@ internal class Dag08 : Problem
         var grid = Grid<char>.FromInput(Input, c => c);
         HashSet<(int, int)> antinodesPart1 = [];
         HashSet<(int, int)> antinodesPart2 = [];
-        int part1 = 0;
         var antennas = grid.AllGridMembers().Where(g => g != '.').GroupBy(g => g.Value);
         foreach (var antennaGroup in antennas)
         {
