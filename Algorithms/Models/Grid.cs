@@ -216,6 +216,40 @@ public class Grid<T>
         }
     }
 
+    public IEnumerable<IList<GridMember<T>>> Groups(bool includeDiagonal = false)
+    {
+        HashSet<(int, int)> visited = new HashSet<(int, int)>();
+        foreach (var member in AllGridMembers())
+        {
+            if (visited.Contains(member.Location))
+            {
+                continue;
+            }
+
+            visited.Add(member.Location);
+            IList<(int, int)> lastAdded = [member.Location];
+            HashSet<(int, int)> group = [member.Location];
+            while (lastAdded.Any())
+            {
+                IList<(int, int)> newLastAdded = [];
+                foreach (var location in lastAdded)
+                {
+                    foreach (var neighbour in Neighbours(location, includeDiagonal))
+                    {
+                        if (!group.Contains(neighbour.Location))
+                        {
+                            newLastAdded.Add(neighbour.Location);
+                            group.Add(neighbour.Location);
+                            visited.Add(neighbour.Location);
+                        }
+                    }
+                }
+                lastAdded = newLastAdded;
+            }
+            yield return group.Select(g => this[g.Item1, g.Item2]).ToList();
+        }
+    }
+
     public Grid<T> FillBlanks(T value, int borderX = 0, int borderY = 0)
     {
         var minX = MinX;
@@ -346,4 +380,23 @@ public enum GridDirection
     SouthWest,
     West,
     NorthWest,
+}
+
+public static class GridConstants
+{
+    public static IList<GridDirection> MajorDirections =
+        [GridDirection.North, GridDirection.East, GridDirection.South, GridDirection.West];
+}
+
+public static class GridDirectionExtensions
+{
+    public static GridDirection TurnRight(this GridDirection direction, int steps = 2)
+    {
+        return (GridDirection)(((int)direction + steps) % 8);
+    }
+
+    public static GridDirection TurnLeft(this GridDirection direction, int steps = 2)
+    {
+        return direction.TurnRight(-steps);
+    }
 }
