@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Algorithms.Extensions;
 using Algorithms.Models;
 
 namespace Problems.Advent._2024;
@@ -13,15 +14,13 @@ internal class Dag13 : Problem
         IList<(long ax, long ay, long bx, long by, long x, long y)> machines = [];
         foreach (var machine in Input.Split(Environment.NewLine).Chunk(4))
         {
-            var s = machine[0].Split('+');
-            long ay = long.Parse(s[2]);
-            long ax = long.Parse(s[1].Split(',')[0]);
-            s = machine[1].Split('+');
-            long by = long.Parse(s[2]);
-            long bx = long.Parse(s[1].Split(',')[0]);
-            s = machine[2].Split('=');
-            long y = long.Parse(s[2]);
-            long x = long.Parse(s[1].Split(',')[0]);
+            var numbers = (machine[0] + machine[1] + machine[2]).FindAllNumbers().ToList();
+            long ax = numbers[0];
+            long ay = numbers[1];
+            long bx = numbers[2];
+            long by = numbers[3];
+            long x = numbers[4];
+            long y = numbers[5];
             machines.Add((ax, ay, bx, by, x, y));
         }
 
