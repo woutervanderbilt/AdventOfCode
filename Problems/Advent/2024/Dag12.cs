@@ -24,17 +24,17 @@ internal class Dag12 : Problem
             bool IsStartOfSide(GridDirection direction)
             {
                 var neighbour = grid.MoveInDirection(member.Location, direction);
-                if (neighbour.Value != member.Value)
+                if (neighbour.Value == member.Value)
                 {
-                    if (grid.MoveInDirection(member.Location, direction.TurnRight()).Value != member.Value)
-                    {
-                        return true;
-                    }
-
-                    return grid.MoveInDirection(neighbour.Location, direction.TurnRight()).Value == member.Value;
+                    return false;
+                }
+                if (grid.MoveInDirection(member.Location, direction.TurnRight()).Value != member.Value)
+                {
+                    return true;
                 }
 
-                return false;
+                return grid.MoveInDirection(neighbour.Location, direction.TurnRight()).Value == member.Value;
+
             }
         }
     }

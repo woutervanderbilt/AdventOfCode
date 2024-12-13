@@ -124,7 +124,7 @@ internal class Dag20 : Problem
         var grid = new Grid<bool>();
         bool first = true;
         int y = 0;
-        foreach (var line in Input.Split(Environment.NewLine))
+        foreach (var line in input.Split(Environment.NewLine))
         {
             if (first)
             {
