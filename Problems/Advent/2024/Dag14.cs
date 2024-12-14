@@ -21,7 +21,6 @@ internal class Dag14 : Problem
             robots.Add((numbers[0], numbers[1], numbers[2], numbers[3]));
         }
 
-        var roboCopy = robots.ToList();
         var locations = robots.Select(r => Move(r, 100));
         var grouped = locations.GroupBy(Quadrant);
         var result = grouped.Where(g => g.Key > 0).Select(g => (long)g.Count()).Product();
@@ -32,41 +31,34 @@ internal class Dag14 : Problem
         int ySteps = 0;
         for(int i = 0; i < Math.Max(width, height); i++)
         {
-            var closeCountX = 0;
-            var closeCountY = 0;
-            foreach (var robot in robots)
+            Counter<long> xValues = new();
+            Counter<long> yValues = new();
+            foreach (var robot in robots.Select(r => Move(r, i)))
             {
-                foreach (var robot2 in robots)
-                {
-                    if(Math.Abs(robot.x - robot2.x) <= 3)
-                    {
-                        closeCountX++;
-                    }
-                    if (Math.Abs(robot.y - robot2.y) <= 3)
-                    {
-                        closeCountY++;
-                    }
-                }
+                xValues[robot.x]++;
+                yValues[robot.y]++;
             }
+            
+            var maxCountX = xValues.Values.Max();
+            var maxCountY = yValues.Values.Max();
 
-            if (closeCountX > maxX)
+            if (maxCountX > maxX)
             {
-                maxX = closeCountX;
+                maxX = maxCountX;
                 xSteps = i;
             }
-            if (closeCountY > maxY)
+            if (maxCountY > maxY)
             {
-                maxY = closeCountY;
+                maxY = maxCountY;
                 ySteps = i;
             }
-            robots = robots.Select(r => Move(r, 1)).ToList();
         }
 
         long result2 = new ResidueClass(xSteps, width).Chinese(new ResidueClass(ySteps, height)).Value;
 
 
         var grid = new Grid<bool>();
-        foreach (var robot in roboCopy.Select(r => Move(r, result2)))
+        foreach (var robot in robots.Select(r => Move(r, result2)))
         {
             grid[(int)robot.x, (int)(height - robot.y)] = true;
         }
