@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Algorithms.Extensions;
 public static class StringExtensions
 {
-    private static readonly Regex NumbersRegex = new (@"\d+");
+    private static readonly Regex NumbersRegex = new (@"-*\d+");
     public static IEnumerable<long> FindAllNumbers(this string s)
     {
         return NumbersRegex.Matches(s).Select(m => long.Parse(m.Value));
