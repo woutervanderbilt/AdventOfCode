@@ -21,48 +21,61 @@ internal class Dag14 : Problem
             robots.Add((numbers[0], numbers[1], numbers[2], numbers[3]));
         }
 
+        var roboCopy = robots.ToList();
         var locations = robots.Select(r => Move(r, 100));
         var grouped = locations.GroupBy(Quadrant);
         var result = grouped.Where(g => g.Key > 0).Select(g => (long)g.Count()).Product();
-        
-        int prevMax = 0;
-        int result2 = 0;
-        for(int i = 0; i < 101 * 103; i++)
+
+        int maxX = 0;
+        int maxY = 0;
+        int xSteps = 0;
+        int ySteps = 0;
+        for(int i = 0; i < Math.Max(width, height); i++)
         {
-            var closeCount = 0;
+            var closeCountX = 0;
+            var closeCountY = 0;
             foreach (var robot in robots)
             {
                 foreach (var robot2 in robots)
                 {
-                    if(Math.Abs(robot.x - robot2.x) <= 3 && Math.Abs(robot.y - robot2.y) <= 3)
+                    if(Math.Abs(robot.x - robot2.x) <= 3)
                     {
-                        closeCount++;
+                        closeCountX++;
+                    }
+                    if (Math.Abs(robot.y - robot2.y) <= 3)
+                    {
+                        closeCountY++;
                     }
                 }
             }
 
-            if (closeCount >= prevMax)
+            if (closeCountX > maxX)
             {
-                prevMax = closeCount;
-                var grid = new Grid<bool>();
-                foreach (var robot in robots)
-                {
-                    grid[(int)robot.x, (int)(height - robot.y)] = true;
-                }
-                grid.Print();
-                Console.WriteLine(i);
-                Console.WriteLine();
-                result2 = i;
+                maxX = closeCountX;
+                xSteps = i;
+            }
+            if (closeCountY > maxY)
+            {
+                maxY = closeCountY;
+                ySteps = i;
             }
             robots = robots.Select(r => Move(r, 1)).ToList();
         }
 
+        long result2 = new ResidueClass(xSteps, width).Chinese(new ResidueClass(ySteps, height)).Value;
 
+
+        var grid = new Grid<bool>();
+        foreach (var robot in roboCopy.Select(r => Move(r, result2)))
+        {
+            grid[(int)robot.x, (int)(height - robot.y)] = true;
+        }
+        grid.Print();
         Result = (result, result2).ToString();
 
-        (long, long, long, long) Move((long x, long y, long vx, long vy) robot, long steps)
+        (long x, long y, long vx, long vy) Move((long x, long y, long vx, long vy) robot, long steps)
         {
-            return (((robot.x + robot.vx * steps) % width + width) % width, ((robot.y + robot.vy * steps) % height + height) % height, robot.vx, robot.vy);
+            return ((robot.x + (robot.vx + width) * steps) % width, (robot.y + (robot.vy + height) * steps) % height, robot.vx, robot.vy);
         }
 
         int Quadrant((long x, long y, long vx, long vy) item)
