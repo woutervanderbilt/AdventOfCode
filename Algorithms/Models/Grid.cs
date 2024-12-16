@@ -397,6 +397,6 @@ public static class GridDirectionExtensions
 
     public static GridDirection TurnLeft(this GridDirection direction, int steps = 2)
     {
-        return direction.TurnRight(-steps);
+        return direction.TurnRight(8-steps);
     }
 }
