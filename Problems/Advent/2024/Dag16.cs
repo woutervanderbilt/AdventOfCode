@@ -96,8 +96,7 @@ internal class Dag16 : Problem
         }
 
         HashSet<(int x, int y)> goodSeats = [];
-        HashSet<(int x, int y, GridDirection direction)> paths =
-            new HashSet<(int x, int y, GridDirection direction)>(directions.Select(d => (target.X, target.Y, d)));
+        HashSet<(int x, int y, GridDirection direction)> paths = [..directions.Select(d => (target.X, target.Y, d))];
         while (paths.Any())
         {
             var newPaths = new HashSet<(int x, int y, GridDirection direction)>();
@@ -116,6 +115,11 @@ internal class Dag16 : Problem
             paths = newPaths;
         }
 
+        foreach (var seat in goodSeats)
+        {
+            grid[seat.x, seat.y] = 'O';
+        }
+        grid.Print();
         Result = (min, goodSeats.Count).ToString();
     }
 

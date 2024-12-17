@@ -13,4 +13,9 @@ public static class StringExtensions
     {
         return NumbersRegex.Matches(s).Select(m => long.Parse(m.Value));
     }
+
+    public static IEnumerable<int> FindAllNumbersAsInt(this string s)
+    {
+        return NumbersRegex.Matches(s).Select(m => int.Parse(m.Value));
+    }
 }
