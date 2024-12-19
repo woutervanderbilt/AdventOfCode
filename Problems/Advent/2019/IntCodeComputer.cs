@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Algorithms.Extensions;
 
 namespace Problems.Advent._2019;
 
@@ -24,12 +25,10 @@ public class IntCodeComputer
     public IntCodeComputer Compile()
     {
         Program = new Dictionary<long, long>();
-        long c = 0;
-        foreach (var b in programSource.Split(',').Select(long.Parse).ToList())
+        foreach (var (b, c) in programSource.Split(',').Select(long.Parse).Indexed())
         {
             Program[c] = b;
             originalProgram[c] = b;
-            c++;
         }
 
         return this;
@@ -152,15 +151,13 @@ public class IntCodeComputer
         {
             parameter = Program[CurrentPosition + index];
         }
-        switch (mode)
-        {
-            case 0:
-                return parameter;
-            case 2:
-                return parameter + RelativeBase;
-        }
 
-        throw new Exception();
+        return mode switch
+        {
+            0 => parameter,
+            2 => parameter + RelativeBase,
+            _ => throw new Exception()
+        };
     }
 
 
@@ -172,16 +169,12 @@ public class IntCodeComputer
             parameter = Program[CurrentPosition + index];
         }
 
-        switch (mode)
+        return mode switch
         {
-            case 0:
-                return Program.ContainsKey(parameter) ? Program[parameter] : 0;
-            case 1:
-                return parameter;
-            case 2:
-                return Program.ContainsKey(parameter + RelativeBase) ? Program[parameter + RelativeBase] : 0;
-        }
-
-        throw new Exception();
+            0 => Program.TryGetValue(parameter, out var value) ? value : 0,
+            1 => parameter,
+            2 => Program.TryGetValue(parameter + RelativeBase, out var value) ? value : 0,
+            _ => throw new Exception()
+        };
     }
 }

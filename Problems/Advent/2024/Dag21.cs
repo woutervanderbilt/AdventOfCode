@@ -13,6 +13,8 @@ internal class Dag21 : Problem
 
         }
     }
+    protected override bool UseTestInput => false;
 
+    protected override string TestInput => @"";
     public override int Nummer => 202421;
 }
