@@ -100,6 +100,31 @@ public class Grid<T>
         };
     }
 
+    public IDictionary<(int x, int y), int> Distances((int x, int y) from)
+    {
+        IDictionary<(int x, int y), int> distances = new Dictionary<(int, int), int>();
+        distances[from] = 0;
+        IList<(int, int)> lastVisited = [from];
+        int steps = 0;
+        while (lastVisited.Any())
+        {
+            steps++;
+            IList<(int, int)> newLastVisited = [];
+            foreach (var location in lastVisited)
+            {
+                foreach (var neighbour in Neighbours(location, false))
+                {
+                    if (distances.TryAdd(neighbour.Location, steps))
+                    {
+                        newLastVisited.Add(neighbour.Location);
+                    }
+                }
+            }
+            lastVisited = newLastVisited;
+        }
+        return distances;
+    }
+
 
     public int GroupCount(bool includeDiagonal)
     {
