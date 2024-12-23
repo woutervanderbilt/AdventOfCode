@@ -20,10 +20,7 @@ internal class Dag01 : Problem
 
         var leftSorted = left.OrderBy(i => i).ToArray();
         var rightSorted = right.OrderBy(i => i).ToArray();
-        Result = Enumerable.Range(0, left.Count).Sum(i => Math.Abs(leftSorted[i] - rightSorted[i])).ToString();
-
-        Result += " - ";
-        Result += left.Sum(i => i * right.Count(j => j == i)).ToString();
+        Result = (Enumerable.Range(0, left.Count).Sum(i => Math.Abs(leftSorted[i] - rightSorted[i])), left.Sum(i => i * right.Count(j => j == i))).ToString();
     }
 
     public override int Nummer => 202401;

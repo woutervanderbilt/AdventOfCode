@@ -17,7 +17,7 @@ internal class Dag02 : Problem
             lists.Add(line.Split(' ').Select(int.Parse).ToList());
         }
 
-        Result = lists.Count(l => IsSafe(l, true)).ToString();
+        Result = (lists.Count(l => IsSafe(l, false)), lists.Count(l => IsSafe(l, true))).ToString();
 
         bool IsSafe(IList<int> list, bool canRemove)
         {

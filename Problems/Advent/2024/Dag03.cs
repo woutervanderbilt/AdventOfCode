@@ -21,7 +21,8 @@ internal class Dag03 : Problem
             }
         }
 
-        Result = result.ToString();
+        Result = (regex.Matches(Input)
+            .Sum(m => long.Parse(m.Groups[1].Value) * long.Parse(m.Groups[2].Value)), result).ToString();
     }
 
     public override int Nummer => 202403;
