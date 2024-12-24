@@ -29,13 +29,16 @@ public class Graph<T> where T : notnull
         {
             Edges[from] = new List<(T to, long weight)>();
         }
+
         Edges.AddToList(from, (to, weight));
+
+        if (!Edges.ContainsKey(to))
+        {
+            Edges[to] = new List<(T to, long weight)>();
+        }
+
         if (bidirectional)
         {
-            if (!Edges.ContainsKey(to))
-            {
-                Edges[to] = new List<(T to, long weight)>();
-            }
             Edges.AddToList(to, (from, weight));
         }
     }
@@ -85,6 +88,48 @@ public class Graph<T> where T : notnull
                 x.Add(v);
             }
         }
+    }
 
+    public (IEnumerable<T> path, long cost, bool pathFound) ShortestPath(T from, T to)
+    {
+        IDictionary<T, long> costs = new Dictionary<T, long> { [from] = 0 };
+        IDictionary<T, T> comingFrom = new Dictionary<T, T>();
+        var queue = new PriorityQueue<T, long>();
+        queue.Enqueue(from, 0);
+        while (queue.TryDequeue(out var vertex, out long cost))
+        {
+            if (costs.TryGetValue(vertex, out var vCost) &&  vCost < cost)
+            {
+                continue;
+            }
+            foreach (var neighbour in Edges[vertex])
+            {
+                var newCost = cost + neighbour.weight;
+                if (!costs.TryGetValue(neighbour.to, out var prevCost) || prevCost > newCost)
+                {
+                    costs[neighbour.to] = newCost;
+                    comingFrom[neighbour.to] = vertex;
+                    queue.Enqueue(neighbour.to, newCost);
+                }
+            }
+
+            if (vertex.Equals(to))
+            {
+                break;
+            }
+        }
+
+        if (!costs.TryGetValue(to, out var result))
+        {
+            return ([], 0, false);
+        }
+
+        IList<T> path = [to];
+        while(comingFrom.TryGetValue(to, out to))
+        {
+            path.Add(to);
+        }
+
+        return (path.Reverse(), result, true);
     }
 }

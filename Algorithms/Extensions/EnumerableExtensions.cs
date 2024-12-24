@@ -47,19 +47,21 @@ public static class EnumerableExtensions
         }
     }
 
-    public static IEnumerable<(T, T)> ConsecutivePairs<T>(this IEnumerable<T> source)
-    {
-        T prev = default;
-        bool first = true;
-        foreach (var item in source)
-        {
-            if (!first)
-            {
-                yield return ((prev, item));
-            }
+    public static IEnumerable<(T, T)> ConsecutivePairs<T>(this IEnumerable<T> source) => source.Zipper((a, b) => (a, b));
 
-            prev = item;
-            first = false;
+    public static IEnumerable<(T, T)> Pairs<T>(this IEnumerable<T> source, bool distinct, bool ordered)
+    {
+        var list = source.Indexed().ToList();
+        foreach (var (v1, index1) in list)
+        {
+            foreach (var (v2, index2) in list.Skip((ordered ? 0 : index1)))
+            {
+                if (distinct && index1 == index2)
+                {
+                    continue;
+                }
+                yield return (v1, v2);
+            }
         }
     }
 

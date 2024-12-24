@@ -36,15 +36,13 @@ internal class Dag23 : Problem
 
         var cliques = graph.Cliques().ToList();
 
-
-
         var maxCliqueLength = cliques.Max(c => c.Count);
         var maxClique = cliques.First(c => c.Count == maxCliqueLength);
         var result2 = string.Join(',', maxClique.OrderBy(c => c));
-
+        
         Result = (result1, result2).ToString();
     }
-    protected override bool UseTestInput => false;
+    protected override bool UseTestInput => true;
 
     protected override string TestInput => @"kh-tc
 qp-kh
