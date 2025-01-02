@@ -153,11 +153,11 @@ internal class Dag24 : Problem
             void AddSignal(string gate, bool value)
             {
                 signals[gate] = value;
-                if (!outputs.ContainsKey(gate))
+                if (!outputs.TryGetValue(gate, out var output1))
                 {
                     return;
                 }
-                foreach (var output in outputs[gate])
+                foreach (var output in output1)
                 {
                     var nextGate = gates[output];
                     if (signals.TryGetValue(nextGate.input1, out var s1) &&
