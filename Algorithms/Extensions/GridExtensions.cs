@@ -47,18 +47,18 @@ public static class GridExtensions
         var maxX = grid.MaxX;
         var minY = grid.MinY;
         var maxY = grid.MaxY;
+
+        var sb = new StringBuilder();
         if (switchXandY)
         {
-
             for (int x = minX; x <= maxX; x++)
             {
                 for (int y = maxY; y >= minY; y--)
                 {
                     var value = grid[x, y];
-                    Console.Write(value.Found && value.Value ? t : f);
+                    sb.Append(value.Found && value.Value ? t : f);
                 }
-
-                Console.WriteLine();
+                sb.AppendLine();
             }
         }
         else
@@ -68,12 +68,13 @@ public static class GridExtensions
                 for (int x = minX; x <= maxX; x++)
                 {
                     var value = grid[x, y];
-                    Console.Write(value.Found && value.Value ? t : f);
+                    sb.Append(value.Found && value.Value ? t : f);
                 }
 
-                Console.WriteLine();
+                sb.AppendLine();
             }
         }
+        Console.WriteLine(sb);
     }
 
     public static void Print<T>(this Grid<T> grid, Func<T, char> map, bool switchXandY = false)
@@ -82,6 +83,8 @@ public static class GridExtensions
         var maxX = grid.MaxX;
         var minY = grid.MinY;
         var maxY = grid.MaxY;
+
+        var sb = new StringBuilder();
         if (switchXandY)
         {
 
@@ -89,10 +92,10 @@ public static class GridExtensions
             {
                 for (int y = maxY; y >= minY; y--)
                 {
-                    Console.Write(map(grid[x, y]));
+                    sb.Append(map(grid[x, y]));
                 }
 
-                Console.WriteLine();
+                sb.AppendLine();
             }
         }
         else
@@ -101,11 +104,12 @@ public static class GridExtensions
             {
                 for (int x = minX; x <= maxX; x++)
                 {
-                    Console.Write(map(grid[x, y]));
+                    sb.Append(map(grid[x, y]));
                 }
 
-                Console.WriteLine();
+                sb.AppendLine();
             }
         }
+        Console.WriteLine(sb);
     }
 }
